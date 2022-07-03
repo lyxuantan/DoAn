@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class Product implements UploadsFiles, Serializable {
 
     private static final long serialVersionUID = 4641853311314844969L;
-    public static Integer STATUS_ACTICE = 1;
-    public static Integer STATUS_DEACTICE = 0;
+    public static Integer STATUS_ACTIVE = 1;
+    public static Integer STATUS_DEACTIVE = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,10 +59,10 @@ public class Product implements UploadsFiles, Serializable {
     private String desc;
 
     @Column(name = "price_ref")
-    private Long priceRef;
+    private Float priceRef;
 
     @Column(name = "price_sale")
-    private Long priceSale;
+    private Float priceSale;
 
     @Column(name = "per_discount")
     private Long perDiscount;
@@ -78,6 +78,9 @@ public class Product implements UploadsFiles, Serializable {
 
     @Column(name = "sale_number")
     private Long saleNumber;
+
+    @Column(name = "total")
+    private Long total;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productId")
     private List<ProductImage> productImages = new ArrayList<ProductImage>();
@@ -105,6 +108,10 @@ public class Product implements UploadsFiles, Serializable {
     @JoinColumn(name = "collection_id")
     @Fetch(FetchMode.JOIN)
     private Collections collections;
+//
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonIgnore
+    private Set<CustomerOrderDetail> customerOrderDetails = new HashSet<>();
 
 //    @Transient
 //    public List<ProductImage> getProductImages() {
@@ -123,8 +130,8 @@ public class Product implements UploadsFiles, Serializable {
 
     public Map<Integer, String> mapStatus() {
         HashMap maps = new HashMap<Integer, String>();
-        maps.put(STATUS_ACTICE, "Kích hoạt");
-        maps.put(STATUS_DEACTICE, "Ngưng");
+        maps.put(STATUS_ACTIVE, "Kích hoạt");
+        maps.put(STATUS_DEACTIVE, "Ngưng");
         return maps;
     }
 

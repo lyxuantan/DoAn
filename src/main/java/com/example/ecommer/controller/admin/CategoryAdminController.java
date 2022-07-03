@@ -23,7 +23,6 @@ public class CategoryAdminController {
     public ResponseEntity<ApiResponse> addUser(@RequestBody CategoryRequest category) {
         ApiResponse response;
         try {
-
             categoryService.saveCategory(category);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {

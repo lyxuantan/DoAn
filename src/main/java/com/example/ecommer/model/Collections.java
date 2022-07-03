@@ -1,12 +1,11 @@
 package com.example.ecommer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -14,6 +13,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class Collections extends Base {
 
     @Column(name = "`name`")
@@ -22,4 +23,18 @@ public class Collections extends Base {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "collections")
     @JsonIgnore
     private List<Product> product = new ArrayList<>();
+
+    @Column(name = "category_id")
+    private Long categoryId;
+
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    // Quan hệ n-n với đối tượng ở dưới (Person) (1 địa điểm có nhiều người ở)
+
+    @JoinTable(name = "category_collection", //Tạo ra một join Table tên là "address_person"
+            joinColumns = @JoinColumn(name = "collection_id"),  // TRong đó, khóa ngoại chính là address_id trỏ tới class hiện tại (Address)
+            inverseJoinColumns = @JoinColumn(name = "category_id") //Khóa ngoại thứ 2 trỏ tới thuộc tính ở dưới (Person)
+    )
+    @JsonIgnore
+    private Collection<Category> categories;
 }

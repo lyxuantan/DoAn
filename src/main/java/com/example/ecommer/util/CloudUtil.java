@@ -14,9 +14,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AmazonUtil {
+public class CloudUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(AmazonUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(CloudUtil.class);
     private static final int VALUE_NOT_CONVERT = 0;
 
     @Autowired
@@ -56,7 +56,7 @@ public class AmazonUtil {
             // 1982839233/2048
             // 20-09-2020 --> 780111
             // 21-09-2020 --> 780111
-            return (int) Math.ceil((double) AmazonUtil.dateToInt(_date)/2048);
+            return (int) Math.ceil((double) CloudUtil.dateToInt(_date)/2048);
         } catch (ParseException e) {
             logger.info("ParseException Date : {}", e.getMessage());
             return VALUE_NOT_CONVERT;

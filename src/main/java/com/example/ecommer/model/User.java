@@ -1,4 +1,5 @@
 package com.example.ecommer.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ public class User extends Base{
     private String phoneNumber;
 
     @Column(name = "password", length = 255)
+    @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)

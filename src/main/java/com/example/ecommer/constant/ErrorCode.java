@@ -9,6 +9,7 @@ public enum ErrorCode {
     NOT_FOUND("ERR002", "Không tìm thấy thông tin"),
     NOT_FOUND_CATEGORY("ERR002", "Danh mục sản phẩm không tồn tại"),
     NOT_FOUND_PRODUCT("ERR002", "Sản phẩm không tồn tại"),
+    NOT_FOUND_COLLECTION("ERR002", "Bộ sưu tập không tồn tại"),
 
     DELETE_ERROR("400", "Xóa thât bại"),
     UPLOAD_IMAGE_INVALID("ERR002", "Không phải định dạng file ảnh");

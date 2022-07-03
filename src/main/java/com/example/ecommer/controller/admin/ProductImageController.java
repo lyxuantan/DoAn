@@ -21,7 +21,6 @@ public class ProductImageController {
     @Autowired
     ProductImageRepository productImageRepository;
 
-
     @PostMapping("")
     public ResponseEntity<ApiResponse> uploadFile(@RequestParam("productId") Long productId, @RequestParam("isPresident") boolean isPresident,  @RequestParam("file") MultipartFile[] file) {
         String message = "";

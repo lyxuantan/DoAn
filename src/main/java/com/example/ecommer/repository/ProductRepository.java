@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -18,6 +19,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM product WHERE (price_sale > :priceFrom AND price_sale < :priceTo) AND (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId or material_id in :materialId)", nativeQuery = true)
     Page<Product> findPageProductFilter(Long priceFrom, Long priceTo, List<Long> collectionId, List<Long> sizeId, List<Long> colorId, List<Long> materialId, Pageable pageable);
 
+    @Query(value = "SELECT * FROM product", nativeQuery = true)
+    Page<Product> findAll(Pageable pageable);
+
+    @Query(value = "SELECT * FROM product WHERE category_id in :categoryId", nativeQuery = true)
+    Page<Product> findAllByCategory(Set<Long> categoryId, Pageable pageable);
     //    @Query("SELECT p from Product p ")
 //    Page<Product> findListProductPage(String keyword, Long productId, Long collectionId, Long sizeId, Long colorId, Long materialId, String order);
 

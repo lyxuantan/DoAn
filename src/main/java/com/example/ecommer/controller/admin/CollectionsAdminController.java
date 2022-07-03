@@ -2,27 +2,27 @@ package com.example.ecommer.controller.admin;
 
 import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.ApiResponse;
-import com.example.ecommer.dto.request.ProductRequest;
 import com.example.ecommer.exception.CustomException;
-import com.example.ecommer.service.ProductService;
+import com.example.ecommer.model.Collections;
+import com.example.ecommer.service.CollectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller(value = "ProductOfAdmin")
-@RequestMapping("admin/product")
+@RestController
+@RequestMapping("admin/collection")
 @CrossOrigin(origins = "http://localhost:3000")
-public class ProductAdminController {
+public class CollectionsAdminController {
 
     @Autowired
-    private ProductService productService;
+    private CollectionsService collectionsService;
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse> addUser(@RequestBody Collections collections) {
         ApiResponse response;
         try {
-            productService.saveProduct(productRequest);
+
+            collectionsService.saveCollections(collections);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response  = new ApiResponse(e);
@@ -31,10 +31,10 @@ public class ProductAdminController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse> updateUser(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody Collections collections) {
         ApiResponse response;
         try {
-            productService.update(productRequest);
+            collectionsService.update(collections);
             response = new ApiResponse(ErrorCode.SUCCESS);
         }
         catch (CustomException e) {
@@ -43,11 +43,11 @@ public class ProductAdminController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable(name = "id") Long id) {
+    @GetMapping("/delete")
+    public ResponseEntity<ApiResponse> deleteUser(@RequestParam(name = "id") Long id) {
         ApiResponse response;
         try {
-            productService.delete(id);
+            collectionsService.delete(id);
             response = new ApiResponse(ErrorCode.SUCCESS);
         }
         catch (CustomException e) {

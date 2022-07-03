@@ -1,6 +1,6 @@
 package com.example.ecommer.model;
 
-import com.example.ecommer.util.AmazonUtil;
+import com.example.ecommer.util.CloudUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -56,7 +56,7 @@ public class ProductImage  implements Serializable  {
     private Product product;
 
     public void createImgUrl() {
-        file = AmazonUtil.Util.host + Product.UPLOAD_PATH + file;
+        file = CloudUtil.Util.host + Product.UPLOAD_PATH + file;
     }
 
     @Lob
