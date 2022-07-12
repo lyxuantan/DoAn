@@ -12,10 +12,15 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class Color extends Base {
 
     @Column(name = "`name`")
     private String name;
+
+    @Column(name = "hex")
+    private String hex;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "colors")
     @JsonIgnore

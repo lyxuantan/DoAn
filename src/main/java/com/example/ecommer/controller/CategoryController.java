@@ -21,6 +21,19 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @GetMapping("/get-detail")
+    public ResponseEntity<ApiResponse> findById(@RequestParam(name = "id") Long id) {
+        ApiResponse response;
+        try {
+            response = new ApiResponse(categoryService.findById(id));
+        } catch (CustomException e) {
+            response  = new ApiResponse(e);
+        } catch (Exception e) {
+            response = new ApiResponse(ErrorCode.API_FAIL_UNKNOW);
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> listCategory() {
         ApiResponse response;
