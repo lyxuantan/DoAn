@@ -19,7 +19,7 @@ public interface CategoryService {
 
     void update(Category category);
 
-    Category findById(Integer id);
+    Category findById(Long id);
 
 //    List<Node> categoryWithIndent();
 

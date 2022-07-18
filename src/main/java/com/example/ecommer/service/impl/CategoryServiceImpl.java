@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findById(Integer id) {
+    public Category findById(Long id) {
         Category categoryExit = categoryRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         return categoryExit;
     }

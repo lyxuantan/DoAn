@@ -33,4 +33,17 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("get-details")
+    public ResponseEntity<ApiResponse> findProductById(@RequestParam(name = "productId") Long id) {
+        ApiResponse response;
+        try {
+            response = new ApiResponse(productService.findById(id));
+        } catch (CustomException e) {
+            response = new ApiResponse(e);
+        } catch (Exception e) {
+            response = new ApiResponse(ErrorCode.API_FAIL_UNKNOW);
+        }
+        return ResponseEntity.ok(response);
+    }
+
 }

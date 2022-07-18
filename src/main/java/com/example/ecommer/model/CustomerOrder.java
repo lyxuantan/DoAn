@@ -19,7 +19,7 @@ import java.util.Set;
 @Getter
 public class CustomerOrder extends Base{
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderId", cascade = CascadeType.ALL)
     private List<CustomerOrderDetail> customerOrderDetails = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
@@ -37,5 +37,5 @@ public class CustomerOrder extends Base{
     private Integer status = 0;
 
     @Column(name = "is_paid")
-    private Boolean isPaid;
+    private Boolean isPaid = true;
 }

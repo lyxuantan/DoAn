@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -40,9 +41,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CartResponse> findByUserAndStatus(Long id, Integer status) {
+    public List<CartResponse> findByUserAndStatus(Long id, Boolean isPaid) {
         User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndStatus(user, status);
+        List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, isPaid);
         List<CartResponse> cartResponses = new ArrayList<>();
         for(CustomerOrder cus: customerOrderList) {
             CartResponse cartResponse = new CartResponse();
@@ -53,6 +54,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             cartResponse.setTotal(totalPriceCustomerOrder(cus.getCustomerOrderDetails()));
             cartResponse.setSubTotal(totalPriceRefCustomerOrder(cus.getCustomerOrderDetails()));
             cartResponse.setStatus(cus.getStatus());
+            cartResponse.setCustomerOrderDetails(cus.getCustomerOrderDetails());
             cartResponses.add(cartResponse);
         }
         return cartResponses;
@@ -61,45 +63,184 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public void addToCard(AddToCartRequest addToCartRequest) {
         User user = userRepository.findById(addToCartRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndStatus(user, addToCartRequest.getStatus());
-        Product product = productRepository.findById(addToCartRequest.getProductId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+        List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, addToCartRequest.getIsPaid());
+        List<CustomerOrderDetail> customerOrderDetailList = new ArrayList<>();
+        System.out.println(addToCartRequest.getCustomerOrderDetails());
         if (customerOrderList.size() != 0) {
-            CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
-            customerOrderDetail.setOrderId(customerOrderList.get(customerOrderList.size() - 1));
-            customerOrderDetail.setProduct(product);
-            customerOrderDetail.setQuantity(addToCartRequest.getQuantity());
-            customerOrderDetail.setPrice(countPriceProductInCart(product, addToCartRequest.getQuantity()));
-            customerOrderDetailRepository.save(customerOrderDetail);
+            addToCartRequest.getCustomerOrderDetails().forEach(item -> {
+                Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+                CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                customerOrderDetail.setOrderId(customerOrderList.get(customerOrderList.size() - 1).getId());
+                customerOrderDetail.setProduct(product);
+                customerOrderDetail.setQuantity(item.getQuantity());
+                customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                customerOrderDetailList.add(customerOrderDetail);
+                customerOrderDetailRepository.save(customerOrderDetail);
+            });
+            CustomerOrder customerOrder = customerOrderList.get(customerOrderList.size() - 1);
+            customerOrder.setCustomerOrderDetails(customerOrderDetailList);
+            customerOrder.setTotal((long) customerOrderDetailList.size());
+            customerOrder.setPrice(totalPriceCustomerOrder(customerOrderDetailList));
+            customerOrder.setStatus(addToCartRequest.getStatus());
+            customerOrder.setIsPaid(addToCartRequest.getIsPaid());
+            customerOrderRepository.save(customerOrder);
         }
         else {
             CustomerOrder customerOrder = new CustomerOrder();
             customerOrder.setUser(user);
-            customerOrder.setStatus(1);
-            CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
-            customerOrderDetail.setOrderId(customerOrder);
-            customerOrderDetail.setProduct(product);
-            customerOrderDetail.setQuantity(addToCartRequest.getQuantity());
-            customerOrderDetail.setPrice(countPriceProductInCart(product, addToCartRequest.getQuantity()));
-            customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, addToCartRequest.getQuantity()));
+            customerOrder.setStatus(addToCartRequest.getStatus());
+            customerOrder.setIsPaid(false);
+            addToCartRequest.getCustomerOrderDetails().forEach(item -> {
+                Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+                CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                customerOrderDetail.setOrderId(customerOrder.getId());
+                customerOrderDetail.setProduct(product);
+                customerOrderDetail.setQuantity(item.getQuantity());
+                customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                customerOrderDetailList.add(customerOrderDetail);
+                customerOrderDetailRepository.save(customerOrderDetail);
+            });
+            customerOrder.setCustomerOrderDetails(customerOrderDetailList);
+            customerOrder.setTotal((long) customerOrderDetailList.size());
+            customerOrder.setPrice(totalPriceCustomerOrder(customerOrderDetailList));
             customerOrderRepository.save(customerOrder);
-            customerOrderDetailRepository.save(customerOrderDetail);
-
         }
-
     }
 
     @Override
     public void updateCard(AddToCartRequest addToCartRequest) {
-        CustomerOrder customerOrder = customerOrderRepository.findById(addToCartRequest.getOrderId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        Product product = productRepository.findById(addToCartRequest.getProductId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
-        if (customerOrder != null) {
-            CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
-            customerOrderDetail.setOrderId(customerOrder);
-            customerOrderDetail.setProduct(product);
-            customerOrderDetail.setQuantity(addToCartRequest.getQuantity());
-            customerOrderDetail.setPrice(countPriceProductInCart(product, addToCartRequest.getQuantity()));
-            customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, addToCartRequest.getQuantity()));
-            customerOrderDetailRepository.save(customerOrderDetail);
+        User user = userRepository.findById(addToCartRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        List<CustomerOrderDetail> customerOrderDetailList = new ArrayList<>();
+        if (addToCartRequest.getOrderId() != null) {
+            Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(addToCartRequest.getOrderId());
+            if(customerOrder.isPresent()) {
+                addToCartRequest.getCustomerOrderDetails().forEach(item -> {
+                    Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+                    if(item.getId() != null) {
+                        Optional<CustomerOrderDetail> customerOrderDetailExit = customerOrderDetailRepository.findById(item.getId());
+                        if (customerOrderDetailExit.isPresent()) {
+                            customerOrderDetailExit.get().setId(item.getId());
+                            customerOrderDetailExit.get().setOrderId(customerOrder.get().getId());
+                            customerOrderDetailExit.get().setProduct(product);
+                            customerOrderDetailExit.get().setQuantity(item.getQuantity());
+                            customerOrderDetailExit.get().setPrice(countPriceProductInCart(product, item.getQuantity()));
+                            customerOrderDetailExit.get().setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                            customerOrderDetailList.add(customerOrderDetailExit.get());
+                            customerOrderDetailRepository.save(customerOrderDetailExit.get());
+                        }
+                        else {
+                            CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                            customerOrderDetail.setId(item.getId());
+                            customerOrderDetail.setOrderId(customerOrder.get().getId());
+                            customerOrderDetail.setProduct(product);
+                            customerOrderDetail.setQuantity(item.getQuantity());
+                            customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                            customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                            customerOrderDetailList.add(customerOrderDetail);
+                            customerOrderDetailRepository.save(customerOrderDetail);
+                        }
+                    }
+                    else {
+                        CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                        customerOrderDetail.setId(item.getId());
+                        customerOrderDetail.setOrderId(customerOrder.get().getId());
+                        customerOrderDetail.setProduct(product);
+                        customerOrderDetail.setQuantity(item.getQuantity());
+                        customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                        customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                        customerOrderDetailList.add(customerOrderDetail);
+                        customerOrderDetailRepository.save(customerOrderDetail);
+                    }
+                });
+                customerOrder.get().setId(addToCartRequest.getOrderId());
+                customerOrder.get().setCustomerOrderDetails(customerOrderDetailList);
+                customerOrder.get().setTotal((long) customerOrderDetailList.size());
+                customerOrder.get().setPrice(totalPriceCustomerOrder(customerOrderDetailList));
+                customerOrder.get().setStatus(addToCartRequest.getStatus());
+                customerOrder.get().setIsPaid(addToCartRequest.getIsPaid());
+                customerOrderRepository.save(customerOrder.get());
+            }
+            else {
+                CustomerOrder customerOrderNew = new CustomerOrder();
+                customerOrderNew.setUser(user);
+                customerOrderNew.setStatus(addToCartRequest.getStatus());
+                customerOrderNew.setIsPaid(false);
+                addToCartRequest.getCustomerOrderDetails().forEach(item -> {
+                    Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+                    if(item.getId() != null) {
+                        Optional<CustomerOrderDetail> customerOrderDetailExit = customerOrderDetailRepository.findById(item.getId());
+                        if (customerOrderDetailExit.isPresent()) {
+                            customerOrderDetailExit.get().setId(item.getId());
+                            customerOrderDetailExit.get().setOrderId(customerOrder.get().getId());
+                            customerOrderDetailExit.get().setProduct(product);
+                            customerOrderDetailExit.get().setQuantity(item.getQuantity());
+                            customerOrderDetailExit.get().setPrice(countPriceProductInCart(product, item.getQuantity()));
+                            customerOrderDetailExit.get().setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                            customerOrderDetailList.add(customerOrderDetailExit.get());
+                            customerOrderDetailRepository.save(customerOrderDetailExit.get());
+                        }
+                        else {
+                            CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                            customerOrderDetail.setId(item.getId());
+                            customerOrderDetail.setOrderId(customerOrder.get().getId());
+                            customerOrderDetail.setProduct(product);
+                            customerOrderDetail.setQuantity(item.getQuantity());
+                            customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                            customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                            customerOrderDetailList.add(customerOrderDetail);
+                            customerOrderDetailRepository.save(customerOrderDetail);
+                        }
+                    }
+                    else {
+                        CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                        customerOrderDetail.setId(item.getId());
+                        customerOrderDetail.setOrderId(customerOrder.get().getId());
+                        customerOrderDetail.setProduct(product);
+                        customerOrderDetail.setQuantity(item.getQuantity());
+                        customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                        customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                        customerOrderDetailList.add(customerOrderDetail);
+                        customerOrderDetailRepository.save(customerOrderDetail);
+                    }
+                });
+                customerOrderNew.setCustomerOrderDetails(customerOrderDetailList);
+                customerOrderNew.setTotal((long) customerOrderDetailList.size());
+                customerOrderNew.setPrice(totalPriceCustomerOrder(customerOrderDetailList));
+                customerOrderRepository.save(customerOrderNew);
+            }
+        }
+        else {
+            CustomerOrder customerOrderNew = new CustomerOrder();
+            customerOrderNew.setUser(user);
+            customerOrderNew.setStatus(addToCartRequest.getStatus());
+            customerOrderNew.setIsPaid(false);
+            addToCartRequest.getCustomerOrderDetails().forEach(item -> {
+                Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
+                CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+                customerOrderDetail.setOrderId(customerOrderNew.getId());
+                customerOrderDetail.setProduct(product);
+                customerOrderDetail.setQuantity(item.getQuantity());
+                customerOrderDetail.setPrice(countPriceProductInCart(product, item.getQuantity()));
+                customerOrderDetail.setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
+                customerOrderDetailList.add(customerOrderDetail);
+                customerOrderDetailRepository.save(customerOrderDetail);
+            });
+            customerOrderNew.setCustomerOrderDetails(customerOrderDetailList);
+            customerOrderNew.setTotal((long) customerOrderDetailList.size());
+            customerOrderNew.setPrice(totalPriceCustomerOrder(customerOrderDetailList));
+            customerOrderRepository.save(customerOrderNew);
+        }
+    }
+
+    @Override
+    public void deleteCustomerOrderDetail(Long id) {
+        Optional<CustomerOrderDetail> customerOrderDetail = customerOrderDetailRepository.findById(id);
+        if(customerOrderDetail.isPresent()) {
+            customerOrderDetailRepository.deleteById(id);
+        }
+        else {
+            throw new CustomException(ErrorCode.NOT_FOUND_CUSTOMER_ORDER_DETAIL);
         }
     }
 
@@ -121,6 +262,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return total;
     }
 
+
     public Float totalPriceRefCustomerOrder(List<CustomerOrderDetail> customerOrderDetails) {
         Float total = 0.0f;
         for (int i = 0; i < customerOrderDetails.size() - 1; i++) {
@@ -131,5 +273,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 //        total += countPriceRefProductInCart(product, quantity);
         return total;
     }
+
+
 
 }

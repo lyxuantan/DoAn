@@ -18,6 +18,8 @@ public class AddToCartRequest {
 
     private Integer status;
 
+    private Boolean isPaid = false;
+
     private List<CustomerOrderDetail> customerOrderDetails;
 
     public AddToCartRequest() {

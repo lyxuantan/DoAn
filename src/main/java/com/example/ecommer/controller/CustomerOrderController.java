@@ -22,10 +22,10 @@ public class CustomerOrderController {
 
     @GetMapping("/find-order-active-by-user")
     public ResponseEntity<ApiResponse> listOrderActiveByUser(@RequestParam(value = "userId", required = true) Long userId,
-                                                             @RequestParam(value = "status", required = false) Integer status) {
+                                                             @RequestParam(value = "isPaid", required = false) Boolean isPaid) {
         ApiResponse response;
         try {
-            response = new ApiResponse(customerOrderService.findByUserAndStatus(userId, status));
+            response = new ApiResponse(customerOrderService.findByUserAndStatus(userId, isPaid));
         } catch (CustomException e) {
             response = new ApiResponse(e);
         } catch (Exception e) {
@@ -51,6 +51,18 @@ public class CustomerOrderController {
         ApiResponse response;
         try {
             customerOrderService.updateCard(addToCartRequest);
+            response = new ApiResponse(ErrorCode.SUCCESS);
+        } catch (CustomException e) {
+            response = new ApiResponse(e);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/delete-detail")
+    public ResponseEntity<ApiResponse> deleteOrderDetail(@RequestParam(name = "id") Long id) {
+        ApiResponse response;
+        try {
+            customerOrderService.deleteCustomerOrderDetail(id);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response = new ApiResponse(e);

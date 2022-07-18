@@ -15,7 +15,7 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
 
     Optional<CustomerOrder> findByIdAndStatus(Long id, Integer status);
 
-    List<CustomerOrder> findAllByUserAndStatus(User userId, Integer status);
+    List<CustomerOrder> findAllByUserAndIsPaid(User userId, Boolean isPaid);
 
 
 }

@@ -66,10 +66,10 @@ public class ProductServiceImpl implements ProductService {
         if (filterProductRequest.getIsBestSell().equals(false)) {
             if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getMaterial().size() != 0) {
                 logger.info("Creating Token for user : {}", filterProductRequest);
-                return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getMaterial(), pageable);
+                return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getMaterial(), filterProductRequest.getCategoryId(),pageable);
             } else {
                 logger.info("69 : {}", filterProductRequest);
-                return productRepository.findAll(pageable);
+                return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
             }
         } else {
             logger.info("72 : {}", filterProductRequest);
