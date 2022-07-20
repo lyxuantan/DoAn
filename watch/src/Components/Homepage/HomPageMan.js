@@ -11,11 +11,12 @@ import {getCategoryDetail} from "../../api/category";
 
 
 
-function HomePageMan () {
+function HomePageMan ({isBestSeller}) {
 
     const {id} = useParams();
 
-    const [categoryDetail, setCategoryDetail] = useState(null)
+    const [categoryDetail, setCategoryDetail] = useState(null);
+
 
     useEffect(() => {
         getCategoryDetail({
@@ -35,7 +36,7 @@ function HomePageMan () {
         <>  
             <Navbar />
             <Header />
-            <ContentMen categoryDetail={categoryDetail}/>
+            <ContentMen categoryDetail={categoryDetail} isBestSeller={isBestSeller}/>
             <Footer />
         </>
     )

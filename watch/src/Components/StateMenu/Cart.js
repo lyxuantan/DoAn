@@ -37,20 +37,13 @@ export default function Cart() {
     const cartStore = useSelector(state => state.cartSlice);
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     updateCustomerOrder(
-    //         {
-    //             userId: 5,
-    //             orderId
-    //         }
-    //     ).then(res => {
-    //         const {data} = res;
-    //     })
-    // }, [])
-
     useEffect(() => {
         fetchCustomerOrder();
     }, [])
+
+    useEffect(() => {
+        setCustomerOrder(cartStore);
+    }, [cartStore])
 
     const fetchCustomerOrder = () => {
         getCustomerOrder({
@@ -60,7 +53,6 @@ export default function Cart() {
             res => {
                 const {data} = res.data;
                 if (data && data.length) {
-                    setCustomerOrder(data?.[data.length - 1])
                     dispatch(getCart(data?.[data.length - 1]))
 
                 }
@@ -68,16 +60,9 @@ export default function Cart() {
         )
     }
 
-    console.log(36, customerOrder)
     const onChangeTotal = (item, num) => {
-        console.log(55, item, num)
         const tmp = {...customerOrder};
-
         const indexOrderDetail = customerOrder.customerOrderDetails.findIndex(i => i.id === item.id);
-        // const customerOrderDetail = tmp.customerOrderDetails[indexOrderDetail];
-        // customerOrderDetail.total += num;
-        console.log(indexOrderDetail)
-        console.log(tmp.customerOrderDetails[indexOrderDetail])
         if (indexOrderDetail > -1) {
             tmp.customerOrderDetails = customerOrder.customerOrderDetails.map((item, index) => {
                 if (indexOrderDetail === index) {
@@ -147,8 +132,11 @@ export default function Cart() {
                             <div className='overInfortext'>
                                 <div className='allIn'>
                                     <div className='index1'>
-                    <span className="navbar-brand info" id='one' href="#"><i className='icons mr-2'>
-                        <FaTruck className="mr-2 pr-2"/></i><span className="ml-2" ml={2} pl={2}>MIỄN PHÍ VẬN CHUYỂN ĐƠN HÀNG >700K</span></span>
+                    <span className="navbar-brand info mx-0" id='one' href="#">
+                       <div className="marquee">
+                           <span className="ml-2" ml={2} pl={2}><i className='icons mr-2'>
+                               <FaTruck className="mr-2 pr-2"/></i>MIỄN PHÍ VẬN CHUYỂN ĐƠN HÀNG >700K</span></div>
+                    </span>
                                     </div>
                                 </div>
                             </div>
@@ -176,9 +164,6 @@ export default function Cart() {
                                 THANH TOÁN NGAY
                                 <FontAwesomeIcon icon="check-square"/>
                             </button>
-                            {/*<div className="cart-bottom-footer">*/}
-                            {/*    *Ước tính thời gian ship: 18/07/2022*/}
-                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

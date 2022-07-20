@@ -8,7 +8,8 @@ export const CATEGORY = {
 export const PRODUCT = {
     GET: "/product/get",
     ADD: "/category/add",
-    UPDATE: "/category/update"
+    UPDATE: "/category/update",
+    GET_DETAIl: "/product/get-details"
 }
 
 export const FILTER = {

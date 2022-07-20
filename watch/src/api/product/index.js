@@ -8,3 +8,11 @@ export const getProduct = (payload) => {
         data: payload,
     })
 }
+
+export const getProductDetail = (payload) => {
+    return HTTP({
+        url: PRODUCT.GET_DETAIl,
+        method: "GET",
+        params: payload
+    })
+}

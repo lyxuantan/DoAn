@@ -10,6 +10,14 @@ import HomePageWoman from './Components/Homepage/HomePageWoman';
 import HomePageBestSeller from './Components/Homepage/HomePageBestSeller';
 import Header from "./Components/Header/header";
 import Navbar from "./Components/Navbar/navbar";
+import Accounts from "./Admin/Accounts";
+import Orders from "./Admin/Order";
+import AddAccount from "./Admin/Accounts/addAccounts";
+import AddCustomer from "./Admin/Customers/addCustomer";
+import AddProduct from "./Admin/Products/addProduct";
+import Products from "./Admin/Products/products";
+import Customers from "./Admin/Customers";
+import AdminHome from "./Admin";
 
 
 function App() {
@@ -30,6 +38,15 @@ function App() {
                     <Route path='product/men' element = { <HomePageMan />} />
                     <Route path='product/woman' element =  { <HomePageWoman />} />
                     <Route path='bestseller' element={ <HomePageBestSeller /> } />
+                    <Route path='admin' element = { <AdminHome />} />
+                    <Route path='admin/customer' element= { <Customers />} />
+                    <Route path='admin/product' element = { <Products />} />
+                    <Route path='admin/product/addProduct' element = { <AddProduct /> } />
+                    <Route path='admin/product/addProduct/:id' element = { <AddProduct /> } />
+                    <Route path='admin/customer/addCustomer' element = { <AddCustomer /> } />
+                    <Route path='admin/account/addAccount' element = { <AddAccount /> } />
+                    <Route path='admin/order' element = { <Orders /> } />
+                    <Route path='admin/account' element = { <Accounts /> } />
                 </Routes>
 
         </>

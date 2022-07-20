@@ -316,14 +316,14 @@
         line-height: 32px;
         cursor: pointer;
 
-        &-name {
-            font-size: 32px;
-            font-weight: 700;
-        }
-        &-desc {
-            font-size: 14px;
-            font-weight: 400;
-        }
+        //.menuDropDown-item-desc {
+        //    font-size: 14px;
+        //    font-weight: 400;
+        //}
+    }
+    .menuDropDown-item.desc {
+        font-size: 14px;
+        font-weight: 400;
     }
     .menuDropDown-item:hover {
         opacity: 1;

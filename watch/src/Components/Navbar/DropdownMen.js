@@ -63,8 +63,9 @@ function DropDownMen({children}) {
                                                       onMouseEnter={() => onMouseShowCollection(item)}>
                                 <Link to={`/product/${item.id}`} style={{color: "unset"}}><div className="menuDropDown-item">
                                     <div className="menuDropDown-item-name">{item.name}</div>
-                                    {index === 0 ? <div className="menuDropDown-item-desc">Bán chạy nhất</div> : null}
                                 </div></Link>
+                                {index === 0 ? <Link style={{color: "unset"}} to={`/product/best-seller/${item.id}`}><div className="menuDropDown-item desc"><div className="menuDropDown-item-name">Bán chạy nhất</div></div></Link> : null}
+
                             </div>) :
                             null}
 

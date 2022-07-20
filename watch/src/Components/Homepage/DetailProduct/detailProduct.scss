@@ -36,23 +36,28 @@
     padding-left: 50px;
 }
 .coverPayment{
+    //display: flex;
+    //flex-direction: column;
+    justify-content: space-between;
     width: 100%;
-    height: 80%;
+    //height: 80%;
     margin: 50px 0;
-    box-shadow: 0 0px 5px 0px rgba(0, 0, 0, 0.1), 0 0px 5px 0px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0 0px 5px 0px rgba(0, 0, 0, 0.1), 0 0px 5px 0px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(180deg, white, #f8f7f4);
 }
 .brandTopPayment{
     text-align: center;
     line-height: 80px;
-    font-family:'Courier New', Courier, monospace;
+    //font-family:'Courier New', Courier, monospace;
     letter-spacing: 2px;
 }
 .titleTopPayment{
     text-align: center;
     margin-top: -8%;
     letter-spacing: 5px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 35px;
+    //font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 2rem;
     margin-bottom: 10%;
 }
 
@@ -64,20 +69,26 @@
 .Detail{
     font-size: 18px;
 }
-.btnPayment{
-    width: 90%;
-    height: 60px;
-    border-radius: unset;
-    font-weight: bold;
-    background-color: #53c66e;
+.product-details-footer {
+    display: grid;
+    padding: 0 20px;
+    .btnPayment{
+        //width: 90%;
+        height: 60px;
+        border-radius: unset;
+        border: none;
+        font-weight: bold;
+        background-color: #53c66e;
+    }
+    .btnAddStore{
+        //width: 90%;
+        height: 60px;
+        border-radius: unset;
+        font-weight: bold;
+        margin-top: 20PX;
+    }
 }
-.btnAddStore{
-    width: 90%;
-    height: 60px;
-    border-radius: unset;
-    font-weight: bold;
-    margin-top: 20PX;
-}
+
 
 .overDetailProduct{
     padding-top: 60px;
@@ -93,6 +104,25 @@
     }
     .custom-tab-list:hover {
         border-bottom: 2px solid var(--primary-color);
+    }
+    .product-detail {
+        display: grid;
+        width: 50%;
+        float: right;
+        padding: 0 60px;
+        tr {
+            border-bottom: 2px solid var(--color-gray);
+            td {
+                padding: 12px 0;
+            }
+        }
+        .detail-left {
+            text-align: left;
+        }
+        .detail-right {
+            text-align: right;
+            text-transform: uppercase;
+        }
     }
 }
 

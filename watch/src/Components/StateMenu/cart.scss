@@ -25,8 +25,7 @@
     background: #161a21;
 }
 .titleCart{
-    font-family: Montserrat;
-    font-size: 20px;
+    //font-family: Montserrat;
     font-style: normal;
     font-weight: 700;
     line-height: 20px;
@@ -34,6 +33,28 @@
     text-align: left;
     color: #fff;
 }
+.marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    position: absolute;
+}
+
+.marquee span {
+    display: inline-block;
+    animation: marquee 10s linear infinite;
+
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate(100%, 0);
+    }
+    100% {
+        transform: translate(-100%, 0);
+    }
+
+}
+
 .miniCart{
     padding: 16px;
     height: calc(100vh - 300px);

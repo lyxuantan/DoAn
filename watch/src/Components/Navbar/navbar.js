@@ -33,6 +33,7 @@ function Navbar() {
     getAllCategory().then((res) => {
       if (res && res.data) {
         const {data} = res.data;
+        console.log(data)
         const list = nest(data);
         setListCategory(list)
         dispatch(addCategory(list))
@@ -83,10 +84,10 @@ function Navbar() {
             </li>
           </div>
           <div className="col-4 text-center logo">
-              <img
+              <Link to={"/"}><img
                 src="https://curnonwatch.com/_next/static/media/logo.cc5d661a.svg"
                 alt=""
-              ></img>
+              ></img></Link>
           </div>
           <div className="col-4 text-end nav justify-content-end right align-items-center">
             <li className="nav-item">

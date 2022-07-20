@@ -12,16 +12,13 @@ const ProductItem = ({item}) => {
     const cartStore = useSelector(state => state.cartSlice);
     const dispatch = useDispatch();
 
-    console.log(cartStore)
 
     const onAddToCart = (item) => {
-        console.log(13, item)
         dispatch(addToCart(item));
         // eslint-disable-next-line no-unused-expressions
         const findIndexItem = cartStore?.customerOrderDetails && cartStore?.customerOrderDetails.length ? cartStore?.customerOrderDetails.findIndex(i => i?.product?.id === item?.id) : -1;
         const newDetail = [];
         if(findIndexItem > -1) {
-            console.log(244, findIndexItem)
             cartStore?.customerOrderDetails.forEach((item, index) =>
             {
                 if(index === findIndexItem) {
@@ -58,7 +55,6 @@ const ProductItem = ({item}) => {
                     product: item,
                 });
         }
-        console.log(63, newDetail)
 
         const payload = {
             ...cartStore,
@@ -71,17 +67,10 @@ const ProductItem = ({item}) => {
         }
         updateCustomerOrder(payload).then(res => {
             const {data} = res;
-            console.log(106, data)
             if (data.errorCode == "200") {
                 dispatch(getCart(payload));
             }
         })
-        console.log(payload)
-        // updateCustomerOrder(payload).then(res => {
-        //     const {data} = res;
-        //     console.log(data);
-        // })
-
     }
 
     return (<div className="content-product container">

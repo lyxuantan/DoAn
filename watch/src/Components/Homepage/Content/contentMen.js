@@ -7,7 +7,7 @@ import {getProduct} from "../../../api/product";
 import ProductItem from "../productItem";
 import React from "react";
 
-function ContentMen({categoryDetail}) {
+function ContentMen({categoryDetail, isBestSeller}) {
 
     const {id} = useParams();
 
@@ -16,7 +16,7 @@ function ContentMen({categoryDetail}) {
 
     })
 
-
+console.log(19, isBestSeller)
     useEffect(() => {
         getProduct(
             {
@@ -31,7 +31,7 @@ function ContentMen({categoryDetail}) {
                 "direction": "DESC",
                 "pageNo": 1,
                 "pageSize": 4,
-                "orderBy": "sale_number",
+                "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
                 "isBestSell": false,
                 "parentCategoryId": categoryDetail?.parentId,
 
@@ -43,7 +43,7 @@ function ContentMen({categoryDetail}) {
                 }
             })
             .catch(error => console.log(error));
-    }, [categoryDetail]);
+    }, [categoryDetail, isBestSeller]);
 
 
     return (
