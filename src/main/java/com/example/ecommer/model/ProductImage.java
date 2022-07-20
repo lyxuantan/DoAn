@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +17,10 @@ import java.sql.Date;
 @Setter @Getter
 @Builder
 public class ProductImage  implements Serializable  {
+
+//    @Value("${watch.host}")
+//    @Transient
+//    private String host;
 
     private static final long serialVersionUID = 4641853311314844969L;
 
@@ -54,6 +59,12 @@ public class ProductImage  implements Serializable  {
     @JoinColumn(name = "product_id", insertable=false, updatable=false)
     @JsonIgnore
     private Product product;
+
+    @Transient
+    public String getPhotosImagePatch() {
+        if (this.file == null || this.id  == null) return null;
+        return CloudUtil.Util.host + this.file;
+    }
 
     public void createImgUrl() {
         file = CloudUtil.Util.host + Product.UPLOAD_PATH + file;

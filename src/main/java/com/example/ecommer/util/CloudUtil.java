@@ -22,12 +22,12 @@ public class CloudUtil {
     @Autowired
     private Environment environment;
 
-    @Value("${amazon.host}")
+    @Value("${watch.host}")
     String amazonHost;
 
     @PostConstruct
     public void init() {
-        Util.host = environment.getProperty("amazon.host");
+        Util.host = environment.getProperty("watch.host");
     }
 
     public String getFileById(int objectId, String imageFile, String folder) {
@@ -41,7 +41,7 @@ public class CloudUtil {
         } else {
             int total = getFolderUpload(objectId);
             String filePath = folder + total + '/' + imageFile;
-            return environment.getProperty("amazon.host") + filePath;
+            return environment.getProperty("watch.host") + filePath;
         }
     }
 
