@@ -33,6 +33,8 @@ public class FilterProductRequest {
 
     private Integer pageSize = 4;
 
+    private String keyword;
+
     private String direction = "ASC";
 
     private String orderBy = "id";

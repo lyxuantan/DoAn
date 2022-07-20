@@ -73,16 +73,23 @@ public class ProductServiceImpl implements ProductService {
             }
         } else {
             logger.info("72 : {}", filterProductRequest);
-            Set<Long> listCategoryId = new HashSet<>();
-            List<Category> categoryList = categoryRepository.findByParentId(filterProductRequest.getParentCategoryId());
-            categoryList.forEach(a -> {
-                        listCategoryId.add(filterProductRequest.getParentCategoryId());
-                        listCategoryId.add(a.getId());
+            if(filterProductRequest.getParentCategoryId() != null ||  !filterProductRequest.getKeyword().trim().isEmpty()) {
+                Set<Long> listCategoryId = new HashSet<>();
+                List<Category> categoryList = categoryRepository.findByParentId(filterProductRequest.getParentCategoryId());
+                categoryList.forEach(a -> {
+                            listCategoryId.add(filterProductRequest.getParentCategoryId());
+                            listCategoryId.add(a.getId());
 
-                    }
-            );
-            logger.info("categoryList : {}", categoryList);
-            return productRepository.findAllByCategory(listCategoryId, pageable);
+                        }
+                );
+                logger.info("categoryList : {}", categoryList);
+
+                return productRepository.findAllByCategory(listCategoryId, filterProductRequest.getKeyword(), pageable);
+            }
+            else {
+                logger.info("findAllByKeyword : {}");
+                return productRepository.findAllByKeyword(pageable);
+            }
         }
     }
 
