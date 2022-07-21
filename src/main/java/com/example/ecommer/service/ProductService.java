@@ -15,11 +15,11 @@ public interface ProductService {
 
     Page<Product> findListProductPage(FilterProductRequest filterProductRequest);
 
-    void saveProduct(ProductRequest category);
+    void saveProduct(Product category);
 
     void delete(Long id);
 
-    void update(ProductRequest productRequest);
+    void update(Product productRequest);
 
     Product findById(Long id);
 }

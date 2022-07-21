@@ -4,6 +4,7 @@ import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.ApiResponse;
 import com.example.ecommer.dto.request.ProductRequest;
 import com.example.ecommer.exception.CustomException;
+import com.example.ecommer.model.Product;
 import com.example.ecommer.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ProductAdminController {
     private ProductService productService;
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody Product productRequest) {
         ApiResponse response;
         try {
             productService.saveProduct(productRequest);
@@ -31,7 +32,7 @@ public class ProductAdminController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse> updateUser(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody Product productRequest) {
         ApiResponse response;
         try {
             productService.update(productRequest);

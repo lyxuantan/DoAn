@@ -2,6 +2,8 @@ package com.example.ecommer.dto.request;
 
 import lombok.*;
 
+import javax.persistence.Column;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,6 +42,10 @@ public class ProductRequest {
     private Long sizeId;
 
     private Long collectionId;
+
+    private String glassSurface;
+
+    private String thinkness;
 
     public Long getId() {
         return id;

@@ -16,3 +16,19 @@ export const getProductDetail = (payload) => {
         params: payload
     })
 }
+
+export const saveProduct = (payload) => {
+    return HTTP({
+        url: PRODUCT.ADD,
+        method: "post",
+        data: payload
+    })
+}
+
+export const updateProduct = (payload) => {
+    return HTTP({
+        url: PRODUCT.UPDATE,
+        method: "post",
+        data: payload
+    })
+}

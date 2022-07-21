@@ -7,8 +7,8 @@ export const CATEGORY = {
 
 export const PRODUCT = {
     GET: "/product/get",
-    ADD: "/category/add",
-    UPDATE: "/category/update",
+    ADD: "/admin/product/add",
+    UPDATE: "/admin/product/update",
     GET_DETAIl: "/product/get-details"
 }
 
@@ -24,3 +24,4 @@ export const CUSTOMER_ORDER = {
     GET_ORDER_IS_PAID: "/order/find-order-active-by-user",
     DELETE_CUSTOMER_ORDER: "/order/delete-detail"
 }
+

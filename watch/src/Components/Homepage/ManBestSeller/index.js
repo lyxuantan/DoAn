@@ -16,6 +16,7 @@ function ManBestSeller({category}) {
             "direction": "DESC",
             "pageNo": 1,
             "pageSize": 4,
+            "keyword": "",
             "orderBy": "sale_number",
             "isBestSell": true,
             "parentCategoryId": category?.id,

@@ -61,4 +61,10 @@ public class ProductImage  implements Serializable  {
 
     @Lob
     private byte[] data;
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (this.file == null || this.id == null) return null;
+        return CloudUtil.Util.host + file;
+    }
 }
