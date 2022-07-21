@@ -94,24 +94,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveProduct(ProductRequest productRequest) {
+    public void saveProduct(Product productRequest) {
         Product product = new Product();
         Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
-        Optional<Color> color = colorRepository.findById(productRequest.getColorId());
-        Optional<Material> material = materialRepository.findById(productRequest.getMaterialId());
-        Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
-        Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
-        if (color.isPresent()) {
-            product.setColors(color.get());
+        if(productRequest.getColorId() != null) {
+            Optional<Color> color = colorRepository.findById(productRequest.getColorId());
+            if (color.isPresent()) {
+                product.setColors(color.get());
+            }
         }
-        if (material.isPresent()) {
-            product.setMaterial(material.get());
+        if(product.getSizeId() != null) {
+            Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
+            if (sizes.isPresent()) {
+                product.setSize(sizes.get());
+            }
         }
-        if (sizes.isPresent()) {
-            product.setSize(sizes.get());
-        }
-        if (collections.isPresent()) {
-            product.setCollections(collections.get());
+
+        if(product.getCollections() != null) {
+            Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
+            if (collections.isPresent()) {
+                product.setCollections(collections.get());
+            }
         }
         product.setCategoryId(category.getId());
         product.setName(productRequest.getName());
@@ -134,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(ProductRequest productRequest) {
+    public void update(Product productRequest) {
         Product product = productRepository.findById(productRequest.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         if (product != null) {
@@ -178,7 +181,7 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    public Float calculatePriceSale(ProductRequest product) {
+    public Float calculatePriceSale(Product product) {
         return product.getPriceRef() + product.getPriceRef() * product.getPerDiscount() / 100;
     }
 }

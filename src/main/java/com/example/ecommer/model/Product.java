@@ -82,6 +82,24 @@ public class Product implements UploadsFiles, Serializable {
     @Column(name = "total")
     private Long total;
 
+    @Column(name = "glass_surface")
+    private String glassSurface;
+
+    @Column(name = "thinkness")
+    private String thinkness;
+
+    @Transient
+    private Long colorId;
+
+    @Transient
+    private Long materialId;
+
+    @Transient
+    private Long sizeId;
+
+    @Transient
+    private Long collectionId;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productId")
     private List<ProductImage> productImages = new ArrayList<ProductImage>();
 

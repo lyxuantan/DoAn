@@ -41,3 +41,23 @@ code {
   width: 100%;
 }
 
+.content-wrapper {
+  margin: 100px 0px 100px 0px;
+  background-color: var(--color-white);
+}
+
+.btn-save {
+  background-color: var(--color-green);
+  padding: 12px 16px;
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+}
+
+.btn-cancel {
+  background-color:  #cbd3e6  !important;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+
+}
