@@ -20,6 +20,19 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @GetMapping("/get-all")
+    public ResponseEntity<ApiResponse> getAllProduct() {
+        ApiResponse response;
+        try {
+            response = new ApiResponse(productService.listProduct());
+        } catch (CustomException e) {
+            response = new ApiResponse(e);
+        } catch (Exception e) {
+            response = new ApiResponse(ErrorCode.API_FAIL_UNKNOW);
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/get")
     public ResponseEntity<ApiResponse> listProduct(@RequestBody FilterProductRequest filterProductRequest) {
         ApiResponse response;

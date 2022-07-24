@@ -9,6 +9,13 @@ export const getProduct = (payload) => {
     })
 }
 
+export const getAllProduct = () => {
+    return HTTP({
+        url: PRODUCT.GET_ALL,
+        method: "get"
+    })
+}
+
 export const getProductDetail = (payload) => {
     return HTTP({
         url: PRODUCT.GET_DETAIl,

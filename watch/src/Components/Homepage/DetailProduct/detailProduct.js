@@ -45,9 +45,10 @@ function DetailProduct() {
             {productId: id}
         ).then(res => {
             const {data} = res.data;
-            if(data) {
+            if (data) {
                 setProduct(data);
-                setImgPresent("https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fr%2Fgrace.png&w=640&q=75")
+                const projectImageSelected = data?.productImages?.[0]?.photosImagePath;
+                setImgPresent(projectImageSelected)
             }
             console.log(data)
         })
@@ -118,14 +119,11 @@ function DetailProduct() {
     }
 
     const onAddToCart = (item) => {
-        // dispatch(addToCart(item));
-        // eslint-disable-next-line no-unused-expressions
         const findIndexItem = cartStore?.customerOrderDetails && cartStore?.customerOrderDetails.length ? cartStore?.customerOrderDetails.findIndex(i => i?.product?.id === item?.id) : -1;
         const newDetail = [];
-        if(findIndexItem > -1) {
-            cartStore?.customerOrderDetails.forEach((item, index) =>
-            {
-                if(index === findIndexItem) {
+        if (findIndexItem > -1) {
+            cartStore?.customerOrderDetails.forEach((item, index) => {
+                if (index === findIndexItem) {
                     newDetail.push({
                         ...item,
                         id: item.id,
@@ -133,8 +131,7 @@ function DetailProduct() {
                         quantity: item.quantity + 1,
                         product: item.product,
                     })
-                }
-                else {
+                } else {
                     newDetail.push(
                         {
                             ...item,
@@ -146,8 +143,7 @@ function DetailProduct() {
                     );
                 }
             });
-        }
-        else {
+        } else {
             cartStore?.customerOrderDetails.forEach((item, index) => {
                 newDetail.push(item);
             });
@@ -155,7 +151,6 @@ function DetailProduct() {
                 {
                     orderId: cartStore?.id,
                     quantity: 1,
-                    // status: item.status,
                     product: item,
                 });
         }
@@ -187,27 +182,20 @@ function DetailProduct() {
             <div className="container overDetailProduct">
                 <div className="row">
                     <div className="col-7">
-                        <div className="row detailImgProduct">
-                            <div className="col-2 detailMiniProduct">
-                                <div className="mini-ImgProduct"><img className="miniShow"
-                                                                      onClick={() => onSelectImgPresent("https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fr%2Fgrace.png&w=640&q=75")}
-                                                                      src="https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fr%2Fgrace.png&w=640&q=75"></img>
+                        {product && product.productImages && product.productImages.length ?
+                            <div className="row detailImgProduct">
+                                <div className="col-2 detailMiniProduct">
+                                    {product.productImages.map((item) => <div className={`mini-ImgProduct ${imgPresent === item.photosImagePath ? "active" : ""}`}>
+                                        <img className="miniShow"
+                                             onClick={() => onSelectImgPresent(item.photosImagePath)}
+                                             src={item.photosImagePath}/>
+                                    </div>)}
                                 </div>
-                                <div className="mini-ImgProduct"><img className="miniShow"
-                                                                      onClick={() => onSelectImgPresent("https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fj%2Fk%2Fjksn-5-3-final-f-crpped.png&w=640&q=75")}
-                                                                      src="https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fj%2Fk%2Fjksn-5-3-final-f-crpped.png&w=640&q=75"></img>
+                                <div className="col-10 bigImgProduct">
+                                    <img
+                                        src={imgPresent}></img>
                                 </div>
-                                {/*<div className="mini-ImgProduct"><img className="miniShow"*/}
-                                {/*                                      src="https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2F8%2F_%2F8.jpg&w=640&q=75"></img>*/}
-                                {/*</div>*/}
-                                {/*<div className="mini-ImgProduct"><img className="miniShow"*/}
-                                {/*                                      src="https://curnonwatch.com/_next/image/?url=https%3A%2F%2Fshop.curnonwatch.com%2Fmedia%2Fcatalog%2Fproduct%2Fu%2Fn%2Funtitled_capture9245.jpg&w=640&q=75"></img>*/}
-                                {/*</div>*/}
-                            </div>
-                            <div className="col-10 bigImgProduct"><img
-                                src={imgPresent}></img>
-                            </div>
-                        </div>
+                            </div> : <span>Không có ảnh hiển thị</span>}
                     </div>
                     <div className="col-4 First">
                         <div className="coverPayment">
@@ -216,16 +204,18 @@ function DetailProduct() {
                                 <h2 className="titleTopPayment">{product?.name}</h2>
                             </div>
                             <div className=" text-center mb-5">
-                                <span className="cardPrice Detail">{thousandsSeparators(product?.priceSale)} VNĐ</span>
-                                <span className="cardOldPrice Detail">{thousandsSeparators(product?.priceRef)} VNĐ</span>
+                                        <span
+                                            className="cardPrice Detail">{thousandsSeparators(product?.priceSale)} VNĐ</span>
+                                <span
+                                    className="cardOldPrice Detail">{thousandsSeparators(product?.priceRef)} VNĐ</span>
                                 <span className="text-endNote">Giá sau khi giảm </span>
                             </div>
-                            {/*<div className="brandTopPayment">*/}
-                            {/*    <span className="">hoặc Price$ x 3 kỳ với Fundiin</span>*/}
-                            {/*</div>*/}
                             <div style={{textAlign: 'center'}} className="product-details-footer">
-                                <button type="button" className="btn btn-success btnPayment">THANH TOÁN NGAY</button>
-                                <button type="button" className="btn btn-outline-dark btnAddStore" onClick={() => onAddToCart(product)}>THÊM VÀO GIỎ</button>
+                                <button type="button" className="btn btn-success btnPayment">THANH TOÁN NGAY
+                                </button>
+                                <button type="button" className="btn btn-outline-dark btnAddStore"
+                                        onClick={() => onAddToCart(product)}>THÊM VÀO GIỎ
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -236,7 +226,9 @@ function DetailProduct() {
                 <ul>{
                     TAB_KEY.map((item, index) => (
                         <>
-                            <li key={item.key} className={`custom-tab-list ${tabSelected.key === item.key ? "active" : ""}`} onClick={() => onChangeCustomTab(item)}>{item.name}</li>
+                            <li key={item.key}
+                                className={`custom-tab-list ${tabSelected.key === item.key ? "active" : ""}`}
+                                onClick={() => onChangeCustomTab(item)}>{item.name}</li>
                         </>
                     ))
                 }</ul>

@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage'
 import categorySlice from "./redux/categorySlice";
 import userSlice from "./redux/userSlice";
 import cartSlice from "./redux/cartSlice";
+import messageSlice from './redux/messsage';
 
 const persistConfig = {
     key: 'category',
@@ -12,13 +13,14 @@ const persistConfig = {
 const reducers = combineReducers({
     categorySlice: categorySlice,
     cartSlice: cartSlice,
-    userSlice: persistReducer(persistConfig, userSlice),
+    userSlice: userSlice,
+    messageSlice: messageSlice
 });
 
 const store = configureStore({
     reducer: reducers,
 })
 
-const customPersistStore = persistStore(store)
+// const customPersistStore = persistStore(store)
 
-export  {store, customPersistStore};
+export  {store};

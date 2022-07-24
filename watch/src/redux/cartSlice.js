@@ -26,9 +26,6 @@ const userSlice = createSlice({
                 customerOrderDetails: action.payload.customerOrderDetails,
             }
         },
-        addToCart(state, action) {
-            state.customerOrderDetails.push(action.payload)
-        },
     }
 });
 

@@ -8,8 +8,6 @@ import SignUp from './Components/Register';
 import HomePageMan from './Components/Homepage/HomPageMan';
 import HomePageWoman from './Components/Homepage/HomePageWoman';
 import HomePageBestSeller from './Components/Homepage/HomePageBestSeller';
-import Header from "./Components/Header/header";
-import Navbar from "./Components/Navbar/navbar";
 import Accounts from "./Admin/Accounts";
 import Orders from "./Admin/Order";
 import AddAccount from "./Admin/Accounts/addAccounts";
@@ -18,9 +16,45 @@ import AddProduct from "./Admin/Products/addProduct";
 import Products from "./Admin/Products/products";
 import Customers from "./Admin/Customers";
 import AdminHome from "./Admin";
+import {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import { history } from "./history";
+import {clearMessage} from "./redux/messsage";
+import {logout} from "./redux/userSlice";
+import EventBus from "./common/EventBus";
 
 
 function App() {
+    const [showAdminBoard, setShowAdminBoard] = useState(false);
+    const dispatch = useDispatch();
+    const { user: currentUser } = useSelector((state) => state.userSlice);
+
+    useEffect(() => {
+        history.listen((location) => {
+            dispatch(clearMessage()); // clear message when changing location
+        });
+    }, [dispatch]);
+
+    const logOut = useCallback(() => {
+        dispatch(logout());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (currentUser) {
+            setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+        } else {
+            setShowAdminBoard(false);
+        }
+
+        EventBus.on("logout", () => {
+            logOut();
+        });
+
+        return () => {
+            EventBus.remove("logout");
+        };
+    }, [currentUser, logOut]);
+
     return (
         <>
                 <Routes>

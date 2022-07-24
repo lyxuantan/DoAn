@@ -6,6 +6,7 @@ import com.example.ecommer.dto.request.ProductRequest;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.*;
 import com.example.ecommer.repository.*;
+import com.example.ecommer.service.ProductImageService;
 import com.example.ecommer.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +45,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private ProductImageService productImageService;
 
 
     @Override
@@ -141,23 +147,24 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productRequest.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         if (product != null) {
-            Optional<Color> color = colorRepository.findById(productRequest.getColorId());
-            Optional<Material> material = materialRepository.findById(productRequest.getMaterialId());
-            Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
-            Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
+            if(productRequest.getColorId() != null) {
+                Optional<Color> color = colorRepository.findById(productRequest.getColorId());
+                if (color.isPresent()) {
+                    product.setColors(color.get());
+                }
+            }
+            if(product.getSizeId() != null) {
+                Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
+                if (sizes.isPresent()) {
+                    product.setSize(sizes.get());
+                }
+            }
 
-            if (color.isPresent()) {
-                product.setColors(color.get());
-            }
-            if (material.isPresent()) {
-                product.setMaterial(material.get());
-            }
-
-            if (sizes.isPresent()) {
-                product.setSize(sizes.get());
-            }
-            if (collections.isPresent()) {
-                product.setCollections(collections.get());
+            if(product.getCollections() != null) {
+                Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
+                if (collections.isPresent()) {
+                    product.setCollections(collections.get());
+                }
             }
             product.setId(productRequest.getId());
             product.setCategoryId(category.getId());

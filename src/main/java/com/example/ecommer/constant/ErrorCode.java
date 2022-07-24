@@ -12,6 +12,11 @@ public enum ErrorCode {
     NOT_FOUND_COLLECTION("ERR002", "Bộ sưu tập không tồn tại"),
     NOT_FOUND_CUSTOMER_ORDER_DETAIL("ERR002", "Sản phẩm không tồn tại ở giỏ hàng"),
 
+    VERTIFICATION_SEND_MAIL("200", "Verification link is sent on your mail id"),
+
+    CHANGE_PASSWORD_SUCCESS("200", "Password changed successfully"),
+
+
     DELETE_ERROR("400", "Xóa thât bại"),
     UPLOAD_IMAGE_INVALID("ERR002", "Không phải định dạng file ảnh");
 

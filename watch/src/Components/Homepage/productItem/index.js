@@ -79,7 +79,7 @@ const ProductItem = ({item}) => {
                 <UpDownSaleOff num={item?.perDiscount}/>
                 <div className="card">
                     <Link to={`/detail/product/${item.id}`}>
-                        <img src={productImg1} className="card-img-top product-img" alt="..."/>
+                        <img src={item?.productImages?.[0]?.photosImagePath} className="card-img-top product-img" alt="..."/>
                     </Link>
                 </div>
                 <div className="card-body">

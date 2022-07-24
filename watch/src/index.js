@@ -9,7 +9,7 @@ import App from "./App";
 import ScrollToTop from "./Components/ScrollToTop";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
-import {store, customPersistStore} from "./store";
+import {store} from "./store";
 
 import {Suspense} from "react";
 import './i18n';
@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-            <PersistGate persistor={customPersistStore}>
+            {/*<PersistGate persistor={customPersistStore}>*/}
                 <HashRouter>
 
                     <ScrollToTop/>
@@ -28,7 +28,7 @@ root.render(
                     </Suspense>
 
                 </HashRouter>
-            </PersistGate>
+            {/*</PersistGate>*/}
         </Provider>,
     </React.StrictMode>
 );

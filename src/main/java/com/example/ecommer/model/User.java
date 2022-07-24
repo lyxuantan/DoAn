@@ -20,6 +20,8 @@ public class User extends Base{
     @Column(name = "username", length = 30)
     private String username;
 
+    @Column(name = "email_verified")
+    private Boolean emailVerified = false;
 
     @Column(name = "full_name", length = 255)
     private String fullName;
@@ -36,6 +38,9 @@ public class User extends Base{
     @Column(name = "password", length = 255)
     @JsonIgnore
     private String password;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",

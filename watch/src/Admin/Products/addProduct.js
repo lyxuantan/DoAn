@@ -21,7 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 import NumberFormat, {InputAttributes} from 'react-number-format';
 import {getCollections, getColor, getSizes} from "../../api/filter";
 import './styles.scss'
-import {saveProduct, updateProduct} from "../../api/product";
+import {getProductDetail, saveProduct, updateProduct} from "../../api/product";
 import {useSelector} from "react-redux";
 import {getAllCategory} from "../../api/category";
 
@@ -35,10 +35,11 @@ function AddProduct(props) {
     console.log(34, categoryStore)
 
     const [collections, setCollections] = useState([]);
-    const [listCategory , setListCategory] = useState([]);
+    const [listCategory, setListCategory] = useState([]);
     const [size, setSize] = useState([]);
     const [color, setColor] = useState([]);
     const [product, setProduct] = useState({
+        id: null,
         "name": "",
         "title": "",
         "desc": "",
@@ -55,6 +56,35 @@ function AddProduct(props) {
         thinkness: ""
     })
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getProductDetail(
+            {productId: id}
+        ).then(res => {
+            const {data} = res.data;
+            console.log(res)
+            if (data) {
+                const tmp = {...product};
+                tmp.id = data.id;
+                tmp.name = data.name;
+                tmp.title = data.title;
+                tmp.desc = data.desc;
+                tmp.priceRef = data.priceRef;
+                tmp.perDiscount = data.perDiscount;
+                tmp.content = data.content;
+                tmp.categoryId = data.categoryId;
+                tmp.colorId = data.colorId;
+                tmp.materialId = data.materialId;
+                tmp.total = data.total;
+                tmp.sizeId = data.sizeId;
+                tmp.collectionId = data.collectionId;
+                tmp.glassSurface = data.glassSurface;
+                tmp.thinkness = data.thinkness;
+                setProduct(tmp);
+            }
+        })
+    }, [id])
+
     //
     useEffect(() => {
         getCollections().then(res => {
@@ -88,7 +118,7 @@ function AddProduct(props) {
     useEffect(() => {
         getAllCategory().then(res => {
             const {data} = res.data;
-            if(data && data.length) {
+            if (data && data.length) {
                 setListCategory(data);
             }
         })
@@ -162,14 +192,16 @@ function AddProduct(props) {
         setProduct(tmp);
     }
 
-    async function onSaveClick () {
-        if(product.name && product.collectionId) {
+    async function onSaveClick() {
+        console.log(195, "abc")
+        console.log(product)
+        if (product.name && product.collectionId) {
             const payload = {
                 ...product
             }
             const saveRes = id ? await updateProduct(payload) : await saveProduct(payload);
             console.log(saveRes)
-            if(saveRes.data.errorCode == "200") {
+            if (saveRes.data.errorCode == "200") {
                 navigate("/admin/product");
             }
         }
@@ -180,6 +212,8 @@ function AddProduct(props) {
         tmp.categoryId = value;
         setProduct(tmp);
     }
+
+    console.log(listCategory)
 
     return (
         <>
@@ -208,10 +242,9 @@ function AddProduct(props) {
                                         <FormControl fullWidth>
                                             <InputLabel id="demo-simple-select-label">Chọn danh mục</InputLabel>
                                             <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={product.categoryId}
-                                                label="Age"
+                                                id="outlined-multiline-flexible"
+                                                value={listCategory.find(item => item.id === product.categoryId)?.name}
+                                                label="Chọn danh mục"
                                                 onChange={(e) => handleChangeCategory(e.target.value)}
                                             >
                                                 {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
@@ -294,7 +327,7 @@ function AddProduct(props) {
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
                                                 value={product.collectionId}
-                                                label="Age"
+                                                label="Bộ sưu tập"
                                                 onChange={(e) => handleChangeCollection(e.target.value)}
                                             >
                                                 {collections && collections.length ? collections.map((item, index) =>
@@ -311,7 +344,7 @@ function AddProduct(props) {
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
                                                 value={product?.colorId}
-                                                label="Age"
+                                                label="Màu sắc"
                                                 onChange={(e) => handleChangeColor(e.target.value)}
                                             >
                                                 {color && color.length ? color.map((item, index) =>
@@ -362,10 +395,10 @@ function AddProduct(props) {
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12}>
-                                   <div className="add-product-footer">
-                                       <button className="btn-cancel mr-2">Hủy bỏ</button>
-                                       <button className="btn-save pl-3" onClick={onSaveClick}>Lưu sản phẩm</button>
-                                   </div>
+                                    <div className="add-product-footer">
+                                        <button className="btn-cancel mr-2">Hủy bỏ</button>
+                                        <button className="btn-save pl-3" onClick={onSaveClick}>Lưu sản phẩm</button>
+                                    </div>
                                 </Grid>
                             </Box>
 

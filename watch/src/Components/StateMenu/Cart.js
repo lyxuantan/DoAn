@@ -114,7 +114,7 @@ export default function Cart() {
         <div className="cart">
 
             <Box
-                sx={{width: "25vw", height: "100vh", overflowY: "hidden"}}
+                sx={{width: "400px", height: "100vh", overflowY: "hidden"}}
                 role="presentation"
             >
                 <div className="wrapperCart">

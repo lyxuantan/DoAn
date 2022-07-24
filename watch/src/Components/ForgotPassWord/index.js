@@ -8,6 +8,9 @@ import Typography from '@mui/material/Typography';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useState} from "react";
+import {sendMail} from "../../api/auth";
+import {generateOTP} from "../../api/otp";
 
 function Copyright(props) {
   return (
@@ -24,13 +27,26 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function ForgotPass() {
+
+  const [email, setEmail] = useState("");
+
+  const onChangeEmail = (value) => {
+    setEmail(value);
+  }
+
   const handleSubmit = (event) => {
+
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // const data = new FormData(event.currentTarget);
+    generateOTP({email: email}).then(
+        res => {
+
+        }
+    )
+    // console.log({
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    // });
   };
 
   return (
@@ -49,19 +65,19 @@ export default function ForgotPass() {
             <ForwardToInboxIcon />
           </Avatar>
           
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="Tài khoản đăng nhập"
-                  autoFocus
-                />
-              </Grid>
+          <Box component="form" noValidate  sx={{ mt: 3 }}>
+            <Grid container spacing={1}>
+              {/*<Grid item xs={12}>*/}
+              {/*  <TextField*/}
+              {/*    autoComplete="given-name"*/}
+              {/*    name="firstName"*/}
+              {/*    required*/}
+              {/*    fullWidth*/}
+              {/*    id="firstName"*/}
+              {/*    label="Tài khoản đăng nhập"*/}
+              {/*    autoFocus*/}
+              {/*  />*/}
+              {/*</Grid>*/}
               <Grid item xs={12}>
                 <TextField
                   required
@@ -70,6 +86,8 @@ export default function ForgotPass() {
                   label="Email"
                   name="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => onChangeEmail(e.target.value)}
                 />
               </Grid>
               
@@ -79,6 +97,7 @@ export default function ForgotPass() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={handleSubmit}
             >
               ĐẶT LẠI MẬT KHẨU
             </Button>
