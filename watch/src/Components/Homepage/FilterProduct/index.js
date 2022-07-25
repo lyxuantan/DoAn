@@ -45,7 +45,7 @@ const LIST_SORT = [
 ]
 
 
-const FilterProduct = ({categoryDetail}) => {
+const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onChangeSize, onChangeColor }) => {
 
     const [filterSelected, setFilerSelected] = useState(null);
     const [isShow, setIsShow] = useState(false);
@@ -106,7 +106,10 @@ const FilterProduct = ({categoryDetail}) => {
                 </div>
                 {isShow ? <div className="filter-content">
                     <div className="body">
-                        <FilterContentList type={filterSelected?.key}/>
+                        <FilterContentList type={filterSelected?.key} filterProduct={filterProduct}
+                                           onChangeSize={onChangeSize} onChangeCollection={onChangeCollection}
+                                           onChangeColor={onChangeColor}
+                        />
                     </div>
                     <div className="footer">
                         <div>

@@ -4,7 +4,7 @@ import {getCollections, getColor, getSizes} from "../../../../api/filter";
 import './styles.scss'
 import imgChoice from "../../../Navbar/imgChoice";
 
-const FilterContentList = ({type}) => {
+const FilterContentList = ({type, filterProduct, onChangeSize, onChangeCollection, onChangeColor}) => {
 
     const [listFilter, setListFiler] = useState([]);
 
@@ -43,7 +43,8 @@ const FilterContentList = ({type}) => {
         switch (type) {
             case FILTER_TYPE.COLLECTION:
                 return <>
-                    {listFilter && listFilter.length ? listFilter.map(item => <div>
+                    {listFilter && listFilter.length ? listFilter.map(item => <div
+                    onClick={() => onChangeCollection(item)}>
                         <div>
                             <img className="imgChoice" src={imgChoice[0].img} alt=""/>
                         </div>
@@ -54,7 +55,7 @@ const FilterContentList = ({type}) => {
                 </>
             case FILTER_TYPE.COLOR:
                 return <>
-                    {listFilter && listFilter.length ? listFilter.map(item => <div>
+                    {listFilter && listFilter.length ? listFilter.map(item => <div onClick={() => onChangeColor(item)}>
                         <div className="color">
                             <div className="border">
                                 <div className="label" style={{background: `${item.hex}`}}/>
@@ -67,7 +68,7 @@ const FilterContentList = ({type}) => {
                 </>
             case FILTER_TYPE.SIZE:
                 return <>
-                    {listFilter && listFilter.length ? listFilter.map(item => <div>
+                    {listFilter && listFilter.length ? listFilter.map(item => <div onClick={() => onChangeSize(item)}>
                         <div className="size">
                             <div className="label">{item.name}</div>
                         </div>

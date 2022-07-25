@@ -12,17 +12,23 @@ function ContentMen({categoryDetail, isBestSeller}) {
     const {id} = useParams();
 
     const [data, setData] = useState([]);
+
+    const [filterProduct, setFilterProduct] = useState({
+        colors: [],
+        size: [],
+        collections: [],
+        "priceFrom": 0,
+        "priceTo": 0,
+    })
     const [page, setPage] = useState({
 
     })
 
-console.log(19, isBestSeller)
     useEffect(() => {
         getProduct(
             {
                 "id": 15,
                 "colors": [],
-                "material": [],
                 "size": [],
                 "collections": [],
                 "priceFrom": 400000,
@@ -45,14 +51,48 @@ console.log(19, isBestSeller)
             .catch(error => console.log(error));
     }, [categoryDetail, isBestSeller]);
 
+    const onChangeCollection = (item) => {
+        const tmp = {...filterProduct};
+        const findIndex = tmp.collections.findIndex(i => i.id === item.id);
+        if(findIndex > -1 ){
+            tmp.size.splice(findIndex, 1);
+        }
+        else {
+            tmp.size.push(item.id);
+        }
+    }
+
+    const onChangeSize = (item) => {
+        const tmp = {...filterProduct};
+        const findIndex = tmp.size.findIndex(i => i.id === item.id);
+        if(findIndex > -1) {
+            tmp.size.splice(findIndex, 1);
+        }
+        else {
+            tmp.size.push(item.id);
+        }
+
+    }
+
+    const onChangeColor = (item) => {
+        const tmp = {...filterProduct};
+        const findIndex = tmp.size.findIndex(i => i.id === item.id);
+        if(findIndex > -1) {
+            tmp.size.splice(findIndex, 1);
+        }
+        else {
+            tmp.size.push(item.id);
+        }
+    }
 
     return (
         <>
-            <FilterProduct categoryDetail={categoryDetail}/>
+            <FilterProduct categoryDetail={categoryDetail} filterProduct={filterProduct} onChangeCollection={onChangeCollection}
+                           onChangeSize={onChangeSize} onChangeColor={onChangeColor}/>
 
             <div className="product-container">
                 {data && data.length ? data.map((item) =>
-                        (<ProductItem key={item.id} item={item}/>))
+                        (<ProductItem key={item.id} item={item} />))
                     : null}
             </div>
         </>

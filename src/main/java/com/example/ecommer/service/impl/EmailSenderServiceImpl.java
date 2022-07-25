@@ -31,6 +31,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         mailMessage.setSubject(sub);
         mailMessage.setText(body);
         boolean isSent = false;
+        javaMailSender.send(mailMessage);
+
         try {
             javaMailSender.send(mailMessage);
             isSent = true;
