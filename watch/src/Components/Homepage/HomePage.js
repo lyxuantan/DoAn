@@ -10,8 +10,11 @@ import {getAllCategory} from "../../api/category";
 import HomePageBestSeller from "./HomePageBestSeller";
 import HomeContentBestSell from "./HomeContentBestSell";
 import {Route, Routes} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 function HomePage() {
+    const user = useSelector(state => state.userSlice);
+    console.log(18, user)
 
     return (
         <>

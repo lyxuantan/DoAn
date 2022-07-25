@@ -1,6 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "./config";
 
+const user = JSON.parse(localStorage.getItem("user"));
+
 const HTTP = axios.create({
     baseURL: `${BASE_URL}`,
     headers: {
@@ -8,6 +10,7 @@ const HTTP = axios.create({
       "Content-Type": "application/json",
       Accept: "application/json, text/plain",
       "Accept-Language": "vi-VN,vi;q=0.9",
+      "x-access-token": user?.token
     },
     withCredentials: false,
   });

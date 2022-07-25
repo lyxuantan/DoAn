@@ -8,6 +8,7 @@ import { DashboardSidebar } from "../Dashboards/DashboardSidebar";
 import { DashboardNavbar } from "../Dashboards/DashboardNavbar";
 
 const Customers = () => (
+
   <>
     <ThemeProvider theme={theme}>
       <div className="dashBoardNarBar">

@@ -9,6 +9,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useState} from "react";
 
 function Copyright(props) {
   return (
@@ -25,6 +26,13 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const [user, setUser] = useState({
+    fullName: "",
+    username: "",
+    password: "",
+    rePassword: "",
+    email: ""
+  });
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -33,6 +41,30 @@ export default function SignUp() {
       password: data.get('password'),
     });
   };
+
+  function onChangeFullName(value) {
+    const tmp = {...user};
+    tmp.fullName = value;
+    setUser(tmp);
+  }
+
+  function onChangeUsername(value) {
+    const tmp = {...user};
+    tmp.username = value;
+    setUser(tmp);
+  }
+
+  function onChangePassword(value) {
+    const tmp = {...user};
+    tmp.password = value;
+    setUser(tmp);
+  }
+
+  function onChangeEmail(value) {
+    const tmp = {...user};
+    tmp.email = value;
+    setUser(tmp);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -63,6 +95,7 @@ export default function SignUp() {
                   id="firstName"
                   label="Họ và tên"
                   autoFocus
+                  onChange={(e) => onChangeFullName(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -73,6 +106,8 @@ export default function SignUp() {
                   label="Tài khoản"
                   name="lastName"
                   autoComplete="family-name"
+                  onChange={(e) => onChangeUsername(e.target.value)}
+
                 />
               </Grid>
               <Grid item xs={12}>
@@ -84,6 +119,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(e) => onChangePassword(e.target.value)}
+
                 />
               </Grid>
               <Grid item xs={12}>
@@ -105,6 +142,8 @@ export default function SignUp() {
                   label="Email"
                   name="email"
                   autoComplete="email"
+                  onChange={(e) => onChangeEmail(e.target.value)}
+
                 />
               </Grid>
               

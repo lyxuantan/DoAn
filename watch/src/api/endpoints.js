@@ -7,6 +7,7 @@ export const CATEGORY = {
 
 export const PRODUCT = {
     GET: "/product/get",
+    GET_ALL: "product/get-all",
     ADD: "/admin/product/add",
     UPDATE: "/admin/product/update",
     GET_DETAIl: "/product/get-details"
@@ -24,4 +25,26 @@ export const CUSTOMER_ORDER = {
     GET_ORDER_IS_PAID: "/order/find-order-active-by-user",
     DELETE_CUSTOMER_ORDER: "/order/delete-detail"
 }
+
+export const ORDER_HISTORY = {
+    GET: "/order-history/get",
+    UPDATE: "/order-history/update",
+    ADD: "/order-history/add",
+}
+
+export const AUTH = {
+    LOGIN: "/api/auth/signin",
+    REGISTER: "/api/auth/signup"
+}
+
+export const MAIL = {
+    MAIL: "/api/auth/send-email",
+    RESET: "/api/auth/reset-password"
+}
+
+export const OTP = {
+    MAIL: "/otp/generate-otp",
+    RESET: "/otp/validate-otp"
+}
+
 

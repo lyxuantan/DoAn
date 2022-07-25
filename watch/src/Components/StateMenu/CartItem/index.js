@@ -9,7 +9,8 @@ const CartItem = ({item, onChangeTotal, onDeleteOrderDetail}) => {
         <div className="cart-item">
             <div className="cart-item-left">
                 <CloseIcon fontSize="small" onClick={() => onDeleteOrderDetail(item)}/>
-                <img src={imgTest} alt=""/>
+                {console.log(12, item)}
+                <img src={item?.product?.productImages?.[0]?.photosImagePath} alt=""/>
             </div>
             <div className="cart-item-right">
                 <div className="right-top">

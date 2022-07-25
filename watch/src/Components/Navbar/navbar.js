@@ -10,6 +10,9 @@ import Cart from "../StateMenu/Cart";
 import {getAllCategory} from "../../api/category";
 import {useDispatch, useSelector} from "react-redux";
 import {addCategory} from "../../redux/categorySlice";
+import {useCallback} from "react";
+import {logout} from "../../redux/userSlice";
+import EventBus from "../../common/EventBus";
 
 const nest = (items, id = 0, link = 'parentId') =>
   items
@@ -25,9 +28,31 @@ function Navbar() {
   const [showChildren, setShowChildren] = useState(false);
   const [children, setChildren] = useState([]);
   const [listCategory, setListCategory] = useState([]);
+  const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const { user: currentUser } = useSelector((state) => state.userSlice);
+  const dispatch = useDispatch();
 
   const categoryStore = useSelector(state => state);
-  const dispatch = useDispatch();
+
+  const logOut = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+    } else {
+      setShowAdminBoard(false);
+    }
+
+    EventBus.on("logout", () => {
+      logOut();
+    });
+
+    return () => {
+      EventBus.remove("logout");
+    };
+  }, [currentUser, logOut]);
 
   useEffect(() => {
     getAllCategory().then((res) => {
@@ -98,22 +123,8 @@ function Navbar() {
                   {/*</div>*/}
                 </span>
             </li>
-            {/*<li className="nav-item">*/}
-            {/*  <Link*/}
-            {/*    className="nav-link active"*/}
-            {/*    id="two"*/}
-            {/*    aria-current="page"*/}
-            {/*    to="/"*/}
-            {/*  >*/}
-            {/*    <span className="nav-icon">*/}
-            {/*      /!*<Cart />*!/*/}
-            {/*      <div className="total-cart">*/}
-
-            {/*      </div>*/}
-            {/*    </span>*/}
-            {/*  </Link>*/}
-            {/*</li>*/}
-            <li className="nav-item">
+            {!currentUser?.token ?
+                <li className="nav-item">
               <Tooltip title="Đăng Nhập">
               <Link
                 className="nav-link active"
@@ -127,7 +138,22 @@ function Navbar() {
                 </span>
               </Link>
               </Tooltip>
-            </li>
+            </li> :
+                <li>
+              <Tooltip title="Đăng Nhập">
+                <Link
+                    className="nav-link active"
+                    id="three"
+                    aria-current="page"
+                    to="/login"
+                >
+                  <span className="nav-text" onClick={logOut}>LOGOUT</span>
+                  <span className="nav-icon">
+                  <LoginIcon />
+                </span>
+                </Link>
+              </Tooltip>
+            </li>}
             <li className="nav-item">
               <Tooltip title="Đăng Nhập">
               <Link

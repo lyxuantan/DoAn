@@ -1,23 +1,50 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+const user = JSON.parse(localStorage.getItem("user"));
+
 const userSlice = createSlice({
     name: 'user',
-    initialState: {
-        name: "",
-    },
+    initialState: user
+        ? {isLoggedIn: true, user}
+        : {isLoggedIn: false, user: null},
+
     reducers: {
-        addUser(state, action) {
-            console.log(10, state, action)
+        registerSuccess(state, action) {
             return {
                 ...state,
-                name: action.payload.name,
+                isLoggedIn: false,
+            };
+        },
+        registerFail(state, action) {
+            return {
+                ...state,
+                isLoggedIn: false,
             }
-            console.log(action.payload)
-            // state.set(action.payload);
+        },
+        loginSuccess(state, action) {
+            return {
+                ...state,
+                isLoggedIn: true,
+                user: action.payload.user,
+            }
+        },
+        loginFail(state, action) {
+            return {
+                ...state,
+                isLoggedIn: false,
+                user: null,
+            }
+        },
+        logout(state, action) {
+            return {
+                ...state,
+                isLoggedIn: false,
+                user: null,
+            }
         },
     }
 });
 
-const { actions, reducer } = userSlice;
-export const { addUser } = actions;
+const {actions, reducer} = userSlice;
+export const {addUser, registerSuccess, registerFail, loginSuccess, loginFail, logout} = actions;
 export default reducer;
