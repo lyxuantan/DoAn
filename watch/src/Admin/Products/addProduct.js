@@ -211,7 +211,7 @@ function AddProduct(props) {
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
                                                 value={product.categoryId}
-                                                label="Age"
+                                                label="Chọn danh mục"
                                                 onChange={(e) => handleChangeCategory(e.target.value)}
                                             >
                                                 {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
