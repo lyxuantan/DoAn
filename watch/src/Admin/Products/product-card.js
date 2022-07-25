@@ -182,11 +182,11 @@ export const ProductCard = ({...rest}) => {
                                             aria-describedby="alert-dialog-description"
                                         >
                                             <DialogTitle id="alert-dialog-title">
-                                                {dialogTitle} - {dialogBrand}
+                                                {customer.name}
                                             </DialogTitle>
                                             <DialogContent>
                                                 <img
-                                                    src={img}
+                                                    src={customer.productImages.find(item => item.isPresident === true)?.photosImagePath}
                                                     style={{width: "100%"}}
                                                     alt="error"
                                                 />
