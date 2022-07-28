@@ -1,11 +1,9 @@
-import {format} from 'date-fns';
-import {Link} from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
     Box,
     Button,
     Card,
-    CardHeader,
+    CardHeader, Pagination, Stack,
     Table,
     TableBody,
     TableCell,
@@ -14,8 +12,8 @@ import {
     TableSortLabel,
     Tooltip
 } from '@mui/material';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import {SeverityPill} from '../severity-pill';
+import {useState} from "react";
 import {thousandsSeparators} from "../../common/fCommon";
 import moment from 'moment';
 
@@ -85,7 +83,15 @@ const orders = [
 
 const LatestOrders = ({listOrderHistory}) => {
 
-    console.log(listOrderHistory)
+    const [pageNo, setPageNo] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [listOrderDetail, setListOrderDetail] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
+
+    function handleChange(e, value) {
+        setPageNo(value);
+    }
+
 
     return (
         <Card>
@@ -105,17 +111,17 @@ const LatestOrders = ({listOrderHistory}) => {
                                     Trạng thái
                                 </TableCell>
                                 <TableCell sortDirection="desc">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            active
-                                            direction="desc"
-                                        >
+                                    {/*<Tooltip*/}
+                                    {/*    enterDelay={300}*/}
+                                    {/*    title="Sort"*/}
+                                    {/*>*/}
+                                    {/*    <TableSortLabel*/}
+                                    {/*        active*/}
+                                    {/*        direction="desc"*/}
+                                    {/*    >*/}
                                             Giá trị
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                        {/*</TableSortLabel>*/}
+                                    {/*</Tooltip>*/}
                                 </TableCell>
                                 <TableCell>
                                     Ngày ghi nhận
@@ -126,7 +132,10 @@ const LatestOrders = ({listOrderHistory}) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {listOrderHistory && listOrderHistory.length ? listOrderHistory.map((order) => (
+                            {listOrderHistory && listOrderHistory.length ? listOrderHistory?.slice(
+                                (pageNo - 1) * limit,
+                                (pageNo - 1) * limit + limit
+                            ).map((order) => (
                                 <TableRow
                                     hover
                                     key={order?.id}
@@ -161,24 +170,12 @@ const LatestOrders = ({listOrderHistory}) => {
                     </Table>
                 </Box>
             </PerfectScrollbar>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    p: 2
-                }}
-            >
-                <Link to="/admin/order">
-                    <Button
-                        color="primary"
-                        endIcon={<ArrowRightIcon fontSize="small"/>}
-                        size="small"
-                        variant="text"
-                    >
-                        View all
-                    </Button>
-                </Link>
-            </Box>
+            <div className="pagination-footer">
+                <Stack spacing={2}>
+                    <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
+                                onChange={handleChange}/>
+                </Stack>
+            </div>
         </Card>
     );
 }

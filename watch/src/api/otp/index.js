@@ -8,3 +8,11 @@ export const generateOTP = (payload) => {
         data: payload,
     })
 }
+
+export const validateOTP = (payload) => {
+    return HTTP({
+        url: OTP.VALIDATE_OTP,
+        method: "post",
+        data: payload
+    })
+}

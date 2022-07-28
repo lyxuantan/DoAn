@@ -1,11 +1,13 @@
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
+import {numberToString} from "../../common/fCommon";
 
-export const Budget = (props) => (
-  <Card
+export const Budget = ({listOrderHistory}) => {
+
+    {console.log(8, listOrderHistory)}
+  return (<Card
     sx={{ height: '100%' }}
-    {...props}
   >
     <CardContent>
       <Grid
@@ -27,7 +29,7 @@ export const Budget = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            $24k
+            {numberToString(listOrderHistory && listOrderHistory.length && listOrderHistory.map(item => item?.customerOrder?.price || 0).reduce((a, b) => a + b,0))}
           </Typography>
         </Grid>
         <Grid item>
@@ -42,33 +44,8 @@ export const Budget = (props) => (
           </Avatar>
         </Grid>
       </Grid>
-      <Box
-        sx={{
-          pt: 2,
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-        <ArrowDownwardIcon color="error" />
-        <Typography
-        
-          color="error"
-          sx={{
-            mr: 1,
-            fontWeight: '1000'
-          }}
-          variant="body2"
-        >
-          12%
-        </Typography>
-        <Typography
-        sx={{fontWeight: '1000'}}
-          color="textSecondary"
-          variant="caption"
-        >
-          Since last month
-        </Typography>
-      </Box>
+
     </CardContent>
   </Card>
 );
+}

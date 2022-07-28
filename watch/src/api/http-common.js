@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "./config";
+import EventBus from "../common/EventBus";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -10,7 +11,8 @@ const HTTP = axios.create({
       "Content-Type": "application/json",
       Accept: "application/json, text/plain",
       "Accept-Language": "vi-VN,vi;q=0.9",
-      "x-access-token": user?.token
+       Authorization: "Bearer " + user?.token
+      // "x-access-token": user?.token
     },
     withCredentials: false,
   });
@@ -45,6 +47,13 @@ const HTTP = axios.create({
   
   
   const errorHandler = (error) => {
+    if (error.response) {
+      const {status, data} = error.response;
+      if (status === 401 && data.message) {
+        EventBus.on("logout", () => {
+        });
+      }
+    }
     return Promise.reject(error);
   };
   

@@ -1,6 +1,6 @@
 import HomePage from './Components/Homepage/HomePage';
 import DetailProduct from './Components/Homepage/DetailProduct/detailProduct';
-import {Route, HashRouter, Routes, BrowserRouter} from 'react-router-dom';
+import {Route, HashRouter, Routes, BrowserRouter, useNavigate} from 'react-router-dom';
 import AboutUs from './Components/AboutUs/aboutUs';
 import Login from './Components/Login';
 import ForgotPass from './Components/ForgotPassWord';
@@ -20,14 +20,18 @@ import {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import { history } from "./history";
 import {clearMessage} from "./redux/messsage";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {logout} from "./redux/userSlice";
 import EventBus from "./common/EventBus";
+import ResetPass from "./Admin/ResetPass";
+import AccountInfo from "./Components/AccountInfo";
 
 
 function App() {
     const [showAdminBoard, setShowAdminBoard] = useState(false);
     const dispatch = useDispatch();
     const { user: currentUser } = useSelector((state) => state.userSlice);
+    const navigator = useNavigate();
 
     useEffect(() => {
         history.listen((location) => {
@@ -42,6 +46,12 @@ function App() {
     useEffect(() => {
         if (currentUser) {
             setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+            if(currentUser.roles.includes("ROLE_ADMIN")) {
+                navigator("/admin")
+            }
+            if(currentUser.roles.includes("ROLE_USER")) {
+                navigator("/")
+            }
         } else {
             setShowAdminBoard(false);
         }
@@ -59,6 +69,9 @@ function App() {
         <>
                 <Routes>
                     <Route path='/' name="Home" element={<HomePage/>}/>
+                    <Route path='/account/:id' element={<AccountInfo/>}/>
+                    <Route path='/payment' element={<AccountInfo/>}/>
+
                     <Route path='product' exact={true} name="Product" element={<HomePageMan/>}/>
                     <Route path='product/:id' exact={true} name="Product Detail" element={<HomePageMan/>}/>
                     <Route path='product/best-seller/:id' name="Product Detail"
@@ -68,6 +81,8 @@ function App() {
                     <Route path='aboutUs' element = { <AboutUs />} />
                     <Route path='login' element={<Login/>}/>
                     <Route path='forgot/password' element={<ForgotPass/>}/>
+                    <Route path='reset/password' element={<ResetPass/>}/>
+
                     <Route path='singUp' element={<SignUp/>}/>
                     <Route path='product/men' element = { <HomePageMan />} />
                     <Route path='product/woman' element =  { <HomePageWoman />} />

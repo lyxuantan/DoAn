@@ -13,7 +13,7 @@ function HomePageWoman () {
     return(
         <>  
             <Navbar />
-            <Header />
+            <Header/>
             <Infor />
             <ContentWoman />
             <Footer />

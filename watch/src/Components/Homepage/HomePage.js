@@ -5,7 +5,7 @@ import Footer from '../Footer/footer';
 import ManBestSeller from './ManBestSeller';
 import WomanBestSeller from './WomanBestSeller';
 import Decripsiton from '../DecripstionWebsite';
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getAllCategory} from "../../api/category";
 import HomePageBestSeller from "./HomePageBestSeller";
 import HomeContentBestSell from "./HomeContentBestSell";
@@ -14,14 +14,19 @@ import {useSelector} from "react-redux";
 
 function HomePage() {
     const user = useSelector(state => state.userSlice);
-    console.log(18, user)
+    const bestSeller = useRef(null);
 
+    const onScrollToBestSeller = () => {
+        window.scrollTo(0, bestSeller.current.offsetTop);
+    }
     return (
         <>
             <Navbar/>
-            <Header/>
+            <Header onScrollToBestSeller={onScrollToBestSeller}/>
             <Infor/>
-            <HomeContentBestSell/>
+            <div ref={bestSeller}>
+            <HomeContentBestSell user={user}/>
+            </div>
             <Decripsiton/>
             <Footer/>
         </>

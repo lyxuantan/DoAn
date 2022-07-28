@@ -117,7 +117,7 @@ export const theme = createTheme({
           borderBottom: 'none',
           '& .MuiTableCell-root': {
             borderBottom: 'none',
-            fontSize: '12px',
+            fontSize: '14px',
             fontWeight: 600,
             lineHeight: 1,
             letterSpacing: 0.5,
@@ -239,7 +239,7 @@ export const theme = createTheme({
       lineHeight: 1.5
     },
     body2: {
-      fontSize: '0.875rem',
+      fontSize: '1rem',
       fontWeight: 400,
       lineHeight: 1.57
     },
@@ -249,19 +249,19 @@ export const theme = createTheme({
       lineHeight: 1.75
     },
     subtitle2: {
-      fontSize: '0.875rem',
+      fontSize: '1rem',
       fontWeight: 500,
       lineHeight: 1.57
     },
     overline: {
-      fontSize: '0.75rem',
+      fontSize: '1rem',
       fontWeight: 600,
       letterSpacing: '0.5px',
       lineHeight: 2.5,
       textTransform: 'uppercase'
     },
     caption: {
-      fontSize: '0.75rem',
+      fontSize: '1rem',
       fontWeight: 400,
       lineHeight: 1.66
     },

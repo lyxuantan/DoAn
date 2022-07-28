@@ -6,7 +6,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link } from 'react-router-dom';
 
-function Header({listCategory}) {
+function Header({listCategory, onScrollToBestSeller}) {
   const { t } = useTranslation();
   const [slideIndex, setSlideIndex] = useState(1);
 
@@ -62,7 +62,7 @@ function Header({listCategory}) {
           <span className="sp-text" style={{ marginTop: "20px" }}>
             {t("header-1")}
           </span>
-          <Link to="/bestseller"><button className="sp-btn">SHOP NOW</button></Link>
+          <Link><button className="sp-btn" onClick={onScrollToBestSeller} >SHOP NOW</button></Link>
         </div>
       </div>
     </>

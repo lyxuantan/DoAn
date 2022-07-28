@@ -14,6 +14,8 @@ import Navbar from "../Navbar/navbar";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css';
 import './styles.scss';
+import {registerApi} from "../../api/auth";
+import {toast} from "react-toastify";
 
 function Copyright(props) {
     return (
@@ -64,16 +66,46 @@ export default function SignUp() {
         address: "",
         email: "",
         phoneNumber: "",
+        role: ["user"]
     });
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        registerApi({
+            ...user,
+            fullName: user.fullName,
+            username: user.username,
+            password: user.password,
+            rePassword: user.rePassword,
+            address: user.address,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role
+        }).then(res => {
+            const {data} = res;
+            if (data) {
+                if (res.status === 200) {
+                    toast.success("Đăng ký thành công!");
+                    clearForm();
+                } else {
+                    toast.error("Thất bại!")
+                }
+            }
+        })
     };
+
+    const clearForm = () => {
+        setUser({
+            fullName: "",
+            username: "",
+            password: "",
+            rePassword: "",
+            address: "",
+            email: "",
+            phoneNumber: "",
+            role: ["user"]
+        })
+    }
 
     function onChangeFullName(value) {
         const tmp = {...user};
@@ -106,13 +138,10 @@ export default function SignUp() {
     }
 
     function onChangePhoneNumber(value) {
-        console.log(84, value);
         const tmp = {...user};
         tmp.phoneNumber = value;
         setUser(tmp);
     }
-
-    console.log(user)
 
     return (
         <>

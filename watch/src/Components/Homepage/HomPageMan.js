@@ -24,13 +24,10 @@ function HomePageMan ({isBestSeller}) {
         }).then(res => {
             const {data} = res.data;
             if(data) {
-                console.log(26, data);
                 setCategoryDetail(data);
             }
         })
     }, [id])
-
-    console.log(categoryDetail)
 
     return(
         <>  

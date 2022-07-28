@@ -5,6 +5,8 @@ import {Checkbox} from "@mui/material";
 import FilterContentList from "./FilterContentList";
 import {FILTER_TYPE, SORT_TYPE} from "../../../common/common";
 import {useOutsideAlerter} from "../../../component-utility/hook";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 
 const TYPE_FILTER = [
     {
@@ -23,7 +25,7 @@ const TYPE_FILTER = [
         active: false,
     },
     {
-        key: "PRICE_RANGE",
+        key: FILTER_TYPE.PRICE,
         name: "Khoảng giá",
         active: false,
     }
@@ -45,10 +47,24 @@ const LIST_SORT = [
 ]
 
 
-const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onChangeSize, onChangeColor }) => {
+const FilterProduct = ({
+                           categoryDetail,
+                           filterProduct,
+                           onChangeCollection,
+                           onChangeSize,
+                           onChangeColor,
+                           onChangePriceFrom,
+                           onChangePriceTo,
+                           onChangeSort,
+                           totalPages,
+                           totalElements,
+                           onClearFilter,
+                           numberOfElements
+                       }) => {
 
     const [filterSelected, setFilerSelected] = useState(null);
     const [isShow, setIsShow] = useState(false);
+    const [isSortShow, setIsSortShow] = useState(false);
 
     const refFilterContent = useRef(null);
     const refFilterProperties = useRef(null);
@@ -58,6 +74,9 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
         if (isShow && filterSelected) {
             setIsShow(false);
             setFilerSelected(null);
+        }
+        if (isSortShow) {
+            setIsSortShow(false);
         }
     });
 
@@ -70,7 +89,13 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
 
     const onSelectFilter = (item) => {
         setFilerSelected(item);
-        setIsShow(true)
+        setIsShow(true);
+        setIsSortShow(false);
+    }
+
+    function onOpenFilterSort() {
+        setIsSortShow(!isSortShow);
+        setIsShow(false);
     }
 
     return (<>
@@ -84,12 +109,12 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
                 </div>
             </div>
             <div className="header-right">
-                43 trên 43 sản phẩm
+                {numberOfElements} trên {totalElements} sản phẩm
             </div>
         </div>
-        <div className="filter-wrapper">
-            <div
-                className="filter" ref={refFilterContent}>
+        <div className="filter-wrapper" >
+            <div ref={refFilterContent}
+                className="filter" >
                 <div className="filter-header">
                     <div className="filter-header-properties">
                         <ul>
@@ -101,7 +126,8 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
                         </ul>
                     </div>
                     <div className="filter-header-sort" ref={refSort}>
-                        <div className="filter"><span>Sắp xếp theo</span><Chevron height={18}/></div>
+                        <div className="filter"><span onClick={() => onOpenFilterSort()}>Sắp xếp theo</span><Chevron
+                            height={18}/></div>
                     </div>
                 </div>
                 {isShow ? <div className="filter-content">
@@ -109,6 +135,10 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
                         <FilterContentList type={filterSelected?.key} filterProduct={filterProduct}
                                            onChangeSize={onChangeSize} onChangeCollection={onChangeCollection}
                                            onChangeColor={onChangeColor}
+                                           onChangePriceFrom={onChangePriceFrom}
+                                           onChangePriceTo={onChangePriceTo}
+                                           totalPages={totalPages}
+                                           totalElements={totalElements}
                         />
                     </div>
                     <div className="footer">
@@ -116,13 +146,20 @@ const FilterProduct = ({categoryDetail, filterProduct, onChangeCollection, onCha
                             <Checkbox/> Ẩn sản phẩm hết hàng
                         </div>
                         <div>
-                            46 sản phẩm phù hợp
+                            {totalElements || 0} sản phẩm phù hợp
                         </div>
-                        <div className="text-decoration-underline">
+                        <div className="text-decoration-underline" onClick={onClearFilter}>
                             Reset
                         </div>
                     </div>
                 </div> : null}
+                {isSortShow ? <div className="dropdown-filter-sort">
+                    {LIST_SORT.map((item) => <div className="dropdown-filter-sort-item" onClick={() => onChangeSort(item)}>
+                        <div><span className="">{item.name}</span>{filterProduct.direction === item.key ? <span><FontAwesomeIcon icon={faCheck}/></span> : <span></span>}</div>
+
+                    </div>)}
+                    </div>
+                    : null}
             </div>
         </div>
     </>)

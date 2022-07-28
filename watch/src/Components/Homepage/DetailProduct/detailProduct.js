@@ -55,7 +55,6 @@ function DetailProduct() {
     }, [id])
 
     const renderCustomTab = (item) => {
-        console.log(31, tabSelected)
         switch (tabSelected.key) {
             case "TAB_1":
                 return <>

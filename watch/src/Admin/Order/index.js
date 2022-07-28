@@ -1,31 +1,32 @@
 import { ThemeProvider } from "@mui/material/styles";
-import { Box, Container } from "@mui/material";
+import {Box, Container, InputAdornment, SvgIcon, TextField} from "@mui/material";
 import { theme } from "../theme";
 import { DashboardLayout } from "../Dashboards/DashboardLayout";
 import { DashboardSidebar } from "../Dashboards/DashboardSidebar";
 import { DashboardNavbar } from "../Dashboards/DashboardNavbar";
 import { OrderListToolbar } from "./orderToolbar";
 import { OrderListResults } from "./orderDetail";
+import DashboardTitle from "../../Components/DashboardTitle";
+import {Search as SearchIcon} from "../icons/search";
 
 const Orders = () => (
+
   <>
-    <ThemeProvider theme={theme}>
-      <div className="dashBoardNarBar">
-        <DashboardNavbar />
-      </div>
-      <DashboardSidebar />
-      <div className="wrapper-AdminHome">
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            py: 8,
-            backgroundColor: '#f9fafc'
-          }}
-        >
-          <Container maxWidth={false}>
-            <OrderListToolbar />
-            <Box sx={{ mt: 3 }}>
+      <ThemeProvider theme={theme}>
+          <div className="dashBoardNarBar">
+              <DashboardNavbar/>
+          </div>
+          <DashboardSidebar/>
+          <div className="wrapper-AdminHome body-container">
+              <DashboardTitle title="Danh Sách Đơn Hàng"/>
+              <Box
+                  component="main"
+                  sx={{
+                      flexGrow: 1,
+                  }}
+              >
+                  <Container maxWidth={false}>
+                      <Box sx={{mt: 3}}>
               <OrderListResults />
             </Box>
           </Container>

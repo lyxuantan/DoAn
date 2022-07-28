@@ -22,11 +22,7 @@ function DropDownMen({children}) {
 
     }, [children])
 
-    console.log(24, children)
-
     const TrueMenBestSeller = () => {
-        // setAccessory(false);
-        console.log(24)
         setCategorySelected({
             id: "",
             content: "",

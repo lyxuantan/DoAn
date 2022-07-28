@@ -39,3 +39,11 @@ export const updateProduct = (payload) => {
         data: payload
     })
 }
+
+export const deleteProduct = (payload) => {
+    return HTTP({
+        url: PRODUCT.UPDATE,
+        method: "get",
+        params: payload
+    })
+}

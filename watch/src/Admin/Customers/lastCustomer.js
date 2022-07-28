@@ -39,7 +39,6 @@ export const LatestCustomer = () => {
 
   const deletePost = (id) => {
     axios.delete(`http://localhost:3004/products` + `/` + id)
-    console.log(id);
     loadData();
  };
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import '../adminHome.css';
+import '../adminHome.scss';
 import { useState } from 'react';
 import { Box, Button, Divider, Drawer, Typography } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';

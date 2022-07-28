@@ -1,21 +1,20 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-const slideSlice = createSlice({
-    name: 'category',
+const slideBarSlice = createSlice({
+    name: 'slideBarSlice',
     initialState: {
-        listCategory: [],
+        key: "",
     },
     reducers: {
-        addCategory(state, action) {
-            console.log(10, state, action)
+        setSlideBarSelected(state, action) {
             return {
                 ...state,
-                listCategory: action.payload,
+                key: action.payload,
             }
         },
     }
 });
 
-const { actions, reducer } = categorySlice;
-export const { addCategory } = actions;
+const { actions, reducer } = slideBarSlice;
+export const { setSlideBarSelected } = actions;
 export default reducer;

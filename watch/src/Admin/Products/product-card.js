@@ -18,7 +18,7 @@ import {
     Dialog,
     DialogTitle,
     DialogActions,
-    DialogContent, Pagination, Modal,
+    DialogContent, Pagination, Modal, Stack,
 } from "@mui/material";
 import {getProduct} from "../../api/product";
 import {thousandsSeparators} from "../../common/fCommon";
@@ -26,6 +26,9 @@ import * as React from 'react';
 import {UploadFile} from "@mui/icons-material";
 import UploadFiles from "./UploadFile";
 import {useNavigate} from "react-router-dom";
+import './styles.scss'
+import {deleteCustomerOrder} from "../../api/customer-order";
+import {toast} from "react-toastify";
 
 const style = {
     position: 'absolute',
@@ -33,21 +36,22 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     border: 'none',
-    width: 800,
+    borderRadius: "8px",
+    width: 600,
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 4,
+    padding: "12px",
 };
 
-export const ProductCard = ({...rest}) => {
+export const ProductCard = ({keyword}) => {
     const [limit, setLimit] = useState(5);
-    const [page, setPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(0);
-    const [keyword, setKeyword] = useState("");
+    const [pageNo, setPageNo] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [open, setOpen] = useState(false);
     const [img, setImg] = useState("");
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogBrand, setDialogBrand] = useState("");
+
 
     const [data, setData] = useState([]);
     const [productIsUpload, setProductIsUpload] = useState("");
@@ -61,9 +65,9 @@ export const ProductCard = ({...rest}) => {
         getProduct(
             {
                 "direction": "DESC",
-                "pageNo": page,
+                "pageNo": pageNo,
                 "orderBy": "product_id",
-                "keyword": "",
+                "keyword": keyword || "",
                 "pageSize": limit,
                 "isBestSell": true,
                 "parentCategoryId": "",
@@ -73,7 +77,7 @@ export const ProductCard = ({...rest}) => {
                 if (res && res.data) {
                     const {data} = res.data;
                     setData(data.content)
-                    setTotalPage(data?.totalPages)
+                    setTotalPages(data?.totalPages)
                 }
             })
             .catch(error => console.log(error));
@@ -81,7 +85,7 @@ export const ProductCard = ({...rest}) => {
 
     useEffect(() => {
       fetchProduct();
-    }, [page, keyword]);
+    }, [pageNo, keyword]);
 
 
     function handleClickOpen(img, title, brand) {
@@ -97,15 +101,15 @@ export const ProductCard = ({...rest}) => {
 
     const handleChangeRowsPerPage = (event) => {
         setLimit(parseInt(event.target.value, 10));
-        setPage(0);
+        setPageNo(0);
     };
 
     const handlePageChange = (event, newPage) => {
-        setPage(newPage);
+        setPageNo(newPage);
     };
 
     const handleChange = (e, value) => {
-        setPage(value);
+        setPageNo(value);
     }
 
     const onShowUploadFile = (product) => {
@@ -120,6 +124,29 @@ export const ProductCard = ({...rest}) => {
         navigate(`/admin/product/addProduct/${product.id}`)
     }
 
+    const onCloseUpload = () => {
+
+    }
+
+    const onDelete = (customer) => {
+        deleteCustomerOrder(
+            {
+                id: customer?.id,
+            }
+        ).then(
+            res => {
+                const {data} = res;
+                if(data.errorCode == "200") {
+                    toast.success("Xóa Thành Công")
+                    fetchProduct();
+                }
+                else {
+                    toast.error("Xóa Thất Bại")
+                }
+            }
+        )
+    }
+
     const title = [
         "ID",
         "Tên sản phẩm",
@@ -132,7 +159,7 @@ export const ProductCard = ({...rest}) => {
     ];
 
     return (
-        <Card {...rest} className="list-product">
+        <Card className="list-product">
             <PerfectScrollbar>
                 <Box sx={{minWidth: "100%"}}>
                     <Table>
@@ -147,7 +174,7 @@ export const ProductCard = ({...rest}) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data && data.length && data.map((customer) => (
+                            {data && data.length ? data.map((customer) => (
                                 <TableRow hover key={customer.id}>
                                     <TableCell padding="checkbox"></TableCell>
                                     <TableCell>
@@ -173,7 +200,7 @@ export const ProductCard = ({...rest}) => {
                                                 cursor: "pointer",
                                             }}
                                             src={customer.productImages.find(item => item.isPresident === true)?.photosImagePath}
-                                            alt="error"
+                                            alt="Lỗi hiển thị"
                                         /> : null}
                                         <Dialog
                                             open={open}
@@ -213,7 +240,7 @@ export const ProductCard = ({...rest}) => {
                                             <div>
                                                 <Tooltip title="Xoá">
                                                     <Button variant="contained" color="error">
-                                                        <DeleteIcon/>
+                                                        <DeleteIcon onClick={() => onDelete(customer)}/>
                                                     </Button>
                                                 </Tooltip>
                                             </div>
@@ -227,21 +254,24 @@ export const ProductCard = ({...rest}) => {
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )) : null}
                         </TableBody>
                     </Table>
                 </Box>
             </PerfectScrollbar>
-            <Pagination count={totalPage} page={page} onChange={handleChange}/>
-
-            <Modal className="product-modal"
+            <div className="pagination-footer">
+            <Stack spacing={2}>
+                <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary" onChange={handleChange} />
+            </Stack>
+            </div>
+            <Modal
                 open={!!productIsUpload.id}
                 onClose={handleCloseUpload}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-                    <UploadFiles data={data} productIsUpload={productIsUpload} isPresident={true} onFetchProduct={onFetchProduct}/>
+                <Box sx={style} className="product-upload">
+                    <UploadFiles data={data} productIsUpload={productIsUpload} isPresident={true} onFetchProduct={onFetchProduct} handleCloseUpload={handleCloseUpload} />
                 </Box>
             </Modal>
         </Card>

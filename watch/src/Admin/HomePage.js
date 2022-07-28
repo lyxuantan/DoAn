@@ -1,7 +1,7 @@
 import {Box, Container, Grid} from '@mui/material';
 import {Budget} from './Dashboards/budget';
 import {TasksProgress} from './Dashboards/taskProcess';
-import {TotalCustomers} from './Dashboards/totalCustomer';
+import TotalCustomers from './Dashboards/totalCustomer';
 import {TotalProfit} from './Dashboards/totalProfit';
 import Chart from './Dashboards/Chart';
 // import {LatestOrders} from './Dashboards/lastOrder.';
@@ -50,47 +50,47 @@ const HomePage = () => {
                     >
                         <Grid
                             item
-                            lg={3}
+                            lg={6}
                             sm={6}
-                            xl={3}
+                            xl={6}
                             xs={12}
                         >
-                            <Budget/>
+                            <Budget listOrderHistory={listOrderHistory}/>
                         </Grid>
                         <Grid
                             item
-                            xl={3}
-                            lg={3}
+                            xl={6}
+                            lg={6}
                             sm={6}
                             xs={12}
                         >
                             <TotalCustomers/>
                         </Grid>
-                        <Grid
-                            item
-                            xl={3}
-                            lg={3}
-                            sm={6}
-                            xs={12}
-                        >
-                            <TasksProgress/>
-                        </Grid>
-                        <Grid
-                            item
-                            xl={3}
-                            lg={3}
-                            sm={6}
-                            xs={12}
-                        >
-                            <TotalProfit sx={{height: '100%'}}/>
-                        </Grid>
-                        <Grid
-                            item
-                            md={12}
-                            xs={12}
-                        >
-                            <Chart listOrderHistory={listOrderHistory}  listAllProduct={listAllProduct}/>
-                        </Grid>
+                        {/*<Grid*/}
+                        {/*    item*/}
+                        {/*    xl={3}*/}
+                        {/*    lg={3}*/}
+                        {/*    sm={6}*/}
+                        {/*    xs={12}*/}
+                        {/*>*/}
+                        {/*    <TasksProgress/>*/}
+                        {/*</Grid>*/}
+                        {/*<Grid*/}
+                        {/*    item*/}
+                        {/*    xl={3}*/}
+                        {/*    lg={3}*/}
+                        {/*    sm={6}*/}
+                        {/*    xs={12}*/}
+                        {/*>*/}
+                        {/*    <TotalProfit sx={{height: '100%'}}/>*/}
+                        {/*</Grid>*/}
+                        {/*<Grid*/}
+                        {/*    item*/}
+                        {/*    md={12}*/}
+                        {/*    xs={12}*/}
+                        {/*>*/}
+                        {/*    <Chart listOrderHistory={listOrderHistory}  listAllProduct={listAllProduct}/>*/}
+                        {/*</Grid>*/}
                         <Grid
                             item
                             md={12}

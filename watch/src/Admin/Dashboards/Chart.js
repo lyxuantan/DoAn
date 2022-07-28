@@ -49,8 +49,6 @@ const numberToString = (num) => {
 
 const Chart = ({listOrderHistory, listAllProduct}) => {
 
-
-
   return (
    
    <div className="chart-wrapper">
@@ -67,8 +65,6 @@ const Chart = ({listOrderHistory, listAllProduct}) => {
 };
 
 const BarChart = ({ listAllProduct }) => {
-
-    console.log(70, listAllProduct)
     const sortBySale  = listAllProduct && listAllProduct.length ? listAllProduct.sort((a, b) => b.saleNumber - a.saleNumber) : [];
     const cData = [];
     sortBySale?.forEach((item, index) => {
@@ -76,7 +72,6 @@ const BarChart = ({ listAllProduct }) => {
             cData.push([item.saleNumber, item.name])
         }
     })
-    console.log(72, cData)
     // let measure = data.measures[0].name;
     const options = {
         dataset: {
@@ -153,7 +148,7 @@ const LineChart = ({data, listOrderHistory, type }) => {
     listOrderHistory && listOrderHistory.length && listOrderHistory?.forEach(function(res, value) {
         let date = null;
         if(type === "month") {
-            date = moment(res.createTime).month() + 1;
+            date = moment(res.createTime).format("MM/YYYY");
         }
         if(type === "year") {
             date = moment(res.createTime).year();
@@ -166,7 +161,7 @@ const LineChart = ({data, listOrderHistory, type }) => {
         }
         else {
             resultArr[index].totalPrice += res?.customerOrder?.price || 0;
-            resultArr[index].total += res?.customerOrder?.total || 0;
+            resultArr[index].quantity += res?.customerOrder?.total || 0;
         }
     }, {});
 

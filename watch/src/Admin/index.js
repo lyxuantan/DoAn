@@ -1,4 +1,4 @@
-import "./adminHome.css";
+import "./adminHome.scss";
 import HomePage from "./HomePage";
 import { theme } from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
@@ -12,7 +12,7 @@ function AdminHome() {
         <DashboardNavbar />
       </div>
       <DashboardSidebar />
-      <div className="wrapper-AdminHome">
+      <div className="wrapper-AdminHome body-container">
         <HomePage />
       </div>
     </ThemeProvider>

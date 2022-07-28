@@ -17,8 +17,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {deleteCustomerOrderDetail, getCustomerOrder, updateCustomerOrder} from "../../api/customer-order";
 import {getCart} from "../../redux/cartSlice";
+import {thousandsSeparators} from "../../common/fCommon";
 
-export default function Cart() {
+export default function Cart({currentUser}) {
     const [state, setState] = React.useState({
         right: false,
     });
@@ -39,15 +40,15 @@ export default function Cart() {
 
     useEffect(() => {
         fetchCustomerOrder();
-    }, [])
+    }, [currentUser])
 
     useEffect(() => {
         setCustomerOrder(cartStore);
-    }, [cartStore])
+    }, [cartStore, currentUser])
 
     const fetchCustomerOrder = () => {
         getCustomerOrder({
-            userId: 5,
+            userId: currentUser?.id,
             isPaid: false,
         }).then(
             res => {
@@ -55,9 +56,13 @@ export default function Cart() {
                 if (data && data.length) {
                     dispatch(getCart(data?.[data.length - 1]))
 
+                } else {
+                    dispatch(getCart(null))
                 }
             }
-        )
+        ).catch(res => {
+            dispatch(getCart(null))
+        })
     }
 
     const onChangeTotal = (item, num) => {
@@ -88,7 +93,6 @@ export default function Cart() {
                     isPaid: false,
                 }).then(res => {
                     const {data} = res;
-                    console.log(106, data)
                     if (data.errorCode == "200") {
                         fetchCustomerOrder();
                     }
@@ -110,6 +114,7 @@ export default function Cart() {
         })
     }
 
+    console.log(112, customerOrder)
     const list = (anchor) => (
         <div className="cart">
 
@@ -153,7 +158,11 @@ export default function Cart() {
                         </div>
                         <div className="cart-bottom">
                             <div className="cart-bottom-top">
-                                <span>Thành tiền</span> <span>5.298.000 ₫</span>
+                                <span>Thành tiền</span> <span style={{
+                                color: "red",
+                                fontWeight: "bold",
+                                fontSize: "1.15rem",
+                            }}>{thousandsSeparators(customerOrder?.total || 0)} VNĐ</span>
 
                             </div>
                             <button
@@ -189,8 +198,8 @@ export default function Cart() {
                     </React.Fragment>
                 ))}
             </div>
-            <span
-                className="total-cart">{customerOrder.customerOrderDetails && customerOrder.customerOrderDetails.length}</span>
+            {customerOrder.customerOrderDetails && customerOrder.customerOrderDetails.length ? <span
+                className="total-cart">{customerOrder.customerOrderDetails.length}</span> : null}
         </>
     );
 }

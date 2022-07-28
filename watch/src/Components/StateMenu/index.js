@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import "./StateMenu.css";
 import StateMenuWoman from "./StateMenWoman";
 
-export default function StateMenu() {
+export default function StateMenu({currentUser}) {
   const [state, setState] = React.useState({
     left: false,
   });

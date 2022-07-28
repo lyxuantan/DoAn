@@ -15,6 +15,8 @@ import Navbar from "../Navbar/navbar";
 import {useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {login} from "../../api/action/auth";
+import {loginSuccess} from "../../redux/userSlice";
+import CustomError from "../../component-utility/custom-error";
 
 
 function Copyright(props) {
@@ -39,28 +41,39 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [messageError, setMessageError] = useState("");
     const navigator = useNavigate();
 
-    const { isLoggedIn } = useSelector(state => state.userSlice);
-    const { message } = useSelector(state => state.messageSlice);
+    const {isLoggedIn} = useSelector(state => state.userSlice);
+    const {message} = useSelector(state => state.messageSlice);
 
     const dispatch = useDispatch();
 
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
+        // event.preventDefault();
         setLoading(true);
 
         if (username && password) {
             dispatch(login(username, password))
-                .then(() => {
-                    navigator("/");
+                .then((res) => {
+                    dispatch(loginSuccess({user: res}));
+                    if (res.roles && res.roles.length && res.roles.includes("ROLE_ADMIN")) {
+                        navigator("/admin");
+                    } else {
+                        navigator("/");
+
+                    }
+                    return Promise.resolve();
                 })
                 .catch(() => {
                     setLoading(false);
+                    setMessageError("Tài khoản không hợp lệ");
                 });
         } else {
             setLoading(false);
+            setMessageError("Tài khoản không hợp lệ");
+
         }
     };
 
@@ -109,7 +122,7 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Đăng Nhập
                         </Typography>
-                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 1}}>
+                        <Box  noValidate onClick={handleSubmit} sx={{mt: 1}}>
                             <TextField
                                 margin="normal"
                                 required
@@ -136,6 +149,7 @@ export default function Login() {
                                 autoComplete="current-password"
                                 onChange={onChangePassword}
                             />
+                            <CustomError message={messageError} isSaveClick={true}/>
                             <FormControlLabel
                                 control={<Checkbox value="remember" color="primary"/>}
                                 label="Nhớ mật khẩu"

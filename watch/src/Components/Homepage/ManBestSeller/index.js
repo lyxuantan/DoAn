@@ -6,7 +6,7 @@ import ProductItem from "../productItem";
 import React, {useEffect, useState} from "react";
 import {getProduct} from "../../../api/product";
 
-function ManBestSeller({category}) {
+function ManBestSeller({category, user}) {
 
 
     const [listBestSell, setListBestSell] = useState([])

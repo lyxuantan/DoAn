@@ -1,10 +1,11 @@
 import HTTP from "../http-common";
 import {AUTH, MAIL} from '../endpoints';
 
-export const registerApi = () => {
+export const registerApi = (payload) => {
     return HTTP({
         url: AUTH.REGISTER,
-        method: "post"
+        method: "post",
+        data: payload
     })
 }
 
@@ -25,5 +26,28 @@ export const sendMail = (payload) => {
         url: MAIL.MAIL,
         method: "post",
         data: payload
+    })
+}
+
+export const changePassword = (payload) => {
+    return HTTP({
+        url: "/user/change-password",
+        method: "post",
+        data: payload
+    })
+}
+
+export const findUserLogin = (payload) => {
+    return HTTP({
+        url: "/api/auth/get-user-login",
+        method: "get",
+    })
+}
+
+export const updateUser = (payload) => {
+    return HTTP({
+        url: "/user/update-user",
+        method: "post",
+        data: payload,
     })
 }

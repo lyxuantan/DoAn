@@ -44,7 +44,11 @@ export const MAIL = {
 
 export const OTP = {
     MAIL: "/otp/generate-otp",
-    RESET: "/otp/validate-otp"
+    VALIDATE_OTP: "/otp/validate-otp"
+}
+
+export const UPLOAD_FILE= {
+    DELETE: "/admin/upload/delete",
 }
 
 

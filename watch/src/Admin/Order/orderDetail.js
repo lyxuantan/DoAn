@@ -1,140 +1,149 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { SeverityPill } from '../severity-pill';
+import {SeverityPill} from '../severity-pill';
 import {
-  Button,
-  Box,
-  Card,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography,
-  Tooltip
+    Button,
+    Box,
+    Card,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography,
+    Tooltip, Stack, Pagination
 } from "@mui/material";
+import {customerOrderDetailsAll} from "../../api/admin";
+import {flattenDeep} from "lodash";
+import {thousandsSeparators} from "../../common/fCommon";
+import moment from "moment";
 
-export const OrderListResults = ({ ...rest }) => {
-  const [data, setData] = useState([]);
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(0);
-  
-  useEffect(() => {
-    fetchProduct();
-  }, []);
+export const OrderListResults = ({...rest}) => {
+    const [pageNo, setPageNo] = useState(1);
+    const [limit, setLimit] = useState(5);
+    const [listOrderDetail, setListOrderDetail] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
 
-  const fetchProduct = () => {
-    axios
-    .get(`http://localhost:3004/products`)
-    .then((res) => {
-      const persons = res.data;
-      setData(persons);
-    })
-    .catch((error) => console.log(error));
-  }
+    useEffect(() => {
+        fetchCustomerOrder();
+    }, []);
 
-  const handleChangeRowsPerPage = (event) => {
-    setLimit(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    const fetchCustomerOrder = () => {
+        customerOrderDetailsAll().then(
+            res => {
+                const {data} = res.data;
+                if (data && data.length) {
+                    const listOrderFlatten = data && data.length
+                        ? flattenDeep(data.map((item) => item.customerOrderDetails.map(detail => ({
+                            ...detail,
+                            orderId: item
+                        })))).map((i) => ({
+                            ...i,
+                        }))
+                        : [];
+                    setListOrderDetail(listOrderFlatten);
+                    setTotalPages(Math.ceil(listOrderFlatten && listOrderFlatten?.length / limit));
+                }
+            }
+        ).catch()
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
+    }
 
-  const changStatus = (id, title, brand, image, price, saleOff, status) => {
-    axios.put(`http://localhost:3004/products` + `/` + id, {
-      title: title,
-      brand: brand,
-      image: image,
-      price: price,
-      saleOff: saleOff,
-      status: !status
-   })
-   .then(() => {
-    fetchProduct()
-    // console.log(status);
-  })};
+    function handleChange(e, value) {
+        setPageNo(value);
+    }
 
-  return (
-    <Card {...rest}>
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: "100%" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Mã Đơn</TableCell>
-                <TableCell>Mã sản phẩm</TableCell>
-                <TableCell>Tên sản phẩm</TableCell>
-                <TableCell>Tên khách hàng</TableCell>
-                <TableCell>Trạng Thái</TableCell>
-                <TableCell>Tuỳ Chọn</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data && data.length && data?.slice(page * limit, page * limit + limit).map((customer) => (
-                <TableRow hover key={customer.id}>
-                  <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: "center",
-                        display: "flex",
-                      }}
-                    >
-                      <Typography color="textPrimary" variant="body1">
-                        {customer.id}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{customer.price}</TableCell>
-                  <TableCell>{customer.title}</TableCell>
-                  <TableCell>{customer.brand}</TableCell>
-                  <TableCell
-                  onClick={() => changStatus(customer.id, customer.title,
-                  customer.brand, customer.image, customer.price,
-                  customer.saleOff, customer.status)} >
-                     
-                      <SeverityPill
-                       sx={{ cursor: 'pointer'}}
-                      color={`${customer.status ? "success" : "warning"}`}>
-                      {`${customer.status ? "Đã xuất kho" : "Đang xử lý"}`}
-                    </SeverityPill>
-                    
-                 
-                  
-                </TableCell>
-                  <TableCell>                      
-                        <div>
-                          <Tooltip title="Xoá">
-                            <Button variant="contained" color="error">
-                              <DeleteIcon />
-                            </Button>
-                          </Tooltip>
-                        </div>
-                    </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
-      <TablePagination
-        rowsPerPageOptions={[5, 10]}
-        component="div"
-        count={data.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        page={page}
-        rowsPerPage={limit}
-      />
-    </Card>
-  );
+    // const changStatus = (id, title, brand, image, price, saleOff, status) => {
+    //     axios.put(`http://localhost:3004/products` + `/` + id, {
+    //         title: title,
+    //         brand: brand,
+    //         image: image,
+    //         price: price,
+    //         saleOff: saleOff,
+    //         status: !status
+    //     })
+    //         .then(() => {
+    //             fetchProduct()
+    //             // console.log(status);
+    //         })
+    // };
+
+    return (
+        <Card {...rest}>
+            <PerfectScrollbar>
+                <Box sx={{minWidth: "100%"}}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Mã đặt hàng</span>
+                                </TableCell>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Mã đơn hàng</span>
+                                </TableCell>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Tên Sản Phẩm</span>
+                                </TableCell>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Số Lượng</span>
+                                </TableCell>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Thành Tiền</span>
+                                </TableCell>
+                                <TableCell sx={{textAlign: "left"}}>
+                                    <span className="header-text">Thời gian</span>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {listOrderDetail && listOrderDetail.length ? listOrderDetail.slice(
+                                (pageNo - 1) * limit,
+                                (pageNo - 1) * limit + limit
+                            ).map((order) => (
+                                <TableRow hover key={order.id}>
+                                    <TableCell>
+                                        <Box
+                                            sx={{
+                                                alignItems: "center",
+                                                display: "flex",
+                                            }}
+                                        >
+                                            <Typography color="textPrimary" variant="body1">
+                                                {order?.orderId?.id}
+                                            </Typography>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>{order?.id}</TableCell>
+                                    <TableCell>{order?.product?.name}</TableCell>
+                                    <TableCell>
+                                        {thousandsSeparators(order?.quantity)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {thousandsSeparators(order?.price)} VNĐ
+                                    </TableCell>
+                                    <TableCell>
+                                        {moment(order?.updateTime).format("DD/MM/YYYY")}
+                                    </TableCell>
+                                </TableRow>
+                            )) : null}
+                        </TableBody>
+                    </Table>
+                </Box>
+            </PerfectScrollbar>
+            <div className="pagination-footer">
+                <Stack spacing={2}>
+                    <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
+                                onChange={handleChange}/>
+                </Stack>
+            </div>
+        </Card>
+    );
 };
 
 OrderListResults.propTypes = {
-  customers: PropTypes.array.isRequired,
+    customers: PropTypes.array.isRequired,
 };

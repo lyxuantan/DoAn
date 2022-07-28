@@ -6,6 +6,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {addToCart, getCart} from "../../../redux/cartSlice";
 import {useEffect} from "react";
 import {getCustomerOrder, updateCustomerOrder} from "../../../api/customer-order";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 const ProductItem = ({item}) => {
 
@@ -14,14 +16,13 @@ const ProductItem = ({item}) => {
 
 
     const onAddToCart = (item) => {
-        dispatch(addToCart(item));
+        // dispatch(addToCart(item));
         // eslint-disable-next-line no-unused-expressions
         const findIndexItem = cartStore?.customerOrderDetails && cartStore?.customerOrderDetails.length ? cartStore?.customerOrderDetails.findIndex(i => i?.product?.id === item?.id) : -1;
         const newDetail = [];
-        if(findIndexItem > -1) {
-            cartStore?.customerOrderDetails.forEach((item, index) =>
-            {
-                if(index === findIndexItem) {
+        if (findIndexItem > -1) {
+            cartStore?.customerOrderDetails.forEach((item, index) => {
+                if (index === findIndexItem) {
                     newDetail.push({
                         ...item,
                         id: item.id,
@@ -29,8 +30,7 @@ const ProductItem = ({item}) => {
                         quantity: item.quantity + 1,
                         product: item.product,
                     })
-                }
-                else {
+                } else {
                     newDetail.push(
                         {
                             ...item,
@@ -42,8 +42,7 @@ const ProductItem = ({item}) => {
                     );
                 }
             });
-        }
-        else {
+        } else {
             cartStore?.customerOrderDetails.forEach((item, index) => {
                 newDetail.push(item);
             });
@@ -79,11 +78,16 @@ const ProductItem = ({item}) => {
                 <UpDownSaleOff num={item?.perDiscount}/>
                 <div className="card">
                     <Link to={`/detail/product/${item.id}`}>
-                        <img src={item?.productImages?.[0]?.photosImagePath} className="card-img-top product-img" alt="..."/>
+                        {item?.productImages?.[0]?.photosImagePath ?
+                            <img src={item?.productImages?.[0]?.photosImagePath} className="card-img-top product-img"
+                                 alt="Không thể hiển thị ảnh"/> : <div className="product-img">
+                                <span>Sản phẩm chưa có hình ảnh</span>
+                                <FontAwesomeIcon icon={faImage} fontSize={"30"}/></div>}
                     </Link>
                 </div>
                 <div className="card-body">
-                    <button className="btn-addStore" type="button" onClick={() => onAddToCart(item)}>THÊM VÀO GIỎ</button>
+                    <button className="btn-addStore" type="button" onClick={() => onAddToCart(item)}>THÊM VÀO GIỎ
+                    </button>
                     <div className="cardBrand">{item?.collections?.name}</div>
                     <div><h4 className="cardTitle">{item.name}</h4></div>
                     <div>

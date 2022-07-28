@@ -13,6 +13,10 @@ import {store} from "./store";
 
 import {Suspense} from "react";
 import './i18n';
+import {ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -28,6 +32,7 @@ root.render(
                     </Suspense>
 
                 </HashRouter>
+            <ToastContainer />
             {/*</PersistGate>*/}
         </Provider>,
     </React.StrictMode>

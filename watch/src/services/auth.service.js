@@ -23,7 +23,6 @@ const login = (username, password) => {
     password: password
   })
       .then((response) => {
-          console.log(26, response)
         if (response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data));
         }

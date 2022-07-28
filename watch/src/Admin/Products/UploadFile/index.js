@@ -2,8 +2,12 @@ import React, {Component, useEffect, useState} from "react";
 import UploadService from "./UploadFilesService";
 import './styles.scss';
 import {Button} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import {deleteFile} from "../../../api/upload";
+import {ToastContainer, toast} from "react-toastify";
 
-const UploadFiles = ({productIsUpload,data, isPresident, onFetchProduct}) => {
+
+const UploadFiles = ({productIsUpload, data, isPresident, onFetchProduct, handleCloseUpload}) => {
     const [selectedFiles, setSelectedFiles] = useState(null);
     const [currentFile, setCurrentFile] = useState(null);
     const [progress, setProgress] = useState(0);
@@ -17,7 +21,6 @@ const UploadFiles = ({productIsUpload,data, isPresident, onFetchProduct}) => {
     }, [data])
 
     const selectFile = (event) => {
-        console.log(event)
         setSelectedFiles(event.target.files);
     }
 
@@ -48,8 +51,27 @@ const UploadFiles = ({productIsUpload,data, isPresident, onFetchProduct}) => {
         document.getElementById("file-form").value = "";
     }
 
+    function onRemoveFile(item) {
+        deleteFile({
+            id: item.id
+        }).then(res => {
+            const {data} = res;
+            if (data.errorCode === "200") {
+                onFetchProduct();
+                toast.success("Xóa thành công!");
+            } else {
+                toast.error("Xóa thất bại!");
+            }
+        })
+
+    }
+
     return (
         <div>
+            <div className="d-flex justify-content-end">
+            <CloseIcon
+                fontSize="12" style={{marginBottom: "16px", textAlign: "right"}} onClick={handleCloseUpload}/>
+            </div>
             {currentFile && (
                 <div className="progress">
                     <div
@@ -64,16 +86,18 @@ const UploadFiles = ({productIsUpload,data, isPresident, onFetchProduct}) => {
                     </div>
                 </div>
             )}
-            <form  enctype="multipart/form-data">
-            <label className="btn btn-default">
-                <input id="file-form" type="file" onChange={selectFile}/>
-            </label>
-                <button className="btn btn-success"
-                    // disabled={!selectedFiles}
-                        onClick={(e) => upload(e)}
-                >
-                    Upload
-                </button>
+            <form enctype="multipart/form-data">
+                <div className="d-flex justify-content-between">
+                    <label className="btn btn-default">
+                        <input id="file-form" type="file" onChange={selectFile}/>
+                    </label>
+                    <button className="btn btn-success"
+                            disabled={!selectedFiles}
+                            onClick={(e) => upload(e)}
+                    >
+                        Upload
+                    </button>
+                </div>
             </form>
 
             <div className="alert alert-light" role="alert">
@@ -83,17 +107,17 @@ const UploadFiles = ({productIsUpload,data, isPresident, onFetchProduct}) => {
                 <div className="card-header">Danh sách Ảnh</div>
                 <ul className="list-group list-group-flush-image">
                     {listImage && listImage && listImage.length ?
-                        listImage.map((file, index) => (
+                        listImage.slice(0, 4).map((file, index) => (
                             <li className="list-group-item" key={index}>
-                                <img src={file.photosImagePath}/>
+                                <div className="delete-image" onClick={() => onRemoveFile(file)}><CloseIcon
+                                    fontSize="12"/></div>
+                                <img src={file.photosImagePath} alt="Lỗi hiển thị"/>
                             </li>
                         )) : null}
                 </ul>
             </div>
         </div>
     );
-
-
 }
 
 export default UploadFiles;

@@ -3,13 +3,13 @@ import * as React from "react";
 import {AddCircle, RemoveCircle} from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import './styles.scss'
+import {thousandsSeparators} from "../../../common/fCommon";
 
 const CartItem = ({item, onChangeTotal, onDeleteOrderDetail}) => {
     return (
         <div className="cart-item">
             <div className="cart-item-left">
                 <CloseIcon fontSize="small" onClick={() => onDeleteOrderDetail(item)}/>
-                {console.log(12, item)}
                 <img src={item?.product?.productImages?.[0]?.photosImagePath} alt=""/>
             </div>
             <div className="cart-item-right">
@@ -19,10 +19,10 @@ const CartItem = ({item, onChangeTotal, onDeleteOrderDetail}) => {
                     </div>
                     <div>
                         <div>
-                            {item?.price}
+                           <b style={{fontSize: "1.05rem"}}>{thousandsSeparators(item?.price)} VNĐ</b>
                         </div>
                         <div>
-                            {item?.priceRef}
+                            <span style={{textDecorationLine: "line-through"}} className="text-muted"><i>{thousandsSeparators(item?.priceRef)} VNĐ</i></span>
                         </div>
                     </div>
                 </div>

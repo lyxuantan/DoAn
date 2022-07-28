@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useState} from "react";
 import {sendMail} from "../../api/auth";
 import {generateOTP} from "../../api/otp";
+import {useNavigate} from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -29,24 +30,23 @@ const theme = createTheme();
 export default function ForgotPass() {
 
   const [email, setEmail] = useState("");
+  const navigator = useNavigate();
 
   const onChangeEmail = (value) => {
     setEmail(value);
   }
 
   const handleSubmit = (event) => {
-
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
     generateOTP({email: email}).then(
         res => {
-
+          const {data} = res;
+          console.log(data)
+          if(data.errorCode == "200") {
+            navigator("/reset/password")
+          }
         }
     )
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
   };
 
   return (
@@ -67,17 +67,7 @@ export default function ForgotPass() {
           
           <Box component="form" noValidate  sx={{ mt: 3 }}>
             <Grid container spacing={1}>
-              {/*<Grid item xs={12}>*/}
-              {/*  <TextField*/}
-              {/*    autoComplete="given-name"*/}
-              {/*    name="firstName"*/}
-              {/*    required*/}
-              {/*    fullWidth*/}
-              {/*    id="firstName"*/}
-              {/*    label="Tài khoản đăng nhập"*/}
-              {/*    autoFocus*/}
-              {/*  />*/}
-              {/*</Grid>*/}
+
               <Grid item xs={12}>
                 <TextField
                   required

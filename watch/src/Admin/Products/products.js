@@ -11,14 +11,22 @@ import {useState, useEffect} from "react";
 import Button from "@mui/material/Button";
 import {Search as SearchIcon} from "../icons/search";
 import { Link } from "react-router-dom";
+import DashboardTitle from "../../Components/DashboardTitle";
 
 const Products = () => {
+
+    const [keyword, setKeyword] = useState("");
 
     Products.getLayout = (page) => (
         <DashboardLayout>
             {page}
         </DashboardLayout>
     );
+
+    function onChangeSearch(value) {
+        setKeyword(value);
+    }
+
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -26,7 +34,7 @@ const Products = () => {
                     <DashboardNavbar/>
                 </div>
                 <DashboardSidebar/>
-                <div className="wrapper-AdminHome">
+                <div className="wrapper-AdminHome body-container">
                     <Box
                         component="main"
                         sx={{
@@ -37,11 +45,11 @@ const Products = () => {
                     >
 
                         <Container maxWidth={false}>
-                            {/*<ProductListToolbar/>*/}
-                            <h2 className={"pt-2"}>Sản phẩm</h2>
+                            <DashboardTitle title="Sản phẩm"/>
                             <div className="d-flex justify-content-between"><div>
                                 {/*<Input*/}
                                 <TextField
+                                    label={"Tìm kiếm sản phẩm"}
                                     size="small"
                                     InputProps={{
                                         startAdornment: (
@@ -56,11 +64,13 @@ const Products = () => {
                                         )
                                     }}
                                     placeholder="Search product"
+                                    value={keyword}
+                                    onChange={(e) => onChangeSearch(e.target.value)}
                                     // variant="outlined"
                                 />
                             </div><Link to="/admin/product/addProduct"><Button variant={"contained"}>Thêm sản phẩm</Button></Link></div>
                             <Box sx={{mt: 3}}>
-                                <ProductCard/>
+                                <ProductCard keyword={keyword}/>
                             </Box>
                         </Container>
                     </Box>

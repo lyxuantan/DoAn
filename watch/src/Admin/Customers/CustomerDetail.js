@@ -22,24 +22,10 @@ export const CustomerListResults = ({ ...rest }) => {
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState(6);
   const [page, setPage] = useState(0);
-  const loadData = () => {
-    axios
-      .get(`http://localhost:3004/products`)
-      .then((res) => {
-        const persons = res.data;
-        setData(persons);
-      })
-      .catch((error) => console.log(error));
-  }
 
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const deletePost = (id) => {
     axios.delete(`http://localhost:3004/products` + `/` + id)
-    console.log(id);
-    loadData();
  };
 
   const handleChangeRowsPerPage = (event) => {
