@@ -19,6 +19,8 @@ import com.example.ecommer.security.services.UserDetailsImpl;
 import com.example.ecommer.security.services.UserDetailsServiceImpl;
 import com.example.ecommer.service.ConfirmationTokenService;
 import com.example.ecommer.service.EmailSenderService;
+import com.example.ecommer.service.UserService;
+import com.example.ecommer.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -34,8 +36,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("")
+@CrossOrigin(origins = "${watch.port}")
 public class AuthController {
 
     @Autowired
@@ -43,6 +45,9 @@ public class AuthController {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
@@ -80,7 +85,7 @@ public class AuthController {
         return false;
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/api/auth/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -101,7 +106,7 @@ public class AuthController {
         ));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/api/auth/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -146,7 +151,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    @GetMapping("confirm-account")
+    @GetMapping("/api/auth/confirm-account")
     public ResponseEntity<?> getMethodName(@RequestParam("token") String token) {
 
         ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
@@ -168,7 +173,7 @@ public class AuthController {
         return ResponseEntity.ok("Account verified successfully!");
     }
 
-    @PostMapping("/send-email")
+    @PostMapping("/api/auth/send-email")
     public ResponseEntity<?> sendVerificationMail(@Valid @RequestBody VerifyEmailRequest emailRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(emailRequest.getEmail()))) {
                 User user = userRepository.findByEmail(emailRequest.getEmail());
@@ -181,7 +186,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/api/auth/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody LoginRequest loginRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(loginRequest.getEmail()))) {
             if (changePassword(loginRequest.getEmail(), loginRequest.getPassword())) {
@@ -194,4 +199,29 @@ public class AuthController {
         }
     }
 
+
+    @GetMapping("/api/auth/get-user-login")
+    public ResponseEntity<?> getUserLogin() {
+        ApiResponse response;
+        try {
+            response = new ApiResponse(userDetailsService.findByUsername());
+        }
+        catch (CustomException e) {
+            response = new ApiResponse(e);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/user/update-user")
+    public ResponseEntity<?> updateUser(@RequestBody SignupRequest user) {
+        ApiResponse response;
+        try {
+            userServiceImpl.updateUser(user);
+            response = new ApiResponse(ErrorCode.SUCCESS);
+        }
+        catch (CustomException e) {
+            response = new ApiResponse(e);
+        }
+        return ResponseEntity.ok(response);
+    }
 }

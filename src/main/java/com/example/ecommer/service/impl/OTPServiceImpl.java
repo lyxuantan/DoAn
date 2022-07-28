@@ -1,5 +1,6 @@
 package com.example.ecommer.service.impl;
 
+import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.service.EmailSenderService;
 import com.example.ecommer.service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,14 @@ public class OTPServiceImpl implements OTPService {
     private EmailSenderService emailSenderService;
 
     @Override
-    public Boolean generateOTP(String key) {
+    public void generateOTP(String key) {
         int otpValue = otpGeneratorServiceImpl.generateOTP(key);
         if (otpValue == -1)
         {
-            return  false;
+            throw new  CustomException("OTP Không Hợp Lệ");
         }
         String message = "OTP " + otpValue +". This OTP is valid for 5 minutes.";
-
-        return emailSenderService.sendSimpleMail(key, "Password Reset", message);
+        emailSenderService.sendSimpleMail(key, "Password Reset", message);
     }
 
     @Override

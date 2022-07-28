@@ -6,6 +6,7 @@ import com.example.ecommer.dto.request.ProductRequest;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.*;
 import com.example.ecommer.repository.*;
+import com.example.ecommer.security.jwt.JwtUtils;
 import com.example.ecommer.service.ProductImageService;
 import com.example.ecommer.service.ProductService;
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,7 @@ import java.util.Set;
 public class ProductServiceImpl implements ProductService {
 
     static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -68,18 +72,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> findListProductPage(FilterProductRequest filterProductRequest) {
+
+
         PageRequest pageable = PageRequest.of(Math.toIntExact(filterProductRequest.getPageNo() - 1), Math.toIntExact(filterProductRequest.getPageSize()), filterProductRequest.getDirection().equals("DESC") ? Sort.by(filterProductRequest.getOrderBy()).descending() : Sort.by(filterProductRequest.getOrderBy()).ascending());
         if (filterProductRequest.getIsBestSell().equals(false)) {
-            if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getMaterial().size() != 0) {
+            if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getPriceFrom() != null || filterProductRequest.getPriceTo() != null) {
                 logger.info("Creating Token for user : {}", filterProductRequest);
-                return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getMaterial(), filterProductRequest.getCategoryId(),pageable);
+                return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(),pageable);
             } else {
                 logger.info("69 : {}", filterProductRequest);
                 return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
             }
         } else {
-            logger.info("72 : {}", filterProductRequest);
-            if(filterProductRequest.getParentCategoryId() != null ||  !filterProductRequest.getKeyword().trim().isEmpty()) {
+//            logger.info("72 ", JwtUtils.authentication.getName());
+            if(filterProductRequest.getParentCategoryId() != null &&  !filterProductRequest.getKeyword().trim().isEmpty()) {
                 Set<Long> listCategoryId = new HashSet<>();
                 List<Category> categoryList = categoryRepository.findByParentId(filterProductRequest.getParentCategoryId());
                 categoryList.forEach(a -> {
@@ -94,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
             }
             else {
                 logger.info("findAllByKeyword : {}");
-                return productRepository.findAllByKeyword(pageable);
+                return productRepository.findAllByKeyword(pageable, filterProductRequest.getKeyword());
             }
         }
     }
@@ -153,14 +159,14 @@ public class ProductServiceImpl implements ProductService {
                     product.setColors(color.get());
                 }
             }
-            if(product.getSizeId() != null) {
+            if(productRequest.getSizeId() != null) {
                 Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
                 if (sizes.isPresent()) {
                     product.setSize(sizes.get());
                 }
             }
 
-            if(product.getCollections() != null) {
+            if(productRequest.getCollections() != null) {
                 Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
                 if (collections.isPresent()) {
                     product.setCollections(collections.get());

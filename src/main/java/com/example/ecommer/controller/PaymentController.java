@@ -6,6 +6,7 @@ import com.example.ecommer.dto.response.PaymentResponseDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "${watch.port}")
 public class PaymentController {
 
     @PostMapping("create_payment")
@@ -32,9 +34,9 @@ public class PaymentController {
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
         String bank_code = paymentDTO.getBankCode();
-        if (bank_code != null && !bank_code.isEmpty()) {
+//        if (bank_code != null && !bank_code.isEmpty()) {
             vnp_Params.put("vnp_BankCode", bank_code);
-        }
+//        }
         vnp_Params.put("vnp_TxnRef", String.valueOf(paymentDTO.getIdOrder()));
         vnp_Params.put("vnp_OrderInfo", paymentDTO.getDescription());
         vnp_Params.put("vnp_Locale", "vn");
@@ -77,7 +79,7 @@ public class PaymentController {
             }
         }
         String queryUrl = query.toString();
-        String vnp_SecureHash = DigestUtils.sha256Hex(PaymentConfig.CHECKSUM + hashData.toString());
+        String vnp_SecureHash = PaymentConfig.hmacSHA512(PaymentConfig.CHECKSUM, hashData.toString());
 
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = PaymentConfig.VNPAY_URRL + "?" + queryUrl;

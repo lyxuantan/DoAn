@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller(value = "CategoryOfAdmin")
 @RequestMapping("admin/category")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 public class CategoryAdminController {
 
     @Autowired
     private CategoryService categoryService;
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addUser(@RequestBody CategoryRequest category) {
+    public ResponseEntity<ApiResponse> addCategory(@RequestBody CategoryRequest category) {
         ApiResponse response;
         try {
             categoryService.saveCategory(category);

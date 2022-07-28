@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.email = ?1")
     public User findByEmail(String email);
 
+
+
+
     @Query("SELECT u FROM User u WHERE CONCAT(u.fullName,' ',u.username,' ',u.email) like %?1%")
     Page<User> findAllUserPage(String keyword, Pageable pageable);
 
@@ -22,6 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findListUserPage(String keyword, Pageable pageable);
 
     Optional<User> findByUsername(String username);
+
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
 

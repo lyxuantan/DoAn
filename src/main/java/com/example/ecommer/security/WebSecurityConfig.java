@@ -50,20 +50,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] resources = new String[]{
-                "/", "/admin/**", "/api/auth/**", "/assets/admin/js/**", "/assets/plugins/**",
-                "/assets/blocks/**", "/assets/css/**", "/assets/fonts/**", "/assets/img/**", "/assets/js/**", "/assets/vendor/**", "/error", "/test/error"
-        };
-        http.authorizeRequests().antMatchers(resources).permitAll();
-
-        http.cors().and().csrf().disable();
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/test/**").permitAll()
-//                .anyRequest().authenticated();
-//        http.addFilterBefore((Filter) authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/product/**").permitAll()
+                .antMatchers("/category/**").permitAll().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/admin/**").hasAnyRole("ADMIN").antMatchers("/admin/product/**").hasAnyRole("ADMIN").antMatchers("/api/auth/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/user/**").hasAnyRole("USER")
+                .antMatchers("/order/**").hasAnyRole("ADMIN", "USER").antMatchers("/uploads/**").permitAll().antMatchers("/admin/delete-user/**").hasAnyRole("ADMIN")
+                .anyRequest().authenticated();
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

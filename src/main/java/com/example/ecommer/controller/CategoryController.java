@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("category")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 @Transactional
 public class CategoryController {
 
@@ -22,7 +22,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/get-detail")
-    public ResponseEntity<ApiResponse> findById(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<ApiResponse> getDetailsCategory(@RequestParam(name = "id") Long id) {
         ApiResponse response;
         try {
             response = new ApiResponse(categoryService.findById(id));
@@ -35,7 +35,7 @@ public class CategoryController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<ApiResponse> listCategory() {
+    public ResponseEntity<ApiResponse> getListCategory() {
         ApiResponse response;
         try {
             response = new ApiResponse(categoryService.listCategory());

@@ -20,4 +20,5 @@ public enum Direction {
         this.direction = direction;
     }
 
+
 }

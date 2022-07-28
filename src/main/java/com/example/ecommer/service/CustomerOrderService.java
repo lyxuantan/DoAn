@@ -12,9 +12,12 @@ public interface CustomerOrderService {
 
     List<CartResponse> findByUserAndStatus(Long id, Boolean isPaid);
 
+
     void addToCard(AddToCartRequest addToCartRequest);
 
     void updateCard(AddToCartRequest addToCartRequest);
 
     void deleteCustomerOrderDetail(Long id);
+
+
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller(value = "ProductOfAdmin")
 @RequestMapping("admin/product")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 public class ProductAdminController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class ProductAdminController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse> updateUser(@RequestBody Product productRequest) {
+    public ResponseEntity<ApiResponse> updateProduct(@RequestBody Product productRequest) {
         ApiResponse response;
         try {
             productService.update(productRequest);
@@ -44,8 +44,8 @@ public class ProductAdminController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable(name = "id") Long id) {
+    @GetMapping("/delete")
+    public ResponseEntity<ApiResponse> deleteProduct(@RequestParam(name = "id") Long id) {
         ApiResponse response;
         try {
             productService.delete(id);

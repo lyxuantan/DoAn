@@ -118,4 +118,18 @@ public class ProductImageServiceImpl implements ProductImageService {
     public ProductImage getFile(Long id) {
         return productImageRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
+
+    @Override
+    public void delete(Long imgId) {
+        Optional<ProductImage> productImage = productImageRepository.findById(imgId);
+        if(productImage.isPresent()) {
+            productImageRepository.deleteById(imgId);
+
+        }
+        else {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+    }
+
+
 }

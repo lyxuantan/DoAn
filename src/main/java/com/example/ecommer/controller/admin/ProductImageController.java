@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("admin/upload")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 public class ProductImageController {
 
     @Autowired
@@ -38,6 +38,20 @@ public class ProductImageController {
         ApiResponse response;
         try {
             response = new ApiResponse(productImageService.getFile(id));
+        } catch (CustomException e) {
+            response  = new ApiResponse(e);
+        } catch (Exception e) {
+            response = new ApiResponse(ErrorCode.API_FAIL_UNKNOW);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/delete")
+    public ResponseEntity<ApiResponse> removeImage(@RequestParam(name = "id") Long id) {
+        ApiResponse response;
+        try {
+            productImageService.delete(id);
+            response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response  = new ApiResponse(e);
         } catch (Exception e) {

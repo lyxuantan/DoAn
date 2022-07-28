@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -14,6 +15,9 @@ import java.util.Date;
 public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
+    public static Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
     @Value("${ecommerce.app.jwtSecret}")
     private String jwtSecret;
     @Value("${ecommerce.app.jwtExpirationMs}")

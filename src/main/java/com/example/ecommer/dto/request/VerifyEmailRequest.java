@@ -12,4 +12,8 @@ public class VerifyEmailRequest {
     private String email;
 
     private Integer otpNo;
+
+    private String password;
+
+    private String username;
 }

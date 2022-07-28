@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("order-history")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 @Transactional
 public class OrderHistoryController {
 

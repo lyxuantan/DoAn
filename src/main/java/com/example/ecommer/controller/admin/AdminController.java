@@ -92,7 +92,7 @@ public class AdminController {
     }
 
     @GetMapping("/delete-user")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@RequestParam(name = "userId") Long userId) {
         ApiResponse response;
         try {

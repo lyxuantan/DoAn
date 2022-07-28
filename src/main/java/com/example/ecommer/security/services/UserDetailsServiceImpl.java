@@ -1,5 +1,6 @@
 package com.example.ecommer.security.services;
 
+import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.User;
 import com.example.ecommer.repository.UserRepository;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     UserRepository userRepository;
 
 
-
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,11 +40,18 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Override
     public Page<User> findListUserPage(Integer pageNo, Integer limit, String keyword, Integer roleId) {
         PageRequest pageable = PageRequest.of(pageNo - 1, limit, Sort.by("id").ascending());
-        if (roleId == 0) {
-            return userRepository.findAllUserPage(keyword, pageable);
-        }
-        return userRepository.findListUserPage(keyword, pageable);    }
+        return userRepository.findListUserPage(keyword, pageable);
+    }
 
+    @Override
+    public User findByUserId(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new CustomException("Không tìm thấy user"));
+    }
+
+    public User findByUsername() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 //    public boolean changePassword(String email, String password) {
 //        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email));
 //        if (!user.isPresent()) {

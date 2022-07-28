@@ -25,6 +25,11 @@ public class ApiResponse {
         this.errorDesc = data.getDesc();
     }
 
+    public ApiResponse(Void delete) {
+        this.errorCode = "200";
+        this.errorDesc = "Thành công";
+    }
+
     public Object getData() {
         return data;
     }

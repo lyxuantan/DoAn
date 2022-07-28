@@ -2,7 +2,7 @@ package com.example.ecommer.service;
 
 public interface OTPService {
 
-    Boolean generateOTP(String key);
+    void generateOTP(String key);
 
     Boolean validateOTP(String key, Integer otpNumber);
 }

@@ -12,8 +12,14 @@ import com.example.ecommer.repository.CustomerOrderDetailRepository;
 import com.example.ecommer.repository.CustomerOrderRepository;
 import com.example.ecommer.repository.ProductRepository;
 import com.example.ecommer.repository.UserRepository;
+import com.example.ecommer.security.jwt.JwtUtils;
 import com.example.ecommer.service.CustomerOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,10 +48,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CartResponse> findByUserAndStatus(Long id, Boolean isPaid) {
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, isPaid);
         List<CartResponse> cartResponses = new ArrayList<>();
-        for(CustomerOrder cus: customerOrderList) {
+        for (CustomerOrder cus : customerOrderList) {
             CartResponse cartResponse = new CartResponse();
             cartResponse.setId(cus.getId());
             cartResponse.setUser(cus.getUser());
@@ -60,9 +67,25 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return cartResponses;
     }
 
+    public Page<CustomerOrder> findByUserAndStatusPage(Long id, Boolean isPaid, Integer pageNo, Integer limit) {
+        PageRequest pageable = PageRequest.of(pageNo - 1, limit, Sort.by("id").descending());
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        return customerOrderRepository.findAllByUserAndIsPaid(user, isPaid ,pageable);
+
+    }
+
+    public List<CustomerOrder> findAllCustomerOrderIsPaid() {
+        return customerOrderRepository.findAllListCustomerOrderIsPaid();
+
+    }
+
+
+
     @Override
     public void addToCard(AddToCartRequest addToCartRequest) {
-        User user = userRepository.findById(addToCartRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, addToCartRequest.getIsPaid());
         List<CustomerOrderDetail> customerOrderDetailList = new ArrayList<>();
         System.out.println(addToCartRequest.getCustomerOrderDetails());
@@ -84,8 +107,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setStatus(addToCartRequest.getStatus());
             customerOrder.setIsPaid(addToCartRequest.getIsPaid());
             customerOrderRepository.save(customerOrder);
-        }
-        else {
+        } else {
             CustomerOrder customerOrder = new CustomerOrder();
             customerOrder.setUser(user);
             customerOrder.setStatus(addToCartRequest.getStatus());
@@ -109,15 +131,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public void updateCard(AddToCartRequest addToCartRequest) {
-        User user = userRepository.findById(addToCartRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
         List<CustomerOrderDetail> customerOrderDetailList = new ArrayList<>();
         if (addToCartRequest.getOrderId() != null) {
             Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(addToCartRequest.getOrderId());
-            if(customerOrder.isPresent()) {
+            if (customerOrder.isPresent()) {
                 addToCartRequest.getCustomerOrderDetails().forEach(item -> {
                     Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
-                    if(item.getId() != null) {
+                    if (item.getId() != null) {
                         Optional<CustomerOrderDetail> customerOrderDetailExit = customerOrderDetailRepository.findById(item.getId());
                         if (customerOrderDetailExit.isPresent()) {
                             customerOrderDetailExit.get().setId(item.getId());
@@ -128,8 +151,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             customerOrderDetailExit.get().setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
                             customerOrderDetailList.add(customerOrderDetailExit.get());
                             customerOrderDetailRepository.save(customerOrderDetailExit.get());
-                        }
-                        else {
+                        } else {
                             CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
                             customerOrderDetail.setId(item.getId());
                             customerOrderDetail.setOrderId(customerOrder.get().getId());
@@ -140,8 +162,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             customerOrderDetailList.add(customerOrderDetail);
                             customerOrderDetailRepository.save(customerOrderDetail);
                         }
-                    }
-                    else {
+                    } else {
                         CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
                         customerOrderDetail.setId(item.getId());
                         customerOrderDetail.setOrderId(customerOrder.get().getId());
@@ -160,15 +181,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrder.get().setStatus(addToCartRequest.getStatus());
                 customerOrder.get().setIsPaid(addToCartRequest.getIsPaid());
                 customerOrderRepository.save(customerOrder.get());
-            }
-            else {
+            } else {
                 CustomerOrder customerOrderNew = new CustomerOrder();
                 customerOrderNew.setUser(user);
                 customerOrderNew.setStatus(addToCartRequest.getStatus());
                 customerOrderNew.setIsPaid(false);
                 addToCartRequest.getCustomerOrderDetails().forEach(item -> {
                     Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
-                    if(item.getId() != null) {
+                    if (item.getId() != null) {
                         Optional<CustomerOrderDetail> customerOrderDetailExit = customerOrderDetailRepository.findById(item.getId());
                         if (customerOrderDetailExit.isPresent()) {
                             customerOrderDetailExit.get().setId(item.getId());
@@ -179,8 +199,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             customerOrderDetailExit.get().setPriceRef(countPriceRefProductInCart(product, item.getQuantity()));
                             customerOrderDetailList.add(customerOrderDetailExit.get());
                             customerOrderDetailRepository.save(customerOrderDetailExit.get());
-                        }
-                        else {
+                        } else {
                             CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
                             customerOrderDetail.setId(item.getId());
                             customerOrderDetail.setOrderId(customerOrder.get().getId());
@@ -191,8 +210,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             customerOrderDetailList.add(customerOrderDetail);
                             customerOrderDetailRepository.save(customerOrderDetail);
                         }
-                    }
-                    else {
+                    } else {
                         CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
                         customerOrderDetail.setId(item.getId());
                         customerOrderDetail.setOrderId(customerOrder.get().getId());
@@ -209,8 +227,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderNew.setPrice(totalPriceCustomerOrder(customerOrderDetailList));
                 customerOrderRepository.save(customerOrderNew);
             }
-        }
-        else {
+        } else {
             CustomerOrder customerOrderNew = new CustomerOrder();
             customerOrderNew.setUser(user);
             customerOrderNew.setStatus(addToCartRequest.getStatus());
@@ -236,10 +253,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public void deleteCustomerOrderDetail(Long id) {
         Optional<CustomerOrderDetail> customerOrderDetail = customerOrderDetailRepository.findById(id);
-        if(customerOrderDetail.isPresent()) {
+        if (customerOrderDetail.isPresent()) {
             customerOrderDetailRepository.deleteById(id);
-        }
-        else {
+        } else {
             throw new CustomException(ErrorCode.NOT_FOUND_CUSTOMER_ORDER_DETAIL);
         }
     }
@@ -255,8 +271,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public Float totalPriceCustomerOrder(List<CustomerOrderDetail> customerOrderDetails) {
         Float total = 0.0f;
         for (int i = 0; i < customerOrderDetails.size() - 1; i++) {
-            if(customerOrderDetails.get(i).getPrice() != null && customerOrderDetails.get(i).getTotal() != null) {
-                total += customerOrderDetails.get(i).getPrice() * customerOrderDetails.get(i).getTotal();
+            if (customerOrderDetails.get(i).getPrice() != null && customerOrderDetails.get(i).getQuantity() != null) {
+                total += customerOrderDetails.get(i).getPrice() * customerOrderDetails.get(i).getQuantity();
             }
         }
         return total;
@@ -266,14 +282,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public Float totalPriceRefCustomerOrder(List<CustomerOrderDetail> customerOrderDetails) {
         Float total = 0.0f;
         for (int i = 0; i < customerOrderDetails.size() - 1; i++) {
-            if(customerOrderDetails.get(i).getPriceRef() != null && customerOrderDetails.get(i).getTotal() != null) {
-                total += customerOrderDetails.get(i).getPriceRef() * customerOrderDetails.get(i).getTotal();
+            if (customerOrderDetails.get(i).getPriceRef() != null && customerOrderDetails.get(i).getQuantity() != null) {
+                total += customerOrderDetails.get(i).getPriceRef() * customerOrderDetails.get(i).getQuantity();
             }
         }
 //        total += countPriceRefProductInCart(product, quantity);
         return total;
     }
 
+    List<CustomerOrder> customerOrderListByUser(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return customerOrderRepository.findAllByUser(user.get());
+    }
 
 
 }

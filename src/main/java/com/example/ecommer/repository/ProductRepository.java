@@ -16,8 +16,8 @@ import java.util.Set;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(long id);
 
-    @Query(value = "SELECT * FROM product WHERE (category_id = :categoryId) and (price_sale > :priceFrom AND price_sale < :priceTo) AND (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId or material_id in :materialId)", nativeQuery = true)
-    Page<Product> findPageProductFilter(Long priceFrom, Long priceTo, List<Long> collectionId, List<Long> sizeId, List<Long> colorId, List<Long> materialId, Long categoryId, Pageable pageable);
+    @Query(value = "SELECT * FROM product WHERE (category_id = :categoryId) and (price_sale > :priceFrom AND price_sale < :priceTo) or (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
+    Page<Product> findPageProductFilter(Long priceFrom, Long priceTo, List<Long> collectionId, List<Long> sizeId, List<Long> colorId, Long categoryId, Pageable pageable);
 
     @Query(value = "SELECT * FROM product where category_id = :categoryId", nativeQuery = true)
     Page<Product> findAllByCategoryId(Long categoryId, Pageable pageable);
@@ -26,11 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByCategory(Set<Long> categoryId, String keyword, Pageable pageable);
 
     @Query(value = "SELECT * FROM product", nativeQuery = true)
-    Page<Product> findAllByKeyword(Pageable pageable);
-
-
-    //    @Query("SELECT p from Product p ")
-//    Page<Product> findListProductPage(String keyword, Long productId, Long collectionId, Long sizeId, Long colorId, Long materialId, String order);
+    Page<Product> findAllByKeyword(Pageable pageable, String keyword);
 
 }
 

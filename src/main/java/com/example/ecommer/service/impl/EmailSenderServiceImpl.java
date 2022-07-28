@@ -1,9 +1,11 @@
 package com.example.ecommer.service.impl;
 
+import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -25,7 +27,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     }
 
     @Override
-    public boolean sendSimpleMail(String to, String sub, String body) {
+    @Async
+    public void sendSimpleMail(String to, String sub, String body) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(to);
         mailMessage.setSubject(sub);
@@ -37,8 +40,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             javaMailSender.send(mailMessage);
             isSent = true;
         } catch (Exception e) {
+            throw new CustomException("Không gửi được OTP vui lòng thử lại!");
         }
 
-        return isSent;
     }
 }

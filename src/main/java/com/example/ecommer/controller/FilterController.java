@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("filter")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${watch.port}")
 @Transactional
 public class FilterController {
 
