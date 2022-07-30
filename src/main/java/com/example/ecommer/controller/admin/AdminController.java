@@ -70,7 +70,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse> changeUser(@RequestBody ChangePasswordRequest changePasswordRequest) {
         ApiResponse response;
         try {
-            userService.changePassword(changePasswordRequest);
+            userService.changePasswordLogined(changePasswordRequest);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response = new ApiResponse(e);
@@ -83,7 +83,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse> getUserDetails(@RequestBody ChangePasswordRequest changePasswordRequest) {
         ApiResponse response;
         try {
-            userService.changePassword(changePasswordRequest);
+            userService.changePasswordLogined(changePasswordRequest);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response = new ApiResponse(e);

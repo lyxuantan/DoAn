@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "${watch.port}")
 public class AuthController {
 
@@ -85,7 +85,7 @@ public class AuthController {
         return false;
     }
 
-    @PostMapping("/api/auth/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -106,7 +106,7 @@ public class AuthController {
         ));
     }
 
-    @PostMapping("/api/auth/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -151,7 +151,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    @GetMapping("/api/auth/confirm-account")
+    @GetMapping("/confirm-account")
     public ResponseEntity<?> getMethodName(@RequestParam("token") String token) {
 
         ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
@@ -173,7 +173,7 @@ public class AuthController {
         return ResponseEntity.ok("Account verified successfully!");
     }
 
-    @PostMapping("/api/auth/send-email")
+    @PostMapping("/send-email")
     public ResponseEntity<?> sendVerificationMail(@Valid @RequestBody VerifyEmailRequest emailRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(emailRequest.getEmail()))) {
                 User user = userRepository.findByEmail(emailRequest.getEmail());
@@ -186,7 +186,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/api/auth/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody LoginRequest loginRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(loginRequest.getEmail()))) {
             if (changePassword(loginRequest.getEmail(), loginRequest.getPassword())) {
@@ -200,7 +200,7 @@ public class AuthController {
     }
 
 
-    @GetMapping("/api/auth/get-user-login")
+    @GetMapping("/get-user-login")
     public ResponseEntity<?> getUserLogin() {
         ApiResponse response;
         try {

@@ -45,7 +45,7 @@ public class OTPController {
     public ResponseEntity<?> validateOtp(@Valid @RequestBody ChangePasswordRequest emailRequest) {
         if (emailRequest.getOtpNo() != null) {
             if (Boolean.TRUE.equals(otpService.validateOTP(emailRequest.getEmail(), emailRequest.getOtpNo()))) {
-                if (userServiceImpl.changePassword(emailRequest)) {
+                if (userServiceImpl.changePassword(emailRequest.getEmail(), emailRequest.getPassword())) {
                     return ResponseEntity.ok(new ApiResponse(ErrorCode.CHANGE_PASSWORD_SUCCESS));
                 }
             }

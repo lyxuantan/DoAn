@@ -54,8 +54,20 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userExist);
     }
 
+    public boolean changePassword(String email, String password) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email));
+        if (!user.isPresent()) {
+            throw new CustomException("User not found");
+        }
+        user.get().setPassword(encoder.encode(password));
+        User user1 = userRepository.save(user.get());
+        if (user1 != null) {
+            return true;
+        }
+        return false;
+    }
 
-    public boolean changePassword(ChangePasswordRequest changePasswordRequest) {
+    public boolean changePasswordLogined(ChangePasswordRequest changePasswordRequest) {
         Optional<User> user = Optional.ofNullable(userRepository.findByEmail(changePasswordRequest.getEmail()));
         if (!user.isPresent()) {
             throw new CustomException("User not found");
