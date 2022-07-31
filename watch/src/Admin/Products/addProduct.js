@@ -239,217 +239,223 @@ function AddProduct(props) {
 
     };
 
+    const { user: currentUser } = useSelector((state) => state.userSlice);
 
-    return (
-        <>
-            <ThemeProvider theme={theme}>
-                <div className="dashBoardNarBar">
-                    <DashboardNavbar/>
-                </div>
-                <DashboardSidebar/>
-                <div className="wrapper-AdminHome">
-                    <div className="">
-                        <Box className=""
-                             component="main"
-                             sx={{
-                                 flexGrow: 1,
-                                 py: 8,
-                                 backgroundColor: '#f9fafc'
-                             }}
-                        >
-                            {!id ? <DashboardTitle title="Thêm sản phẩm"/>
-                                : <DashboardTitle title="Chỉnh sửa sản phẩm"/>
-                            }
-                            <div className="edit-content">
-                                <div className="edit-content-header">
-                                    <Link to="/admin/product"><CardBackButton/></Link>
-                                    {!id ? <h5>Tạo mới sản phẩm</h5>
-                                        : <h5>Chỉnh sửa sản phẩm</h5>
-                                    }
-                                </div>
-                                <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                                    <Grid item xs={6}>
-                                        {headerField(1, "Nhập tên sản phẩm")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập tên sản phẩm"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.name}
-                                            onChange={(e) => onChangeName(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(2, "Nhập tiêu đề")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập tiêu đề"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.title}
-                                            onChange={(e) => onChangeTitle(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(3, "Nhập mô tả")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập mô tả"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.desc}
-                                            onChange={(e) => onChangeDescription(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(4, "Nhập nội dung")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập nội dung"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.content}
-                                            onChange={(e) => onChangeContent(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(5, "Nhập chất liệu kính")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập chất liệu kính"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.glassSurface}
-                                            onChange={(e) => onChangeGlassSurface(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(6, "Độ dày")}
-                                        <TextField
-                                            id="outlined-multiline-flexible"
-                                            label="Nhập độ dày"
-                                            fullWidth={true}
-                                            multiline
-                                            value={product.thinkness}
-                                            onChange={(e) => onChangeThinkness(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {headerField(7, "Chọn danh mục")}
-                                        <FormControl fullWidth>
+    if(currentUser?.roles?.includes("ROLE_ADMIN")) {
+        return (
+            <>
+                <ThemeProvider theme={theme}>
+                    <div className="dashBoardNarBar">
+                        <DashboardNavbar/>
+                    </div>
+                    <DashboardSidebar/>
+                    <div className="wrapper-AdminHome">
+                        <div className="">
+                            <Box className=""
+                                 component="main"
+                                 sx={{
+                                     flexGrow: 1,
+                                     py: 8,
+                                     backgroundColor: '#f9fafc'
+                                 }}
+                            >
+                                {!id ? <DashboardTitle title="Thêm sản phẩm"/>
+                                    : <DashboardTitle title="Chỉnh sửa sản phẩm"/>
+                                }
+                                <div className="edit-content">
+                                    <div className="edit-content-header">
+                                        <Link to="/admin/product"><CardBackButton/></Link>
+                                        {!id ? <h5>Tạo mới sản phẩm</h5>
+                                            : <h5>Chỉnh sửa sản phẩm</h5>
+                                        }
+                                    </div>
+                                    <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                                        <Grid item xs={6}>
+                                            {headerField(1, "Nhập tên sản phẩm")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập tên sản phẩm"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.name}
+                                                onChange={(e) => onChangeName(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(2, "Nhập tiêu đề")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập tiêu đề"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.title}
+                                                onChange={(e) => onChangeTitle(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(3, "Nhập mô tả")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập mô tả"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.desc}
+                                                onChange={(e) => onChangeDescription(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(4, "Nhập nội dung")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập nội dung"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.content}
+                                                onChange={(e) => onChangeContent(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(5, "Nhập chất liệu kính")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập chất liệu kính"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.glassSurface}
+                                                onChange={(e) => onChangeGlassSurface(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(6, "Độ dày")}
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập độ dày"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.thinkness}
+                                                onChange={(e) => onChangeThinkness(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {headerField(7, "Chọn danh mục")}
+                                            <FormControl fullWidth>
+                                                <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    defaultValue={product.categoryId}
+                                                    value={product.categoryId}
+                                                    name="radio-buttons-group"
+                                                >
+                                                    <div className="ratio-list">
+                                                        {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
+                                                            <FormControlLabel value={item.id} control={<Radio/>}
+                                                                              label={<div>{item.name}</div>}
+                                                                              onChange={(e) => handleChangeCategory(e.target.value)}/>
+                                                        ) : null}
+                                                    </div>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <CustomError message={validate(product)?.categoryId}
+                                                         isSaveClick={isSaveClick}/>
+
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {headerField(8, "Chọn bộ sưu tập")}
                                             <RadioGroup
                                                 aria-labelledby="demo-radio-buttons-group-label"
-                                                defaultValue={product.categoryId}
-                                                value={product.categoryId}
+                                                defaultValue={product.collectionId}
+                                                value={product.collectionId}
                                                 name="radio-buttons-group"
                                             >
                                                 <div className="ratio-list">
-                                                {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
-                                                    <FormControlLabel value={item.id} control={<Radio/>}
-                                                                      label={<div>{item.name}</div>}
-                                                                      onChange={(e) => handleChangeCategory(e.target.value)}/>
-                                                ) : null}
-                                                </div>
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <CustomError message={validate(product)?.categoryId} isSaveClick={isSaveClick}/>
-
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {headerField(8, "Chọn bộ sưu tập")}
-                                        <RadioGroup
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue={product.collectionId}
-                                            value={product.collectionId}
-                                            name="radio-buttons-group"
-                                        >
-                                            <div className="ratio-list">
-                                                {collections && collections.length ? collections.map((item, index) =>
+                                                    {collections && collections.length ? collections.map((item, index) =>
                                                         <FormControlLabel value={item.id} control={<Radio/>}
                                                                           label={<div>{item.name}</div>}
                                                                           onChange={(e) => handleChangeCollection(e.target.value)}/>
-                                                ) : null}
-                                            </div>
-                                        </RadioGroup>
-                                        <CustomError message={validate(product)?.collectionId} isSaveClick={isSaveClick}/>
+                                                    ) : null}
+                                                </div>
+                                            </RadioGroup>
+                                            <CustomError message={validate(product)?.collectionId}
+                                                         isSaveClick={isSaveClick}/>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {headerField(9, "Chọn Màu sắc")}
+                                            <RadioGroup
+                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                defaultValue={product.colorId}
+                                                value={product.colorId}
+                                                name="radio-buttons-group"
+                                            >
+                                                <div className="ratio-list">
+                                                    {color && color.length ? color.map((item, index) =>
+                                                        <FormControlLabel value={item.id} control={<Radio/>}
+                                                                          label={<div>{item.name}</div>}
+                                                                          onChange={(e) => handleChangeColor(e.target.value)}/>
+                                                    ) : null}
+                                                </div>
+                                            </RadioGroup>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {headerField(10, "Chọn kích cỡ")}
+                                            <RadioGroup
+                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                defaultValue={product.sizeId}
+                                                value={product.sizeId}
+                                                name="radio-buttons-group"
+                                            >
+                                                <div className="ratio-list">
+                                                    {size && size.length ? size.map((item, index) =>
+                                                        <FormControlLabel value={item.id} control={<Radio/>}
+                                                                          label={item.name}
+                                                                          onChange={(e) => onChangeSize(e.target.value)}/>
+                                                    ) : null}
+                                                </div>
+                                            </RadioGroup>
+
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(11, "Nhập giá")}
+                                            <TextField
+                                                type="number"
+                                                label="Giá sản phẩm"
+                                                fullWidth={true}
+                                                value={product.priceRef}
+                                                onChange={(e) => handleChangePriceRef(e.target.value)}
+                                                name="numberformat"
+                                                id="outlined-multiline-flexible"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {headerField(12, "Nhập giá")}
+                                            <TextField
+                                                type="number"
+                                                label="Giảm giá"
+                                                fullWidth={true}
+                                                value={product.perDiscount}
+                                                onChange={(e) => handleChangePerDiscount(e.target.value)}
+                                                name="numberformat"
+                                                id="formatted-numberformat-input"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                        </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        {headerField(9, "Chọn Màu sắc")}
-                                        <RadioGroup
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue={product.colorId}
-                                            value={product.colorId}
-                                            name="radio-buttons-group"
-                                        >
-                                            <div className="ratio-list">
-                                                {color && color.length ? color.map((item, index) =>
-                                                    <FormControlLabel value={item.id} control={<Radio/>}
-                                                                      label={<div>{item.name}</div>}
-                                                                      onChange={(e) => handleChangeColor(e.target.value)}/>
-                                                ) : null}
-                                            </div>
-                                        </RadioGroup>
+                                        <div className="add-product-footer">
+                                            <button className="btn-cancel mr-2">Hủy bỏ</button>
+                                            <button className="btn-save pl-3" onClick={onSaveClick}>Lưu sản phẩm
+                                            </button>
+                                        </div>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        {headerField(10, "Chọn kích cỡ")}
-                                        <RadioGroup
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue={product.sizeId}
-                                            value={product.sizeId}
-                                            name="radio-buttons-group"
-                                        >
-                                            <div className="ratio-list">
-                                                {size && size.length ? size.map((item, index) =>
-                                                    <FormControlLabel value={item.id} control={<Radio/>}
-                                                                      label={item.name}
-                                                                      onChange={(e) => onChangeSize(e.target.value)}/>
-                                                ) : null}
-                                            </div>
-                                        </RadioGroup>
-
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(11, "Nhập giá")}
-                                        <TextField
-                                            type="number"
-                                            label="Giá sản phẩm"
-                                            fullWidth={true}
-                                            value={product.priceRef}
-                                            onChange={(e) => handleChangePriceRef(e.target.value)}
-                                            name="numberformat"
-                                            id="outlined-multiline-flexible"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {headerField(12, "Nhập giá")}
-                                        <TextField
-                                            type="number"
-                                            label="Giảm giá"
-                                            fullWidth={true}
-                                            value={product.perDiscount}
-                                            onChange={(e) => handleChangePerDiscount(e.target.value)}
-                                            name="numberformat"
-                                            id="formatted-numberformat-input"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <div className="add-product-footer">
-                                        <button className="btn-cancel mr-2">Hủy bỏ</button>
-                                        <button className="btn-save pl-3" onClick={onSaveClick}>Lưu sản phẩm</button>
-                                    </div>
-                                </Grid>
-                            </div>
-                        </Box>
+                                </div>
+                            </Box>
 
 
-                        {/*</div>*/}
+                            {/*</div>*/}
+                        </div>
                     </div>
-                </div>
-            </ThemeProvider>
-        </>
-    );
+                </ThemeProvider>
+            </>
+        );
+    }
 };
 export default AddProduct;

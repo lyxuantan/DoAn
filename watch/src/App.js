@@ -27,6 +27,8 @@ import ResetPass from "./Admin/ResetPass";
 import AccountInfo from "./Components/AccountInfo";
 import {Payment} from "@mui/icons-material";
 import PaymentOrder from "./Components/Payment";
+import {logoutService} from "./api/action/auth";
+import HomePageCollection from "./Components/HomeFilterCollections";
 
 
 function App() {
@@ -42,7 +44,7 @@ function App() {
     }, [dispatch]);
 
     const logOut = useCallback(() => {
-        dispatch(logout());
+        dispatch(logoutService());
     }, [dispatch]);
 
     useEffect(() => {
@@ -51,9 +53,10 @@ function App() {
             if(currentUser.roles.includes("ROLE_ADMIN")) {
                 navigator("/admin")
             }
-            if(currentUser.roles.includes("ROLE_USER")) {
+            else {
                 navigator("/")
             }
+
         } else {
             setShowAdminBoard(false);
         }
@@ -76,6 +79,8 @@ function App() {
 
                     <Route path='product' exact={true} name="Product" element={<HomePageMan/>}/>
                     <Route path='product/:id' exact={true} name="Product Detail" element={<HomePageMan/>}/>
+                    <Route path='collections/:id' exact={true} name="Product Detail" element={<HomePageCollection/>}/>
+
                     <Route path='product/best-seller/:id' name="Product Detail"
                            element={<HomePageMan isBestSeller={true}/>}/>
 

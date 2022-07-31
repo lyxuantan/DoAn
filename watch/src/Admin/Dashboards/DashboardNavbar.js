@@ -17,6 +17,7 @@ import {getAllCategory} from "../../api/category";
 import {addCategory} from "../../redux/categorySlice";
 import {logoutService} from "../../api/action/auth";
 import {Logout} from "@mui/icons-material";
+import {getUserDetails} from "../../api/user";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -36,6 +37,17 @@ export const DashboardNavbar = (props) => {
     const [showAccountInfor, setShowAccountInfor] = useState(false);
     const [listCategory, setListCategory] = useState([]);
     const {user: currentUser} = useSelector((state) => state.userSlice);
+    const [user, setUser] = useState(null);
+
+    // useEffect(() => {
+    //     getUserDetails().then(res => {
+    //         const {data} = res.data;
+    //         if(data) {
+    //             setUser(data);
+    //         }
+    //     })
+    // }, [currentUser])
+
     useEffect(() => {
         getAllCategory().then((res) => {
             if (res && res.data) {

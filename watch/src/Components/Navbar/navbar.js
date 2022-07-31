@@ -16,6 +16,8 @@ import EventBus from "../../common/EventBus";
 import {Avatar} from "@mui/material";
 import {deepOrange} from "@mui/material/colors";
 import {Logout} from "@mui/icons-material";
+import {logoutService} from "../../api/action/auth";
+import {getUserDetails} from "../../api/user";
 
 const nest = (items, id = 0, link = 'parentId') =>
     items
@@ -37,10 +39,21 @@ function Navbar() {
     const [showAccountInfor, setShowAccountInfor] = useState(false);
     const dispatch = useDispatch();
 
+    // const [user, setUser] = useState(null);
+    //
+    // useEffect(() => {
+    //     getUserDetails().then(res => {
+    //         const {data} = res.data;
+    //         if(data) {
+    //             setUser(data);
+    //         }
+    //     })
+    // }, [currentUser])
+    // console.log(52, user)
     const categoryStore = useSelector(state => state);
 
     const logOut = useCallback(() => {
-        dispatch(logout());
+        dispatch(logoutService());
         navigator("/login");
     }, [dispatch]);
 

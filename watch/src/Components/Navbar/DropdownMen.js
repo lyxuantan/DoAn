@@ -74,7 +74,7 @@ function DropDownMen({children}) {
                             <div className="choiceDropDownChild1">
 
                                 {categorySelected.collections.map((data) => (
-                                    <Link key={data.id} to={`product/${data.id}`} className="linkChoice">
+                                    <Link key={data.id} to={`/collections/${data.id}`} className="linkChoice">
                             <span
                                 style={{
                                     boxSizing: "border-box",

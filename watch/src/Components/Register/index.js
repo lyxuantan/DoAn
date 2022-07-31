@@ -16,6 +16,7 @@ import 'react-phone-input-2/lib/style.css';
 import './styles.scss';
 import {registerApi} from "../../api/auth";
 import {toast} from "react-toastify";
+import CustomError from "../../component-utility/custom-error";
 
 function Copyright(props) {
     return (
@@ -31,30 +32,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-const validate = (values) => {
-    const errors = {};
-    if (!values?.fullName) {
-        errors.fullName = "Không được để trống";
-    }
-    if (!values?.username) {
-        errors.username = "Không được để trông";
-    }
-    if (!values?.password) {
-        errors.password = "Không được để trông";
-    }
-    if (!values?.rePassword) {
-        errors.rePassword = "Không được để trông";
-    }
-    if (!values?.address) {
-        errors.address = "Không được để trông";
-    }
-    if (!values?.email) {
-        errors.email = "Không được để trông";
-    }
-    if (!values?.phoneNumber) {
-        errors.phoneNumber = "Không được để trông";
-    }
-}
+
 
 export default function SignUp() {
 
@@ -68,9 +46,13 @@ export default function SignUp() {
         phoneNumber: "",
         role: ["user"]
     });
+    const [isSaveClick, setIsSaveClick] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setIsSaveClick(true);
+        console.log(54, Object.keys(validate()))
+        if(Object.keys(validate()) && Object.keys(validate()).length) return;
         registerApi({
             ...user,
             fullName: user.fullName,
@@ -86,6 +68,7 @@ export default function SignUp() {
             if (data) {
                 if (res.status === 200) {
                     toast.success("Đăng ký thành công!");
+                    setIsSaveClick(false);
                     clearForm();
                 } else {
                     toast.error("Thất bại!")
@@ -106,6 +89,39 @@ export default function SignUp() {
             role: ["user"]
         })
     }
+
+    const validate = () => {
+        const errors = {};
+        if (!user?.fullName) {
+            errors.fullName = "Tên Không Được Để Trông";
+        }
+        if (!user?.username) {
+            errors.username = "Username Không Được Để Trống";
+        }
+        if (!user?.password) {
+            errors.password = "Password Không Được Để Trống";
+        }
+        if (!user?.rePassword?.trim()) {
+            errors.rePassword = "Mật Khẩu Xác Nhận Không Được Để Trống";
+
+        }
+        else {
+            if(user?.password != user?.rePassword) {
+                errors.rePassword = "Password Và Mật Khẩu Xác Nhận Phải Trùng Khớp";
+            }
+        }
+        if (!user?.address) {
+            errors.address = "Địa Chỉ Không Được Để Trống";
+        }
+        if (!user?.email) {
+            errors.email = "Email Không Được Để Trống";
+        }
+        if (!user?.phoneNumber) {
+            errors.phoneNumber = "Số Điện Thoại Không Được Để Trống";
+        }
+        return errors;
+    }
+
 
     function onChangeFullName(value) {
         const tmp = {...user};
@@ -143,6 +159,12 @@ export default function SignUp() {
         setUser(tmp);
     }
 
+    function onChangeRePassword(value) {
+        const tmp = {...user};
+        tmp.rePassword = value;
+        setUser(tmp);
+    }
+
     return (
         <>
             <Navbar/>
@@ -174,9 +196,11 @@ export default function SignUp() {
                                         fullWidth
                                         id="firstName"
                                         label="Họ và tên"
+                                        value={user.fullName}
                                         autoFocus
                                         onChange={(e) => onChangeFullName(e.target.value)}
                                     />
+                                    <CustomError message={validate(user)?.fullName} isSaveClick={isSaveClick}/>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -186,9 +210,11 @@ export default function SignUp() {
                                         label="Tài khoản"
                                         name="lastName"
                                         autoComplete="family-name"
+                                        value={user.username}
                                         onChange={(e) => onChangeUsername(e.target.value)}
 
                                     />
+                                    <CustomError message={validate(user)?.username} isSaveClick={isSaveClick}/>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -198,9 +224,11 @@ export default function SignUp() {
                                         label="Email"
                                         name="email"
                                         autoComplete="email"
+                                        value={user.email}
                                         onChange={(e) => onChangeEmail(e.target.value)}
 
                                     />
+                                    <CustomError message={validate(user)?.email} isSaveClick={isSaveClick}/>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -210,8 +238,11 @@ export default function SignUp() {
                                         label="Address"
                                         name="address"
                                         autoComplete="address"
+                                        value={user.address}
                                         onChange={(e) => onChangeAddress(e.target.value)}
                                     />
+                                    <CustomError message={validate(user)?.address} isSaveClick={isSaveClick}/>
+
                                 </Grid>
                                 <Grid item xs={12}>
                                     <PhoneInput
@@ -224,6 +255,7 @@ export default function SignUp() {
                                         //     borderColor: (props.touched && props.error) && "red"
                                         // }}
                                     />
+                                    <CustomError message={validate(user)?.phoneNumber} isSaveClick={isSaveClick}/>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -233,10 +265,12 @@ export default function SignUp() {
                                         label="Mật khẩu"
                                         type="password"
                                         id="password"
+                                        value={user.password}
                                         autoComplete="new-password"
                                         onChange={(e) => onChangePassword(e.target.value)}
 
                                     />
+                                    <CustomError message={validate(user)?.password} isSaveClick={isSaveClick}/>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -246,8 +280,11 @@ export default function SignUp() {
                                         label="Nhập lại mật khẩu"
                                         type="password"
                                         id="password"
+                                        value={user.rePassword}
+                                        onChange={(e) => onChangeRePassword(e.target.value)}
                                         autoComplete="confirm-password"
                                     />
+                                    <CustomError message={validate(user)?.rePassword} isSaveClick={isSaveClick}/>
                                 </Grid>
                             </Grid>
                             <Button

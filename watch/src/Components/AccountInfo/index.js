@@ -567,7 +567,7 @@ const AccountInfo = () => {
                                 marginRight: 1,
                                 p: 2
                             }}/>
-                            <b className="ml-2">{currentUser.username}</b>
+                            <b className="ml-2">{currentUser?.username}</b>
                         </div>
                     </div>
                     <div className="account-info-header-list">
@@ -576,7 +576,7 @@ const AccountInfo = () => {
                                 <li key={item.key} onClick={() => onSelectMenu(item)}
                                     className={`${navSelected?.key === item.key ? "active" : ""}`}>
                                     <span style={{marginRight: "8px"}}>{item.icon}</span><span
-                                    className="">{item.name}</span>
+                                    className="">{item?.name}</span>
                                 </li>)
                         }
 

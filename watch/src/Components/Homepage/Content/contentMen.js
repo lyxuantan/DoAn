@@ -10,7 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {Pagination, Stack} from "@mui/material";
 
 
-function ContentMen({categoryDetail, isBestSeller}) {
+function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId}) {
 
     const {id} = useParams();
 
@@ -32,33 +32,65 @@ function ContentMen({categoryDetail, isBestSeller}) {
     const [elementSize, setElementSize] = useState(8);
 
     useEffect(() => {
-        getProduct(
-            {
-                "id": 15,
-                "colors": filterProduct?.colors,
-                "size": filterProduct?.sizes,
-                "collections": filterProduct?.collections,
-                "priceFrom": filterProduct?.priceFrom,
-                "priceTo": filterProduct?.priceTo,
-                "categoryId": categoryDetail?.id,
-                "direction": filterProduct.direction,
-                "pageNo": pageNo,
-                "pageSize": elementSize,
-                "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
-                "isBestSell": false,
-                "parentCategoryId": categoryDetail?.parentId,
+        if(!isCollection) {
+            getProduct(
+                {
+                    "id": 15,
+                    "colors": filterProduct?.colors,
+                    "size": filterProduct?.sizes,
+                    "collections": filterProduct?.collections,
+                    "priceFrom": filterProduct?.priceFrom,
+                    "priceTo": filterProduct?.priceTo,
+                    "categoryId": categoryDetail?.id,
+                    "direction": filterProduct.direction,
+                    "pageNo": pageNo,
+                    "pageSize": elementSize,
+                    "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
+                    "isBestSell": false,
+                    "parentCategoryId": categoryDetail?.parentId,
 
-            })
-            .then(res => {
-                if (res && res.data) {
-                    const {data} = res.data;
-                    setData(data.content)
-                    setTotalElement(data?.totalElements || 0);
-                    setTotalPages(data?.totalPages || 0);
-                    setNumberOfElements(data?.numberOfElements || 0);
-                }
-            })
-            .catch(error => console.log(error));
+                })
+                .then(res => {
+                    if (res && res.data) {
+                        const {data} = res.data;
+                        setData(data.content)
+                        setTotalElement(data?.totalElements || 0);
+                        setTotalPages(data?.totalPages || 0);
+                        setNumberOfElements(data?.numberOfElements || 0);
+                    }
+                })
+                .catch(error => console.log(error));
+        }
+        else {
+            getProduct(
+                {
+                    "id": 15,
+                    "colors": filterProduct?.colors,
+                    "size": filterProduct?.sizes,
+                    "collections": filterProduct?.collections,
+                    "priceFrom": filterProduct?.priceFrom,
+                    "priceTo": filterProduct?.priceTo,
+                    "categoryId": categoryDetail?.id,
+                    "direction": filterProduct.direction,
+                    "pageNo": pageNo,
+                    "pageSize": elementSize,
+                    "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
+                    "isBestSell": false,
+                    "parentCategoryId": categoryDetail?.parentId,
+                    collectionId: collectionsId,
+                    isFindCollections: true
+                })
+                .then(res => {
+                    if (res && res.data) {
+                        const {data} = res.data;
+                        setData(data.content)
+                        setTotalElement(data?.totalElements || 0);
+                        setTotalPages(data?.totalPages || 0);
+                        setNumberOfElements(data?.numberOfElements || 0);
+                    }
+                })
+                .catch(error => console.log(error));
+        }
     }, [categoryDetail, isBestSeller, filterProduct, pageNo]);
 
     const onChangeCollection = (item) => {

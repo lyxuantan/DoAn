@@ -7,7 +7,7 @@ export const registerApi = (payload) => {
         url: AUTH.REGISTER,
         method: "post",
         data: payload,
-        headers: authHeader()
+        // headers: authHeader()
     })
 }
 
@@ -16,7 +16,7 @@ export const loginApi = (payload) => {
         url: AUTH.LOGIN,
         method: "post",
         data: payload,
-        headers: authHeader()
+        // headers: authHeader()
     })
 }
 

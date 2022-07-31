@@ -49,7 +49,6 @@ const PaymentOrder = () => {
         ).then(
             res => {
                 const {data} = res.data;
-                console.log(25, data)
                 if (data) {
                     setCustomerOrder(data)
                     const price = sumPrice(data.customerOrderDetails);
@@ -64,24 +63,6 @@ const PaymentOrder = () => {
         )
     }, [id])
 
-    // useEffect(() => {
-    //     getUserDetails().then(res => {
-    //         const {data} = res.data;
-    //         if(data) {
-    //
-    //         }
-    //     })
-    // }, [])
-
-    // const [user, setuser] = useState({
-    //     username: "a",
-    //     email: "b",
-    //     password: "c",
-    //     phoneNumber: "ed",
-    //     fullName: "e",
-    //     address: "e",
-    //     role: ["user"]
-    // })
 
     function onClosePayment() {
         setShowPayment(false)

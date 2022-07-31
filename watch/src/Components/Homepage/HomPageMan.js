@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getCategoryDetail} from "../../api/category";
 
-function HomePageMan ({isBestSeller}) {
+function HomePageMan ({isBestSeller, isCollection, collectionsId}) {
 
     const {id} = useParams();
 
@@ -26,8 +26,8 @@ function HomePageMan ({isBestSeller}) {
     return(
         <>  
             <Navbar />
-            <Header />
-            <ContentMen categoryDetail={categoryDetail} isBestSeller={isBestSeller}/>
+            {/*<Header />*/}
+            <ContentMen categoryDetail={categoryDetail} isBestSeller={isBestSeller} isCollection={isCollection} collectionsId={id}/>
             <Footer />
         </>
     )
