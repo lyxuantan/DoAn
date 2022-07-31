@@ -27,7 +27,6 @@ import static com.example.ecommer.security.jwt.JwtUtils.authentication;
 public class ProductController {
     static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
-
     @Autowired
     private ProductService productService;
 
@@ -47,11 +46,13 @@ public class ProductController {
     @PostMapping("/get")
     public ResponseEntity<ApiResponse> listProduct(@RequestBody FilterProductRequest filterProductRequest) {
         ApiResponse response;
-//        System.out.println("abc"+userDetails.getUsername());
-//        logger.info("Creating Token for user", username);
 
         try {
-            response = new ApiResponse(productService.findListProductPage(filterProductRequest));
+            if (filterProductRequest.getIsAdminPageProduct().equals(true)) {
+                response = new ApiResponse(productService.listProduct());
+            } else {
+                response = new ApiResponse(productService.findListProductPage(filterProductRequest));
+            }
         } catch (CustomException e) {
             response = new ApiResponse(e);
         } catch (Exception e) {
@@ -72,5 +73,6 @@ public class ProductController {
         }
         return ResponseEntity.ok(response);
     }
+
 
 }

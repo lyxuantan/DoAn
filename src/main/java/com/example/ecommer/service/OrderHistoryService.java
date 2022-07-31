@@ -12,7 +12,7 @@ public interface OrderHistoryService {
 
     OrderHistory update(OrderHistory orderHistory);
 
-    OrderHistory delete(OrderHistory orderHistory);
+    void delete(OrderHistory orderHistory);
 
 
 }

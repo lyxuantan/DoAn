@@ -15,41 +15,38 @@ import {
     TablePagination,
     TableRow,
     Typography,
-    Tooltip, Stack, Pagination
+    Tooltip, Stack, Pagination, TextField, InputAdornment, SvgIcon, Modal
 } from "@mui/material";
 import {customerOrderDetailsAll} from "../../api/admin";
 import {flattenDeep} from "lodash";
-import {thousandsSeparators} from "../../common/fCommon";
+import {findText, thousandsSeparators} from "../../common/fCommon";
 import moment from "moment";
+import {deleteOrderHistory, getOrderHistory, updateStatusOrder} from "../../api/order-hitory";
+import {Search as SearchIcon} from "../icons/search";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import {UploadFile} from "@mui/icons-material";
+import {deleteProduct} from "../../api/customer-order";
+import {toast} from "react-toastify";
 
-export const OrderListResults = ({...rest}) => {
+export const OrderListResults = () => {
     const [pageNo, setPageNo] = useState(1);
     const [limit, setLimit] = useState(5);
     const [listOrderDetail, setListOrderDetail] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [keyword, setKeyword] = useState("");
+
 
     useEffect(() => {
         fetchCustomerOrder();
     }, []);
 
     const fetchCustomerOrder = () => {
-        customerOrderDetailsAll().then(
-            res => {
-                const {data} = res.data;
-                if (data && data.length) {
-                    const listOrderFlatten = data && data.length
-                        ? flattenDeep(data.map((item) => item.customerOrderDetails.map(detail => ({
-                            ...detail,
-                            orderId: item
-                        })))).map((i) => ({
-                            ...i,
-                        }))
-                        : [];
-                    setListOrderDetail(listOrderFlatten);
-                    setTotalPages(Math.ceil(listOrderFlatten && listOrderFlatten?.length / limit));
-                }
+        getOrderHistory().then(res => {
+            const {data} = res.data;
+            if (data && data.length) {
+                setListOrderDetail(data);
             }
-        ).catch()
+        })
 
     }
 
@@ -57,90 +54,205 @@ export const OrderListResults = ({...rest}) => {
         setPageNo(value);
     }
 
-    // const changStatus = (id, title, brand, image, price, saleOff, status) => {
-    //     axios.put(`http://localhost:3004/products` + `/` + id, {
-    //         title: title,
-    //         brand: brand,
-    //         image: image,
-    //         price: price,
-    //         saleOff: saleOff,
-    //         status: !status
-    //     })
-    //         .then(() => {
-    //             fetchProduct()
-    //             // console.log(status);
-    //         })
-    // };
+    function onChangeStatus(order) {
+        updateStatusOrder({
+            id: order.id,
+            status: !order.status
+        }).then(res => {
+            const {data} = res;
+            if (data.errorCode == "200") {
+                fetchCustomerOrder()
+            }
+        })
+    }
+
+    function onChangeSearch(value) {
+        setKeyword(value)
+    }
+
+
+    const [orderDeleteSelected, setOrderDeleteSelected] = useState("")
+
+    function onDeleteProduct(customer) {
+        setOrderDeleteSelected(customer.id);
+    }
+
+    const handleCloseDelete = () => {
+        setOrderDeleteSelected(null);
+
+    }
+
+    function onDelete() {
+        deleteOrderHistory(
+            {
+                id: orderDeleteSelected,
+            }
+        ).then(
+            res => {
+                const {data} = res;
+                console.log(145, data)
+                if(data.errorCode == "200") {
+                    toast.success("Xóa Thành Công")
+                    handleCloseDelete();
+                }
+                else {
+                    toast.error("Xóa Thất Bại")
+                }
+            }
+        )
+        fetchCustomerOrder();
+    }
 
     return (
-        <Card {...rest}>
-            <PerfectScrollbar>
-                <Box sx={{minWidth: "100%"}}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Mã đặt hàng</span>
-                                </TableCell>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Mã đơn hàng</span>
-                                </TableCell>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Tên Sản Phẩm</span>
-                                </TableCell>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Số Lượng</span>
-                                </TableCell>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Thành Tiền</span>
-                                </TableCell>
-                                <TableCell sx={{textAlign: "left"}}>
-                                    <span className="header-text">Thời gian</span>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {listOrderDetail && listOrderDetail.length ? listOrderDetail.slice(
-                                (pageNo - 1) * limit,
-                                (pageNo - 1) * limit + limit
-                            ).map((order) => (
-                                <TableRow hover key={order.id}>
+        <>
+            <div style={{paddingBottom: "16px"}}>
+            <TextField
+                label={"Tên Khách Hàng"}
+                size="small"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SvgIcon
+                                fontSize="small"
+                                color="action"
+                            >
+                                <SearchIcon />
+                            </SvgIcon>
+                        </InputAdornment>
+                    )
+                }}
+                placeholder="Tên Khách Hàng"
+                value={keyword}
+                onChange={(e) => onChangeSearch(e.target.value)}
+                // variant="outlined"
+            />
+            </div>
+            <Card>
+
+                <PerfectScrollbar>
+
+                    <Box sx={{minWidth: "100%"}}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
                                     <TableCell>
-                                        <Box
-                                            sx={{
-                                                alignItems: "center",
-                                                display: "flex",
-                                            }}
-                                        >
-                                            <Typography color="textPrimary" variant="body1">
-                                                {order?.orderId?.id}
-                                            </Typography>
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell>{order?.id}</TableCell>
-                                    <TableCell>{order?.product?.name}</TableCell>
-                                    <TableCell>
-                                        {thousandsSeparators(order?.quantity)}
+                                        Mã đơn hàng
                                     </TableCell>
                                     <TableCell>
-                                        {thousandsSeparators(order?.price)} VNĐ
+                                        Tên khách hàng
                                     </TableCell>
                                     <TableCell>
-                                        {moment(order?.updateTime).format("DD/MM/YYYY")}
+                                        Trạng thái
+                                    </TableCell>
+                                    <TableCell sortDirection="desc">
+                                        {/*<Tooltip*/}
+                                        {/*    enterDelay={300}*/}
+                                        {/*    title="Sort"*/}
+                                        {/*>*/}
+                                        {/*    <TableSortLabel*/}
+                                        {/*        active*/}
+                                        {/*        direction="desc"*/}
+                                        {/*    >*/}
+                                        Giá trị
+                                        {/*</TableSortLabel>*/}
+                                        {/*</Tooltip>*/}
+                                    </TableCell>
+                                    <TableCell>
+                                        Ngày ghi nhận
+                                    </TableCell>
+                                    <TableCell>
+                                        Cập nhật cuối
+                                    </TableCell>
+                                    <TableCell>
+                                        TUỲ CHỌN
                                     </TableCell>
                                 </TableRow>
-                            )) : null}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {listOrderDetail && listOrderDetail.length ? listOrderDetail.filter(item => keyword ? (findText(item?.customerOrder?.user?.fullName, keyword)) : item).slice(
+                                    (pageNo - 1) * limit,
+                                    (pageNo - 1) * limit + limit
+                                ).map((order) => (
+                                    <TableRow
+                                        hover
+                                        key={order?.id}
+                                    >
+                                        <TableCell>
+                                            {order?.id}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order?.customerOrder?.user?.fullName}
+                                        </TableCell>
+                                        <TableCell>
+                                            <SeverityPill
+                                                style={{cursor: "pointer"}}
+                                                color={order?.status ? "success" : "error"}
+                                                // color={(order?.status === 'delivered' && 'success')
+                                                //     || (order?.status === 'refunded' && 'error')
+                                                //     || 'warning'}
+                                                onClick={() => onChangeStatus(order)}
+                                            >
+                                                {order?.status ? "Đã giao" : "Đang giao"}
+                                            </SeverityPill>
+                                        </TableCell>
+                                        <TableCell>
+                                            {thousandsSeparators(order?.customerOrder?.price)} VNĐ
+                                        </TableCell>
+                                        <TableCell>
+                                            {moment(order?.createTime).format("DD/MM/YYYY")}
+                                        </TableCell>
+                                        <TableCell>
+                                            {moment(order?.updateTime).format("DD/MM/YYYY")}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="product-action">
+                                                <div>
+                                                    <Tooltip title="Xoá">
+                                                        <Button variant="contained" color="error" onClick={() => onDeleteProduct(order)}>
+                                                            <DeleteIcon/>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : null}
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </PerfectScrollbar>
+                <div className="pagination-footer">
+                    <Stack spacing={2}>
+                        <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
+                                    onChange={handleChange}/>
+                    </Stack>
+                </div>
+            </Card>
+            <Modal
+                open={!!orderDeleteSelected}
+                onClose={handleCloseDelete}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box>
+                    <div className="popover-wrapper">
+                        <div className="popover">
+                            <div className="popover-header">
+                                Xác Nhận Xóa Đơn Hàng
+                            </div>
+                            <div className="popover-body">
+                                <Button color="primary" variant="contained" onClick={onDelete}>
+                                    Xác Nhận
+                                </Button>
+                                <Button color="secondary" variant="contained" onClick={handleCloseDelete}>
+                                    Hủy
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </Box>
-            </PerfectScrollbar>
-            <div className="pagination-footer">
-                <Stack spacing={2}>
-                    <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
-                                onChange={handleChange}/>
-                </Stack>
-            </div>
-        </Card>
+            </Modal>
+        </>
     );
 };
 

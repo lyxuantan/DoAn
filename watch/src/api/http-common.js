@@ -3,6 +3,16 @@ import { BASE_URL } from "./config";
 import EventBus from "../common/EventBus";
 
 const user = JSON.parse(localStorage.getItem("user"));
+export  function authHeader() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (user && user.token) {
+    return { Authorization: "Bearer " + user.accessToken };
+  } else {
+    return {};
+  }
+}
+
 
 const HTTP = axios.create({
     baseURL: `${BASE_URL}`,

@@ -13,16 +13,18 @@ import {
     TablePagination,
     TableRow,
     Typography,
-    Tooltip, Stack, Pagination
+    Tooltip, Stack, Pagination, Modal
 } from "@mui/material";
 import {deleteUser, getUserPage} from "../../api/user";
 import {toast} from "react-toastify";
+
 
 export const AccountListResults = ({keyword}) => {
     const [data, setData] = useState([]);
     const [limit, setLimit] = useState(10);
     const [pageNo, setPageNo] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [deleteAccountSelected, setDeleteAccountSelected] = useState("");
 
     useEffect(() => {
         fetUserId();
@@ -49,15 +51,26 @@ export const AccountListResults = ({keyword}) => {
     }
 
     function onDeleteUser(customer) {
+        setDeleteAccountSelected(customer.id);
+    }
+
+    const handleCloseDelete = () => {
+        setDeleteAccountSelected(null);
+
+    }
+
+    const onDelete = () => {
         deleteUser(
             {
-                userId: customer?.id,
+                userId: deleteAccountSelected,
             }
         ).then(
             res => {
                 const {data} = res;
                 if (data.errorCode == "200") {
                     toast.success("Xóa Thành Công")
+                    fetUserId();
+                    handleCloseDelete();
                 } else {
                     toast.error("Xóa Thất Bại")
                 }
@@ -65,67 +78,101 @@ export const AccountListResults = ({keyword}) => {
         )
     }
 
+    let handleClose;
     return (
-        <Card>
-            <PerfectScrollbar>
-                <Box sx={{minWidth: "100%"}}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell padding="checkbox"></TableCell>
-                                <TableCell>ID</TableCell>
-                                <TableCell>Tài Khoản</TableCell>
-                                <TableCell>Tên</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Phân Quyền</TableCell>
-                                <TableCell>Tuỳ Chọn</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data && data.length ? data.map((customer) => (
-                                <TableRow hover key={customer.id}>
+        <>
+            <Card>
+                <PerfectScrollbar>
+                    <Box sx={{minWidth: "100%"}}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
                                     <TableCell padding="checkbox"></TableCell>
-                                    <TableCell>
-                                        <Box
-                                            sx={{
-                                                alignItems: "center",
-                                                display: "flex",
-                                            }}
-                                        >
-                                            <Typography color="textPrimary" variant="body1">
-                                                {customer.id}
-                                            </Typography>
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell>{customer.username}</TableCell>
-                                    <TableCell>{customer.fullName}</TableCell>
-                                    <TableCell>{customer.email}</TableCell>
-                                    <TableCell>user</TableCell>
-                                    <TableCell>
-                                        <div>
-                                            <Tooltip title="Xoá">
-                                                <Button variant="contained" color="error">
-                                                    <DeleteIcon onClick={() => onDeleteUser(customer)}/>
-                                                </Button>
-                                            </Tooltip>
-                                        </div>
-                                    </TableCell>
+                                    <TableCell>ID</TableCell>
+                                    <TableCell>Tài Khoản</TableCell>
+                                    <TableCell>Tên</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Số Điện Thoại</TableCell>
+                                    <TableCell>Địa Chỉ</TableCell>
+                                    <TableCell>Phân Quyền</TableCell>
+                                    <TableCell>Tuỳ Chọn</TableCell>
                                 </TableRow>
-                            )) : null}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {data && data.length ? data.map((customer) => (
+                                    <TableRow hover key={customer.id}>
+                                        <TableCell padding="checkbox"></TableCell>
+                                        <TableCell>
+                                            <Box
+                                                sx={{
+                                                    alignItems: "center",
+                                                    display: "flex",
+                                                }}
+                                            >
+                                                <Typography color="textPrimary" variant="body1">
+                                                    {customer.id}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>{customer.username}</TableCell>
+                                        <TableCell>{customer.fullName}</TableCell>
+                                        <TableCell>{customer.email}</TableCell>
+                                        <TableCell>{customer.phoneNumber}</TableCell>
+                                        <TableCell>{customer.address}</TableCell>
+                                        <TableCell>
+                                            <div>
+                                                {customer.roles && customer.roles.length ? customer.roles.map(item => (
+                                                    <div>{item.type}</div>
+                                                )) : null}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div>
+                                                <Tooltip title="Xoá">
+                                                    <Button variant="contained" color="error" onClick={() => onDeleteUser(customer)}>
+                                                        <DeleteIcon />
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : null}
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </PerfectScrollbar>
+                <div className="pagination-footer">
+                    <Stack spacing={2}>
+                        <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
+                                    onChange={handleChange}/>
+                    </Stack>
+                </div>
+            </Card>
+            <Modal
+                open={!!deleteAccountSelected}
+                onClose={handleCloseDelete}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box>
+                    <div className="popover-wrapper">
+                    <div className="popover">
+                        <div className="popover-header">
+                            Xác Nhận Xóa Khách Hàng
+                        </div>
+                        <div className="popover-body">
+                            <Button color="primary" variant="contained" onClick={onDelete}>
+                                Xác Nhận
+                            </Button>
+                            <Button color="secondary" variant="contained" onClick={handleCloseDelete}>
+                                Hủy
+                            </Button>
+                        </div>
+                    </div>
+                    </div>
                 </Box>
-            </PerfectScrollbar>
-            <div className="pagination-footer">
-                <Stack spacing={2}>
-                    <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"
-                                onChange={handleChange}/>
-                </Stack>
-            </div>
-        </Card>
+            </Modal>
+        </>
     );
 };
 
-// AccountListResults.propTypes = {
-//     customers: PropTypes.array.isRequired,
-// };

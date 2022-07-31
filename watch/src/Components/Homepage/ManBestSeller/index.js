@@ -27,8 +27,6 @@ function ManBestSeller({category, user}) {
                 }
             }
         )
-
-
     }, [category])
 
 

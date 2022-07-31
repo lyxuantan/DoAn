@@ -48,11 +48,9 @@ export const DashboardSidebar = (props) => {
             key: "ACCOUNT",
             href: '/admin/account',
             icon: (<UserIcon fontSize="small"/>),
-            title: 'Tài Khoản',
+            title: 'Khách Hàng',
         }
     ];
-
-    console.log(54, slideBarSelected)
 
     useEffect(() => {
         if (!slideBarSelected.key) {
@@ -61,7 +59,6 @@ export const DashboardSidebar = (props) => {
     }, [])
 
     function onChangeMenu(item) {
-        console.log(item)
         dispatch(setSlideBarSelected(item.key));
         navigator(`${item.href}`);
     }

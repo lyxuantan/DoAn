@@ -22,7 +22,7 @@ public class CustomerOrder extends Base{
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderId", cascade = CascadeType.ALL)
     private List<CustomerOrderDetail> customerOrderDetails = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "customer_id")
 //    @JsonIgnore
     private User user;

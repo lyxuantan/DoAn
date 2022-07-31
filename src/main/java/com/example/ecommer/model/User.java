@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,7 @@ public class User extends Base{
     private String email;
 
     @Column(name = "address")
+
     private String address;
 
     @Column(name = "phone_number")
@@ -41,6 +43,10 @@ public class User extends Base{
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE })
+    @JsonIgnore
+    private List<CustomerOrder> customerOrder;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",

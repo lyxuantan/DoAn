@@ -18,12 +18,22 @@ import {useEffect, useState} from "react";
 import {deleteCustomerOrderDetail, getCustomerOrder, updateCustomerOrder} from "../../api/customer-order";
 import {getCart} from "../../redux/cartSlice";
 import {thousandsSeparators} from "../../common/fCommon";
+import {useNavigate} from "react-router-dom";
+
+const totalPrice = (listOrderDetails) => {
+    let total = 0;
+    listOrderDetails && listOrderDetails.length && listOrderDetails.forEach(item => {
+        total += item.price;
+    })
+    return total;
+}
 
 export default function Cart({currentUser}) {
     const [state, setState] = React.useState({
         right: false,
     });
     const [customerOrder, setCustomerOrder] = useState([]);
+    const navigator = useNavigate();
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -115,6 +125,11 @@ export default function Cart({currentUser}) {
     }
 
     console.log(112, customerOrder)
+
+    function onPayNow() {
+        navigator(`/payment/${cartStore.id}`)
+    }
+
     const list = (anchor) => (
         <div className="cart">
 
@@ -162,12 +177,13 @@ export default function Cart({currentUser}) {
                                 color: "red",
                                 fontWeight: "bold",
                                 fontSize: "1.15rem",
-                            }}>{thousandsSeparators(customerOrder?.total || 0)} VNĐ</span>
+                            }}>{thousandsSeparators(totalPrice(customerOrder.customerOrderDetails))} VNĐ</span>
 
                             </div>
                             <button
                                 className="pay-now"
                                 // type="submit"
+                                onClick={onPayNow}
 
                             >
                                 THANH TOÁN NGAY

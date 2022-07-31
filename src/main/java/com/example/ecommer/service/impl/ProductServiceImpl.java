@@ -72,57 +72,61 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> findListProductPage(FilterProductRequest filterProductRequest) {
-
-
         PageRequest pageable = PageRequest.of(Math.toIntExact(filterProductRequest.getPageNo() - 1), Math.toIntExact(filterProductRequest.getPageSize()), filterProductRequest.getDirection().equals("DESC") ? Sort.by(filterProductRequest.getOrderBy()).descending() : Sort.by(filterProductRequest.getOrderBy()).ascending());
-        if (filterProductRequest.getIsBestSell().equals(false)) {
-            if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getPriceFrom() != null || filterProductRequest.getPriceTo() != null) {
-                logger.info("Creating Token for user : {}", filterProductRequest);
-                return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(),pageable);
-            } else {
-                logger.info("69 : {}", filterProductRequest);
-                return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
-            }
+        if (filterProductRequest.getIsAdminPageProduct().equals(true)) {
+            return productRepository.findAllByKeyword(filterProductRequest.getKeyword(), pageable);
         } else {
+            if (filterProductRequest.getIsBestSell().equals(false)) {
+                if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getPriceFrom() != null || filterProductRequest.getPriceTo() != null) {
+                    logger.info("Creating Token for user : {}", filterProductRequest);
+                    return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
+                } else {
+                    logger.info("69 : {}", filterProductRequest);
+                    return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
+                }
+            } else {
 //            logger.info("72 ", JwtUtils.authentication.getName());
-            if(filterProductRequest.getParentCategoryId() != null &&  !filterProductRequest.getKeyword().trim().isEmpty()) {
-                Set<Long> listCategoryId = new HashSet<>();
-                List<Category> categoryList = categoryRepository.findByParentId(filterProductRequest.getParentCategoryId());
-                categoryList.forEach(a -> {
-                            listCategoryId.add(filterProductRequest.getParentCategoryId());
-                            listCategoryId.add(a.getId());
+                if (filterProductRequest.getParentCategoryId() != null) {
+                    Set<Long> listCategoryId = new HashSet<>();
+                    List<Category> categoryList = categoryRepository.findByParentId(filterProductRequest.getParentCategoryId());
+                    categoryList.forEach(a -> {
+                                listCategoryId.add(filterProductRequest.getParentCategoryId());
+                                listCategoryId.add(a.getId());
 
-                        }
-                );
-                logger.info("categoryList : {}", categoryList);
+                            }
+                    );
+                    logger.info("categoryList : {}", categoryList);
 
-                return productRepository.findAllByCategory(listCategoryId, filterProductRequest.getKeyword(), pageable);
-            }
-            else {
-                logger.info("findAllByKeyword : {}");
-                return productRepository.findAllByKeyword(pageable, filterProductRequest.getKeyword());
+                    return productRepository.findAllByCategory(listCategoryId, filterProductRequest.getKeyword(), pageable);
+                }
+//            else {
+//                logger.info("findAllByKeyword : {}");
+//                return productRepository.findAllByKeyword(pageable, filterProductRequest.getKeyword());
+//            }
             }
         }
+
+        return null;
     }
 
     @Override
     public void saveProduct(Product productRequest) {
         Product product = new Product();
         Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
-        if(productRequest.getColorId() != null) {
+        if (productRequest.getColorId() != null) {
             Optional<Color> color = colorRepository.findById(productRequest.getColorId());
             if (color.isPresent()) {
                 product.setColors(color.get());
             }
         }
-        if(product.getSizeId() != null) {
+        if (product.getSizeId() != null) {
             Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
             if (sizes.isPresent()) {
                 product.setSize(sizes.get());
             }
         }
 
-        if(product.getCollections() != null) {
+        if (product.getCollections() != null) {
             Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
             if (collections.isPresent()) {
                 product.setCollections(collections.get());
@@ -153,20 +157,20 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productRequest.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         if (product != null) {
-            if(productRequest.getColorId() != null) {
+            if (productRequest.getColorId() != null) {
                 Optional<Color> color = colorRepository.findById(productRequest.getColorId());
                 if (color.isPresent()) {
                     product.setColors(color.get());
                 }
             }
-            if(productRequest.getSizeId() != null) {
+            if (productRequest.getSizeId() != null) {
                 Optional<Sizes> sizes = sizesRepository.findById(productRequest.getSizeId());
                 if (sizes.isPresent()) {
                     product.setSize(sizes.get());
                 }
             }
 
-            if(productRequest.getCollections() != null) {
+            if (productRequest.getCollections() != null) {
                 Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
                 if (collections.isPresent()) {
                     product.setCollections(collections.get());

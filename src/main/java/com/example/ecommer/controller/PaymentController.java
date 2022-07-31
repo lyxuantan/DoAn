@@ -26,7 +26,7 @@ public class PaymentController {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
 
-        Long amount = paymentDTO.getAmount() * 100;
+        Float amount = paymentDTO.getAmount() * 100;
         Map vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", PaymentConfig.VERSION);
         vnp_Params.put("vnp_Command", PaymentConfig.COMMAND);

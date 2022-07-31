@@ -3,6 +3,7 @@ package com.example.ecommer.controller;
 import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.ApiResponse;
 import com.example.ecommer.dto.request.AddToCartRequest;
+import com.example.ecommer.dto.request.PaymentDTO;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.CustomerOrder;
 import com.example.ecommer.model.OrderHistory;
@@ -37,7 +38,7 @@ public class CustomerOrderController {
     OrderHistoryRepository orderHistoryRepository;
 
     @GetMapping("/find-order-active-by-user")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> listOrderActiveByUser(@RequestParam(value = "userId", required = false) Long userId,
                                                              @RequestParam(value = "isPaid", required = false) Boolean isPaid) {
         ApiResponse response;
@@ -51,8 +52,22 @@ public class CustomerOrderController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/get-details")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> getDetails(@RequestParam(name = "order_id") Long orderId) {
+        ApiResponse response;
+        try {
+            response = new ApiResponse(customerOrderService.findById(orderId));
+        } catch (CustomException e) {
+            response = new ApiResponse(e);
+        } catch (Exception e) {
+            response = new ApiResponse(ErrorCode.API_FAIL_UNKNOW);
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/add")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> addOrder(@RequestBody AddToCartRequest addToCartRequest) {
         ApiResponse response;
         try {
@@ -65,7 +80,7 @@ public class CustomerOrderController {
     }
 
     @PostMapping("/update")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody AddToCartRequest addToCartRequest) {
         ApiResponse response;
         try {
@@ -78,7 +93,7 @@ public class CustomerOrderController {
     }
 
     @GetMapping("/delete-detail")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteOrderDetail(@RequestParam(name = "id") Long id) {
         ApiResponse response;
         try {
@@ -91,10 +106,10 @@ public class CustomerOrderController {
     }
 
     @GetMapping("/find-by-user")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> findByUser(@RequestParam(name = "userId") Long userId, @RequestParam(name = "isPaid", defaultValue = "true") Boolean isPaid,
                                                   @RequestParam(name = "pageNo") Integer pageNo,
-                                                  @RequestParam(name = "pageSize") Integer pageSize){
+                                                  @RequestParam(name = "pageSize") Integer pageSize) {
         ApiResponse response;
         try {
             response = new ApiResponse(customerOrderService.findByUserAndStatus(userId, isPaid));
@@ -105,22 +120,11 @@ public class CustomerOrderController {
     }
 
 
-    @GetMapping("/payment")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> findByUser(@RequestBody OrderHistory orderHistory){
+    @PostMapping("/payment")
+    public ResponseEntity<ApiResponse> paymentCustomerOrder(@RequestBody PaymentDTO customerOrder) {
         ApiResponse response;
         try {
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<CustomerOrder> findCustomer = customerOrderRepository.findById(orderHistory.getCustomerOrderId());
-
-            OrderHistory o = new OrderHistory();
-            o.setDate(orderHistory.getDate());
-            if(findCustomer.isPresent()) {
-                o.setCustomerOrder(findCustomer.get());
-
-            }
-            orderHistoryRepository.save(o);
-            customerOrderRepository.updatePayment(userDetails.getUsername());
+            customerOrderService.paymentCustomerOrder(customerOrder);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {
             response = new ApiResponse(e);

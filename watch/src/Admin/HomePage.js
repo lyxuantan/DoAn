@@ -15,23 +15,32 @@ import {getAllProduct} from "../api/product";
 const HomePage = () => {
     const [listOrderHistory, setListOrderHistory] = useState([]);
     const [listAllProduct, setListAllProduct] = useState([]);
-    useEffect(() => {
+
+    const fetchOrderHistory = () => {
         getOrderHistory().then(res => {
             const {data} = res.data;
-            if(data && data.length) {
+            if (data && data.length) {
                 setListOrderHistory(data);
             }
         })
+    }
+
+    useEffect(() => {
+        fetchOrderHistory();
     }, [])
 
     useEffect(() => {
         getAllProduct().then(res => {
             const {data} = res.data;
-            if(data && data.length) {
+            if (data && data.length) {
                 setListAllProduct(data);
             }
         })
     }, [])
+
+    function onFetchOrderHistory() {
+        fetchOrderHistory();
+    }
 
     return (<>
             <Box
@@ -96,7 +105,15 @@ const HomePage = () => {
                             md={12}
                             xs={12}
                         >
-                            <LatestOrders listOrderHistory={listOrderHistory}/>
+                            <Chart listOrderHistory={listOrderHistory} listAllProduct={listAllProduct}/>
+                        </Grid>
+                        <Grid
+                            item
+                            md={12}
+                            xs={12}
+                        >
+                            <LatestOrders listOrderHistory={listOrderHistory}
+                                          onFetchOrderHistory={onFetchOrderHistory}/>
                         </Grid>
                     </Grid>
                 </Container>

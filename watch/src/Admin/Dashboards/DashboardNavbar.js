@@ -1,3 +1,4 @@
+import React, {useEffect} from "react";
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { AppBar, Avatar, Badge, Box, IconButton, Toolbar, Tooltip } from '@mui/material';
@@ -13,16 +14,37 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {logout} from "../../redux/userSlice";
 import './styles.scss'
+import {getAllCategory} from "../../api/category";
+import {addCategory} from "../../redux/categorySlice";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3]
 }));
 
+const nest = (items, id = 0, link = 'parentId') =>
+    items
+        .filter(item => item[link] === id)
+        .map(item => ({
+            ...item,
+            children: nest(items, item.id)
+        }));
+
 export const DashboardNavbar = (props) => {
   const { onSidebarOpen, ...other } = props;
     const [showAccountInfor, setShowAccountInfor] = useState(false);
+    const [listCategory, setListCategory] = useState([]);
     const {user: currentUser} = useSelector((state) => state.userSlice);
+    useEffect(() => {
+        getAllCategory().then((res) => {
+            if (res && res.data) {
+                const {data} = res.data;
+                const list = nest(data);
+                setListCategory(list)
+                dispatch(addCategory(list))
+            }
+        });
+    }, []);
     const navigator = useNavigate();
     const dispatch = useDispatch();
 

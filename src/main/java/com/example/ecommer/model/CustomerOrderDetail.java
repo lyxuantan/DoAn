@@ -18,10 +18,10 @@ import javax.persistence.*;
 @Getter
 public class CustomerOrderDetail extends Base {
 
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @Column(name = "order_id")
-//    @JsonIgnore
-    private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable=false)
+    @JsonIgnore
+    private CustomerOrder orderId;
 
     @Column(name = "price")
     private Float price = 0.0f;

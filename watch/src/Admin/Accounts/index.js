@@ -24,7 +24,7 @@ const Accounts = () => {
             </div>
             <DashboardSidebar/>
             <div className="wrapper-AdminHome body-container">
-                <DashboardTitle title="Tài Khoản Người Dùng"/>
+                <DashboardTitle title="Khách Hàng"/>
 
                 <Box
                     component="main"
@@ -34,7 +34,7 @@ const Accounts = () => {
                 >
                     <Container maxWidth={false}>
                         <TextField
-                            label={"Tìm Kiếm Tài Khoản"}
+                            label={"Tìm Kiếm Khách Hàng"}
                             size="small"
                             InputProps={{
                                 startAdornment: (
@@ -48,7 +48,7 @@ const Accounts = () => {
                                     </InputAdornment>
                                 )
                             }}
-                            placeholder="Tìm Kiếm Tài Khoản"
+                            placeholder="Tìm Kiếm Khách Hàng"
                             value={keyword}
                             onChange={(e) => onChangeSearch(e.target.value)}
                             // variant="outlined"
@@ -60,7 +60,8 @@ const Accounts = () => {
                 </Box>
             </div>
         </ThemeProvider>
-    </>)
+    </>
+    )
         ;
 }
 Accounts.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;

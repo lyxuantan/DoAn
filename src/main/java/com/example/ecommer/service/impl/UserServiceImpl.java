@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+//    @Autowired
     PasswordEncoder encoder;
 
     @Override
@@ -43,7 +43,11 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-
+    public User findUserLogin() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userExist = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        return userExist;
+    }
 
     public void updateUser(SignupRequest user) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

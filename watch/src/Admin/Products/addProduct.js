@@ -26,6 +26,7 @@ import {useSelector} from "react-redux";
 import {getAllCategory} from "../../api/category";
 import DashboardTitle from "../../Components/DashboardTitle";
 import {CardBackButton} from "../../component-utility/icons-component";
+import CustomError from "../../component-utility/custom-error";
 
 
 function AddProduct(props) {
@@ -36,6 +37,7 @@ function AddProduct(props) {
 
     const [collections, setCollections] = useState([]);
     const [listCategory, setListCategory] = useState([]);
+    const [isSaveClick, setIsSaveClick] = useState(false);
     const [size, setSize] = useState([]);
     const [color, setColor] = useState([]);
     const [product, setProduct] = useState({
@@ -76,7 +78,7 @@ function AddProduct(props) {
                 tmp.colorId = data?.colors?.id;
                 tmp.materialId = data.materialId;
                 tmp.total = data.total;
-                tmp.sizeId = data.size.id;
+                tmp.sizeId = data?.size?.id;
                 tmp.collectionId = data?.collections?.id;
                 tmp.glassSurface = data.glassSurface;
                 tmp.thinkness = data.thinkness;
@@ -85,7 +87,22 @@ function AddProduct(props) {
         })
     }, [id])
 
-    console.log(product)
+    const validate = (val) => {
+        const errors = {};
+        if (!product?.name) {
+            errors.name = "Tên Sản Phẩm Không Được Để Trống";
+        }
+        if (!product?.categoryId) {
+            errors.categoryId = "Tên Sản Phẩm Không Được Để Trống";
+        }
+        if (!product?.priceRef) {
+            errors.priceRef = "Giá Sản Phẩm Không Được Để Trống";
+        }
+        if (!product?.collectionId) {
+            errors.collectionId = "Bộ Sưu Tập Không Được Để Trống";
+        }
+        return errors;
+    }
 
     //
     useEffect(() => {
@@ -196,9 +213,11 @@ function AddProduct(props) {
     }
 
     async function onSaveClick() {
+        setIsSaveClick(true)
         if (product.name && product.collectionId) {
             const payload = {
-                ...product
+                ...product,
+                perDiscount: product.perDiscount || 0
             }
             const saveRes = id ? await updateProduct(payload) : await saveProduct(payload);
             if (saveRes.data.errorCode == "200") {
@@ -219,6 +238,7 @@ function AddProduct(props) {
         setProduct(tmp);
 
     };
+
 
     return (
         <>
@@ -248,24 +268,8 @@ function AddProduct(props) {
                                     }
                                 </div>
                                 <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                                    <Grid item xs={12}>
-                                        {headerField(1, "Chọn danh mục")}
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Chọn danh mục</InputLabel>
-                                            <Select
-                                                id="outlined-multiline-flexible"
-                                                value={listCategory.find(item => item.id === product.categoryId)?.name}
-                                                label="Chọn danh mục"
-                                                onChange={(e) => handleChangeCategory(e.target.value)}
-                                            >
-                                                {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
-                                                    <MenuItem value={item.id}>{item.name}</MenuItem>
-                                                ) : null}
-                                            </Select>
-                                        </FormControl>
-                                    </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(2, "Nhập tên sản phẩm")}
+                                        {headerField(1, "Nhập tên sản phẩm")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập tên sản phẩm"
@@ -276,7 +280,7 @@ function AddProduct(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(3, "Nhập tiêu đề")}
+                                        {headerField(2, "Nhập tiêu đề")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập tiêu đề"
@@ -287,7 +291,7 @@ function AddProduct(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(4, "Nhập mô tả")}
+                                        {headerField(3, "Nhập mô tả")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập mô tả"
@@ -298,7 +302,7 @@ function AddProduct(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(5, "Nhập nội dung")}
+                                        {headerField(4, "Nhập nội dung")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập nội dung"
@@ -309,7 +313,7 @@ function AddProduct(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(6, "Nhập chất liệu kính")}
+                                        {headerField(5, "Nhập chất liệu kính")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập chất liệu kính"
@@ -320,7 +324,7 @@ function AddProduct(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        {headerField(7, "Độ dày")}
+                                        {headerField(6, "Độ dày")}
                                         <TextField
                                             id="outlined-multiline-flexible"
                                             label="Nhập độ dày"
@@ -329,6 +333,27 @@ function AddProduct(props) {
                                             value={product.thinkness}
                                             onChange={(e) => onChangeThinkness(e.target.value)}
                                         />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        {headerField(7, "Chọn danh mục")}
+                                        <FormControl fullWidth>
+                                            <RadioGroup
+                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                defaultValue={product.categoryId}
+                                                value={product.categoryId}
+                                                name="radio-buttons-group"
+                                            >
+                                                <div className="ratio-list">
+                                                {listCategory && listCategory.length ? listCategory.filter(i => i.parentId).map((item, index) =>
+                                                    <FormControlLabel value={item.id} control={<Radio/>}
+                                                                      label={<div>{item.name}</div>}
+                                                                      onChange={(e) => handleChangeCategory(e.target.value)}/>
+                                                ) : null}
+                                                </div>
+                                            </RadioGroup>
+                                        </FormControl>
+                                        <CustomError message={validate(product)?.categoryId} isSaveClick={isSaveClick}/>
+
                                     </Grid>
                                     <Grid item xs={12}>
                                         {headerField(8, "Chọn bộ sưu tập")}
@@ -340,12 +365,13 @@ function AddProduct(props) {
                                         >
                                             <div className="ratio-list">
                                                 {collections && collections.length ? collections.map((item, index) =>
-                                                    <FormControlLabel value={item.id} control={<Radio/>}
-                                                                      label={item.name}
-                                                                      onChange={(e) => handleChangeCollection(e.target.value)}/>
+                                                        <FormControlLabel value={item.id} control={<Radio/>}
+                                                                          label={<div>{item.name}</div>}
+                                                                          onChange={(e) => handleChangeCollection(e.target.value)}/>
                                                 ) : null}
                                             </div>
                                         </RadioGroup>
+                                        <CustomError message={validate(product)?.collectionId} isSaveClick={isSaveClick}/>
                                     </Grid>
                                     <Grid item xs={12}>
                                         {headerField(9, "Chọn Màu sắc")}

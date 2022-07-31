@@ -38,10 +38,17 @@ public class OrderHistory  {
     private CustomerOrder customerOrder;
 
     @Column
+    @JoinColumn(name = "price")
+    private Float price;
+
+    @Column
     @JoinColumn(name = "date")
     private Long date;
+
+    @Column(name = "status")
+    private Boolean status;
 //
-    @Transient
-    private Long customerOrderId;
+//    @Transient
+//    private Long customerOrderId;
 
 }

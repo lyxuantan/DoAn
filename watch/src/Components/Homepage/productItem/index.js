@@ -67,8 +67,28 @@ const ProductItem = ({item}) => {
         updateCustomerOrder(payload).then(res => {
             const {data} = res;
             if (data.errorCode == "200") {
-                dispatch(getCart(payload));
+                fetchCustomerOrder();
+                // dispatch(getCart(payload));
             }
+        })
+    }
+
+
+    const fetchCustomerOrder = () => {
+        getCustomerOrder({
+            isPaid: false,
+        }).then(
+            res => {
+                const {data} = res.data;
+                if (data && data.length) {
+                    dispatch(getCart(data?.[data.length - 1]))
+
+                } else {
+                    dispatch(getCart(null))
+                }
+            }
+        ).catch(res => {
+            dispatch(getCart(null))
         })
     }
 

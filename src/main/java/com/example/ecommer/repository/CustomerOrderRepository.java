@@ -31,8 +31,6 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     @Query("SELECT c FROM CustomerOrder c WHERE c.isPaid = true")
     List<CustomerOrder> findAllListCustomerOrderIsPaid();
 
-    @Query("update CustomerOrder c set c.isPaid = true where c.user.username = ?1")
-    void updatePayment(String username);
 }
 
 

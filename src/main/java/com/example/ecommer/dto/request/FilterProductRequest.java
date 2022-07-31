@@ -41,6 +41,8 @@ public class FilterProductRequest {
 
     private Boolean isBestSell = false;
 
+    private Boolean isAdminPageProduct = false;
+
     public FilterProductRequest() {
     }
 

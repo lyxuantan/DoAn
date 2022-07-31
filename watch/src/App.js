@@ -25,6 +25,8 @@ import {logout} from "./redux/userSlice";
 import EventBus from "./common/EventBus";
 import ResetPass from "./Admin/ResetPass";
 import AccountInfo from "./Components/AccountInfo";
+import {Payment} from "@mui/icons-material";
+import PaymentOrder from "./Components/Payment";
 
 
 function App() {
@@ -43,34 +45,34 @@ function App() {
         dispatch(logout());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (currentUser) {
-            setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
-            if(currentUser.roles.includes("ROLE_ADMIN")) {
-                navigator("/admin")
-            }
-            if(currentUser.roles.includes("ROLE_USER")) {
-                navigator("/")
-            }
-        } else {
-            setShowAdminBoard(false);
-        }
-
-        EventBus.on("logout", () => {
-            logOut();
-        });
-
-        return () => {
-            EventBus.remove("logout");
-        };
-    }, [currentUser, logOut]);
+    // useEffect(() => {
+    //     if (currentUser) {
+    //         setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+    //         if(currentUser.roles.includes("ROLE_ADMIN")) {
+    //             navigator("/admin")
+    //         }
+    //         if(currentUser.roles.includes("ROLE_USER")) {
+    //             navigator("/")
+    //         }
+    //     } else {
+    //         setShowAdminBoard(false);
+    //     }
+    //
+    //     EventBus.on("logout", () => {
+    //         logOut();
+    //     });
+    //
+    //     return () => {
+    //         EventBus.remove("logout");
+    //     };
+    // }, [currentUser, logOut]);
 
     return (
         <>
                 <Routes>
                     <Route path='/' name="Home" element={<HomePage/>}/>
                     <Route path='/account/:id' element={<AccountInfo/>}/>
-                    <Route path='/payment' element={<AccountInfo/>}/>
+                    <Route path='/payment/:id' element={<PaymentOrder/>}/>
 
                     <Route path='product' exact={true} name="Product" element={<HomePageMan/>}/>
                     <Route path='product/:id' exact={true} name="Product Detail" element={<HomePageMan/>}/>

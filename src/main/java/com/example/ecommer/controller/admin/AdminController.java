@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "")
+@RequestMapping(value = "/admin")
 @CrossOrigin(origins = "${watch.port}")
 public class AdminController {
 
@@ -34,8 +34,8 @@ public class AdminController {
     UserRepository userRepository;
 
 
-    @GetMapping(value = "/admin/user")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/user")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> viewUser(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "5") int limit,
@@ -53,7 +53,7 @@ public class AdminController {
     }
 
     @PostMapping("/user/update")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@RequestBody SignupRequest user) {
         ApiResponse response;
         try {
@@ -66,7 +66,7 @@ public class AdminController {
     }
 
     @PostMapping("/user/change-password")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> changeUser(@RequestBody ChangePasswordRequest changePasswordRequest) {
         ApiResponse response;
         try {
@@ -79,7 +79,6 @@ public class AdminController {
     }
 
     @GetMapping("/user/get-details")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> getUserDetails(@RequestBody ChangePasswordRequest changePasswordRequest) {
         ApiResponse response;
         try {
@@ -92,7 +91,6 @@ public class AdminController {
     }
 
     @GetMapping("/delete-user")
-//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@RequestParam(name = "userId") Long userId) {
         ApiResponse response;
         try {
@@ -104,8 +102,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/admin/customer-order-details")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/customer-order-details")
     public ResponseEntity<ApiResponse> viewCustomerOrderDetails(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -114,7 +111,7 @@ public class AdminController {
     ) {
         ApiResponse response;
         try {
-            response = new ApiResponse(customerOrderDetailService.findAllCustomerOrderIsPaid());
+            response = new ApiResponse(customerOrderDetailService.findByUserAndStatusPage(true, page, limit));
         } catch (CustomException e) {
             response = new ApiResponse(e);
         }

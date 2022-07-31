@@ -1,5 +1,6 @@
 import HTTP from "../http-common";
 import {PRODUCT, UPLOAD_FILE} from '../endpoints';
+import authHeader from "../auth-header";
 
 export const uploadImage = (payload, onUploadProgress) => {
     return HTTP({
@@ -18,5 +19,6 @@ export const deleteFile = (payload) => {
         url: UPLOAD_FILE.DELETE,
         method: "GET",
         params: payload,
+        headers: authHeader(),
     })
 }

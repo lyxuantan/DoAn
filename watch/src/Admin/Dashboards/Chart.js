@@ -1,8 +1,22 @@
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider,
+    FormControl, FormControlLabel,
+    FormLabel, Radio,
+    RadioGroup,
+    useTheme
+} from '@mui/material';
+import React, {useEffect, useState} from "react";
 import moment from "moment";
 import ReactECharts from "echarts-for-react";
+import {useSelector} from "react-redux";
 import {thousandsSeparators} from "../../common/fCommon";
 import './styles.scss'
+import {getProduct} from "../../api/product";
 
 const si = [
     {v: 1e3, s: "Nghìn"},
@@ -28,11 +42,10 @@ const numberToString = (num) => {
             (num / si[i].v).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1").replace(".", ",") + " " +
             si[i].s
         );
-    }
-    else {
+    } else {
         const positiveNumbers = Math.abs(num);
         if (positiveNumbers < 1000) {
-            return "-"+thousandsSeparators(positiveNumbers);
+            return "-" + thousandsSeparators(positiveNumbers);
         }
         let i;
         for (i = si.length - 1; i > 0; i--) {
@@ -41,38 +54,128 @@ const numberToString = (num) => {
             }
         }
         return (
-            "-"+(positiveNumbers / si[i].v).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1").replace(".", ",") + " " +
+            "-" + (positiveNumbers / si[i].v).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1").replace(".", ",") + " " +
             si[i].s
         );
     }
 };
 
+const nest = (items, id = 0, link = 'parentId') =>
+    items
+        .filter(item => item[link] === id)
+        .map(item => ({
+            ...item,
+            children: nest(items, item.id)
+        }));
+
+
 const Chart = ({listOrderHistory, listAllProduct}) => {
 
-  return (
-   
-   <div className="chart-wrapper">
-       <div>
-        <LineChart listOrderHistory={listOrderHistory} type={"month"}/>
-       </div>
-       <div>
-           <BarChart listAllProduct={listAllProduct}/>
+    const listCategory = useSelector(state => state.categorySlice)?.listCategory;
+    const [categorySelected, setCategorySelected] = useState(listCategory?.[0]?.id);
+    const [listBestSeller, setListBestSeller] = useState([]);
+    const [typeChart, setTypeChart] = useState({
+        barChart: listCategory?.[0]?.id,
+        lineChart: "month",
+    })
 
-       </div>
-    </div>
-      
-  );
+    console.log("categoryStore", listCategory?.[0])
+    useEffect(() => {
+        setCategorySelected(listCategory?.[0]?.id)
+    }, [listCategory])
+
+    useEffect(() => {
+        console.log("categorySelected", categorySelected)
+        getProduct({
+            "direction": "DESC",
+            "pageNo": 1,
+            "pageSize": 5,
+            "keyword": "",
+            "orderBy": "sale_number",
+            "isBestSell": true,
+            "parentCategoryId": categorySelected,
+        }).then(res => {
+                if (res && res.data) {
+                    const {data} = res.data;
+                    setListBestSeller(data.content)
+                }
+            }
+        )
+    }, [categorySelected])
+
+    function onChangeTypeBarChart(value) {
+        setCategorySelected(value)
+        // setTypeChart({...typeChart, barChart: value})
+    }
+
+    function onChangeTypeLineChart(value) {
+        console.log(107, value)
+        setTypeChart({...typeChart, lineChart: value})
+    }
+
+    console.log(listBestSeller)
+    return (
+
+        <div className="chart-wrapper">
+            <div className="row">
+                <div className="col-6">
+                    <FormControl>
+                        {/*<FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>*/}
+                        <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue={typeChart.lineChart}
+                            value={typeChart.lineChart}
+                            name="radio-buttons-group"
+                            className="flex-row"
+                        >
+
+                            <FormControlLabel value="month" control={<Radio/>} label="Tháng"
+                                              onChange={(e) => onChangeTypeLineChart(e.target.value)}/>
+                            <FormControlLabel value="year" control={<Radio/>} label="Năm"
+                                              onChange={(e) => onChangeTypeLineChart(e.target.value)}/>
+                        </RadioGroup>
+                    </FormControl>
+                    <LineChart listOrderHistory={listOrderHistory} type={typeChart.lineChart}/>
+                </div>
+                <div className="col-6">
+                    <FormControl>
+                        {/*<FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>*/}
+                        <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue={categorySelected}
+                            value={categorySelected}
+                            name="radio-buttons-group"
+                            className="flex-row"
+
+                        >
+                            {listCategory && listCategory.length ? listCategory.map(item => (
+                                <FormControlLabel value={item?.id} control={<Radio/>} label={item.name}
+                                                  onChange={(e) => onChangeTypeBarChart(e.target.value)}
+                                />
+                            )) : null}
+                        </RadioGroup>
+                    </FormControl>
+                    <BarChart listAllProduct={listAllProduct} listBestSeller={listBestSeller}/>
+                </div>
+            </div>
+        </div>
+
+    );
 };
 
-const BarChart = ({ listAllProduct }) => {
-    const sortBySale  = listAllProduct && listAllProduct.length ? listAllProduct.sort((a, b) => b.saleNumber - a.saleNumber) : [];
+const BarChart = ({listAllProduct, listBestSeller}) => {
+    // const sortBySale = listAllProduct && listAllProduct.length ? listAllProduct.sort((a, b) => b.saleNumber - a.saleNumber) : [];
+
+    const nestListProduct = nest(listAllProduct)
+    console.log(81, listAllProduct)
     const cData = [];
-    sortBySale?.forEach((item, index) => {
-        if(index < 10) {
-            cData.push([item.saleNumber, item.name])
+    listBestSeller?.forEach((item, index) => {
+        if (index < 10) {
+            cData.push([item.saleNumber, `${item.name}-${index}`])
         }
     })
-    // let measure = data.measures[0].name;
+
+    console.log(174, cData)
     const options = {
         dataset: {
             source: cData,
@@ -81,6 +184,8 @@ const BarChart = ({ listAllProduct }) => {
             containLabel: true,
             left: "2%",
             right: "2%",
+            top: 0,
+            bottom: 0
         },
         xAxis: {
             axisLabel: {
@@ -93,7 +198,8 @@ const BarChart = ({ listAllProduct }) => {
                 },
             },
         },
-        yAxis: { type: "category", inverse: true }, //,  nameGap: 25
+        yAxis: {type: "category", inverse: true}, //,  nameGap: 25
+        gradientColor: "#106ce1",
 
         visualMap: {
             orient: "none",
@@ -111,46 +217,26 @@ const BarChart = ({ listAllProduct }) => {
         ],
         tooltip: {
             position: "bottom",
-            // confine: true,
-        //     formatter: function (a) {
-        //         const { data } = a;
-        //         return `
-        //     <div style="padding: 0px;">
-        //         <div style="white-space: nowrap;">${formatDateToDDMMYYYY(
-        //             dataFilter?.value?.from
-        //         )} - ${formatDateToDDMMYYYY(dataFilter?.value?.to)}</div>
-        //         <div style="margin-top: 10px">
-        //         <span style="white-space: nowrap">${data[1]}</span>
-        //     </div>
-        //     <div style="margin-top: 10px; display: flex; flex-direction: row">
-        //         <div style="width: 80px; word-break: break-word !important; white-space: normal; !important;">${measure}:</div> <div><strong style="margin-left: 3px">${numberToString(
-        //             data[0]
-        //         )}</strong></div>
-        //     </div>
-        //     </div>
-        // `;
-        //     },
             borderColor: "white",
             textStyle: {
                 color: "#2B3555",
             },
         },
     };
-    return <ReactECharts  option={options} />;
+    return <ReactECharts option={options}/>;
 };
 
-const LineChart = ({data, listOrderHistory, type }) => {
+const LineChart = ({data, listOrderHistory, type}) => {
 
     const resultArr = [];
     const dateArr = [];
 
-
-    listOrderHistory && listOrderHistory.length && listOrderHistory?.forEach(function(res, value) {
+    listOrderHistory && listOrderHistory.length && listOrderHistory?.forEach(function (res, value) {
         let date = null;
-        if(type === "month") {
+        if (type === "month") {
             date = moment(res.createTime).format("MM/YYYY");
         }
-        if(type === "year") {
+        if (type === "year") {
             date = moment(res.createTime).year();
         }
         var index = dateArr.indexOf(date);
@@ -158,8 +244,7 @@ const LineChart = ({data, listOrderHistory, type }) => {
             dateArr.push(date);
             var obj = {date: date, totalPrice: res?.customerOrder?.price || 0, total: res?.customerOrder?.total || 0};
             resultArr.push(obj);
-        }
-        else {
+        } else {
             resultArr[index].totalPrice += res?.customerOrder?.price || 0;
             resultArr[index].quantity += res?.customerOrder?.total || 0;
         }
@@ -184,13 +269,23 @@ const LineChart = ({data, listOrderHistory, type }) => {
     const options = {
         tooltip: {
             trigger: "axis",
+            formatter: function (a) {
+                console.log(265, a)
+                return `
+            <div style="padding: 5px;">
+            <div>${a?.[0]?.name}</div>
+            <div class="d-flex justify-content-between"><strong>Doanh Thu</strong>&nbsp<span>${numberToString(a?.[0]?.value)}</span></div>
+            <div class="d-flex justify-content-between"><strong>Tổng Số</strong>&nbsp<span>${thousandsSeparators(a?.[1]?.value)}</span></div>
+            </div>
+                `;
+            },
 
         },
         grid: {
             top: "10%",
             left: "10%",
-            right: "4%",
-            bottom: "10%",
+            // top: 0,
+            bottom: 0,
             containLabel: true,
         },
         xAxis: {
@@ -206,7 +301,7 @@ const LineChart = ({data, listOrderHistory, type }) => {
                 type: "value",
                 axisLabel: {
                     formatter: function (a, index) {
-                            return `${numberToString(a)} VNĐ`;
+                        return `${numberToString(a)} VNĐ`;
 
                     },
                 },
@@ -214,7 +309,7 @@ const LineChart = ({data, listOrderHistory, type }) => {
         ],
         series: cData?.length ? cData : [],
     };
-    return <ReactECharts  option={options} />;
+    return <ReactECharts option={options}/>;
 };
 
 export default Chart;

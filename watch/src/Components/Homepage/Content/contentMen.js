@@ -9,6 +9,7 @@ import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {Pagination, Stack} from "@mui/material";
 
+
 function ContentMen({categoryDetail, isBestSeller}) {
 
     const {id} = useParams();

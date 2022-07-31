@@ -27,14 +27,14 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     @Override
     public OrderHistory save(OrderHistory orderHistory) {
         OrderHistory newOrderHistory = new OrderHistory();
-        if(orderHistory.getCustomerOrderId() != null)
-        {
-            Optional<CustomerOrder> orderHistoryExit = customerOrderRepository.findById(orderHistory.getCustomerOrderId());
-            if(orderHistoryExit.isPresent()) {
-                newOrderHistory.setCustomerOrder(orderHistoryExit.get());
-            }
-        }
-        newOrderHistory.setDate(orderHistory.getDate());
+//        if(orderHistory.getCustomerOrderId() != null)
+//        {
+//            Optional<CustomerOrder> orderHistoryExit = customerOrderRepository.findById(orderHistory.getCustomerOrderId());
+//            if(orderHistoryExit.isPresent()) {
+//                newOrderHistory.setCustomerOrder(orderHistoryExit.get());
+//            }
+//        }
+//        newOrderHistory.setDate(orderHistory.getDate());
         return orderHistoryRepository.save(newOrderHistory);
     }
 
@@ -45,8 +45,8 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     }
 
     @Override
-    public OrderHistory delete(OrderHistory orderHistory) {
-        return null;
+    public void delete(OrderHistory orderHistory) {
+        orderHistoryRepository.deleteById(orderHistory.getId());
     }
 
 

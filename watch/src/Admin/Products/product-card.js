@@ -27,8 +27,9 @@ import {UploadFile} from "@mui/icons-material";
 import UploadFiles from "./UploadFile";
 import {useNavigate} from "react-router-dom";
 import './styles.scss'
-import {deleteCustomerOrder} from "../../api/customer-order";
+import {deleteCustomerOrder, deleteProduct} from "../../api/customer-order";
 import {toast} from "react-toastify";
+import {nonAccentVietnamese} from "../../common/fCommon";
 
 const style = {
     position: 'absolute',
@@ -43,6 +44,10 @@ const style = {
     padding: "12px",
 };
 
+const findText = (string, text) => {
+    return nonAccentVietnamese(string)?.includes(nonAccentVietnamese(text));
+};
+
 export const ProductCard = ({keyword}) => {
     const [limit, setLimit] = useState(5);
     const [pageNo, setPageNo] = useState(1);
@@ -51,6 +56,7 @@ export const ProductCard = ({keyword}) => {
     const [img, setImg] = useState("");
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogBrand, setDialogBrand] = useState("");
+    const [productDeleteSelected, setProductDeleteSelected] = useState("");
 
 
     const [data, setData] = useState([]);
@@ -69,15 +75,17 @@ export const ProductCard = ({keyword}) => {
                 "orderBy": "product_id",
                 "keyword": keyword || "",
                 "pageSize": limit,
-                "isBestSell": true,
+                "isAdminPageProduct": true,
                 "parentCategoryId": "",
 
             })
             .then(res => {
                 if (res && res.data) {
                     const {data} = res.data;
-                    setData(data.content)
-                    setTotalPages(data?.totalPages)
+                    if(data && data.length) {
+                        setData(data)
+                        setTotalPages(Math.ceil(data && data?.length / limit));
+                    }
                 }
             })
             .catch(error => console.log(error));
@@ -121,24 +129,32 @@ export const ProductCard = ({keyword}) => {
     }
 
     const onModifiledProduct = (product) => {
-        navigate(`/admin/product/addProduct/${product.id}`)
+        console.log(product)
+        navigate(`/admin/product/addProduct/${product?.id}`)
     }
 
-    const onCloseUpload = () => {
+    function onDeleteProduct(customer) {
+        setProductDeleteSelected(customer.id);
+    }
+
+    const handleCloseDelete = () => {
+        setProductDeleteSelected(null);
 
     }
 
     const onDelete = (customer) => {
-        deleteCustomerOrder(
+        deleteProduct(
             {
-                id: customer?.id,
+                id: productDeleteSelected,
             }
         ).then(
             res => {
                 const {data} = res;
+                console.log(145, data)
                 if(data.errorCode == "200") {
                     toast.success("Xóa Thành Công")
                     fetchProduct();
+                    handleCloseDelete();
                 }
                 else {
                     toast.error("Xóa Thất Bại")
@@ -152,6 +168,7 @@ export const ProductCard = ({keyword}) => {
         "Tên sản phẩm",
         "Thương hiệu",
         "Hình ảnh",
+        "Mô Tả",
         "Giá thành",
         "Biến động giá",
         "Số lượng",
@@ -174,7 +191,10 @@ export const ProductCard = ({keyword}) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data && data.length ? data.map((customer) => (
+                            {data && data.length ? data.filter(item => keyword ? (findText(item.name, keyword) || findText(item?.collections?.name, keyword)) : item).slice(
+                                (pageNo - 1) * limit,
+                                (pageNo - 1) * limit + limit
+                            ).map((customer) => (
                                 <TableRow hover key={customer.id}>
                                     <TableCell padding="checkbox"></TableCell>
                                     <TableCell>
@@ -224,6 +244,9 @@ export const ProductCard = ({keyword}) => {
                                         </Dialog>
                                     </TableCell>
                                     <TableCell>
+                                        {customer.desc}
+                                    </TableCell>
+                                    <TableCell>
                                         {thousandsSeparators(customer.priceRef)} VNĐ
                                     </TableCell>
                                     <TableCell>{customer.perDiscount}%</TableCell>
@@ -232,22 +255,22 @@ export const ProductCard = ({keyword}) => {
                                         <div className="product-action">
                                             <div>
                                                 <Tooltip title="Sửa">
-                                                    <Button variant="contained">
-                                                        <ModeEditIcon onClick={() => onModifiledProduct(customer)}/>
+                                                    <Button variant="contained" onClick={() => onModifiledProduct(customer)}>
+                                                        <ModeEditIcon />
                                                     </Button>
                                                 </Tooltip>
                                             </div>
                                             <div>
                                                 <Tooltip title="Xoá">
-                                                    <Button variant="contained" color="error">
-                                                        <DeleteIcon onClick={() => onDelete(customer)}/>
+                                                    <Button variant="contained" color="error" onClick={() => onDeleteProduct(customer)}>
+                                                        <DeleteIcon/>
                                                     </Button>
                                                 </Tooltip>
                                             </div>
                                             <div>
-                                                <Tooltip title="Upload Image">
+                                                <Tooltip title="Upload Image" onClick={() => onShowUploadFile(customer)}>
                                                     <Button variant="contained" color="success">
-                                                        <UploadFile onClick={() => onShowUploadFile(customer)}/>
+                                                        <UploadFile />
                                                     </Button>
                                                 </Tooltip>
                                             </div>
@@ -272,6 +295,30 @@ export const ProductCard = ({keyword}) => {
             >
                 <Box sx={style} className="product-upload">
                     <UploadFiles data={data} productIsUpload={productIsUpload} isPresident={true} onFetchProduct={onFetchProduct} handleCloseUpload={handleCloseUpload} />
+                </Box>
+            </Modal>
+            <Modal
+                open={!!productDeleteSelected}
+                onClose={handleCloseDelete}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box>
+                    <div className="popover-wrapper">
+                        <div className="popover">
+                            <div className="popover-header">
+                                Xác Nhận Xóa Khách Hàng
+                            </div>
+                            <div className="popover-body">
+                                <Button color="primary" variant="contained" onClick={onDelete}>
+                                    Xác Nhận
+                                </Button>
+                                <Button color="secondary" variant="contained" onClick={handleCloseDelete}>
+                                    Hủy
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </Box>
             </Modal>
         </Card>
