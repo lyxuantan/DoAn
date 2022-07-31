@@ -2,7 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "./config";
 import EventBus from "../common/EventBus";
 
-const user = JSON.parse(localStorage.getItem("user"));
+// const user = JSON.parse(localStorage.getItem("user"));
 export  function authHeader() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -16,14 +16,14 @@ export  function authHeader() {
 
 const HTTP = axios.create({
     baseURL: `${BASE_URL}`,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json",
-      Accept: "application/json, text/plain",
-      "Accept-Language": "vi-VN,vi;q=0.9",
-       Authorization: "Bearer " + user?.token
-      // "x-access-token": user?.token
-    },
+    // headers: {
+    //   "Access-Control-Allow-Origin": "*",
+    //   "Content-Type": "application/json",
+    //   Accept: "application/json, text/plain",
+    //   "Accept-Language": "vi-VN,vi;q=0.9",
+    //    Authorization: "Bearer " + user?.token
+    //   // "x-access-token": user?.token
+    // },
     withCredentials: false,
   });
 

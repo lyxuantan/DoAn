@@ -7,7 +7,6 @@ import { UserCircle as UserCircleIcon } from '../icons/user-circle';
 import { Users as UsersIcon } from '../icons/users';
 import MenuNavbarResponsive from './MenuNavbarResponsive';
 import {deepOrange} from "@mui/material/colors";
-import {Logout} from "@mui/icons-material";
 import LoginIcon from "@mui/icons-material/Login";
 import {useCallback, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -16,6 +15,8 @@ import {logout} from "../../redux/userSlice";
 import './styles.scss'
 import {getAllCategory} from "../../api/category";
 import {addCategory} from "../../redux/categorySlice";
+import {logoutService} from "../../api/action/auth";
+import {Logout} from "@mui/icons-material";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -53,7 +54,7 @@ export const DashboardNavbar = (props) => {
     }
 
     const logOut = useCallback(() => {
-        dispatch(logout());
+        dispatch(logoutService());
         navigator("/login");
     }, [dispatch]);
 

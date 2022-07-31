@@ -45,27 +45,27 @@ function App() {
         dispatch(logout());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (currentUser) {
-    //         setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
-    //         if(currentUser.roles.includes("ROLE_ADMIN")) {
-    //             navigator("/admin")
-    //         }
-    //         if(currentUser.roles.includes("ROLE_USER")) {
-    //             navigator("/")
-    //         }
-    //     } else {
-    //         setShowAdminBoard(false);
-    //     }
-    //
-    //     EventBus.on("logout", () => {
-    //         logOut();
-    //     });
-    //
-    //     return () => {
-    //         EventBus.remove("logout");
-    //     };
-    // }, [currentUser, logOut]);
+    useEffect(() => {
+        if (currentUser) {
+            setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+            if(currentUser.roles.includes("ROLE_ADMIN")) {
+                navigator("/admin")
+            }
+            if(currentUser.roles.includes("ROLE_USER")) {
+                navigator("/")
+            }
+        } else {
+            setShowAdminBoard(false);
+        }
+
+        EventBus.on("logout", () => {
+            logOut();
+        });
+
+        return () => {
+            EventBus.remove("logout");
+        };
+    }, [currentUser, logOut]);
 
     return (
         <>
