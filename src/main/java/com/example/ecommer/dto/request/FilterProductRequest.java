@@ -43,6 +43,11 @@ public class FilterProductRequest {
 
     private Boolean isAdminPageProduct = false;
 
+    private Long collectionId;
+
+
+    private Boolean isFindCollections = false;
+
     public FilterProductRequest() {
     }
 

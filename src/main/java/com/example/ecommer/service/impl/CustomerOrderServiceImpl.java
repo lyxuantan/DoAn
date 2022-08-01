@@ -44,8 +44,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CartResponse> findByUserAndStatus(Long id, Boolean isPaid) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, isPaid);
         List<CartResponse> cartResponses = new ArrayList<>();
         for (CustomerOrder cus : customerOrderList) {
@@ -66,7 +66,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public Page<CustomerOrder> findByUserAndStatusPage(Boolean isPaid, Integer pageNo, Integer limit) {
         PageRequest pageable = PageRequest.of(pageNo - 1, limit, Sort.by("id").descending());
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         return customerOrderRepository.findAllByUserAndIsPaid(user, isPaid, pageable);
 
     }

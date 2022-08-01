@@ -25,6 +25,7 @@ public class Collections extends Base {
     private List<Product> product = new ArrayList<>();
 
     @Column(name = "category_id")
+    @JsonIgnore
     private Long categoryId;
 
 

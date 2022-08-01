@@ -29,6 +29,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT p FROM Product p JOIN Collections c on p.collections.id=c.id where p.name like %?1%")
     Page<Product> findAllByKeyword(String keyword, Pageable pageable);
 
+    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and (price_sale > :priceFrom AND price_sale < :priceTo) or (size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
+    Page<Product> findPageProductFilterAndCollections(Long priceFrom, Long priceTo, List<Long> sizeId, List<Long> colorId, Long collectionsFiler, Pageable pageable);
+
 //    @Query(value = "SELECT p FROM Product p JOIN Collections c on p.collections.id=c.id where p.name like %?1%")
 //    List<Product> findAllProduct(String keyword, Pageable pageable);
 

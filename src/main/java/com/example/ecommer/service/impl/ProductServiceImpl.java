@@ -78,8 +78,13 @@ public class ProductServiceImpl implements ProductService {
         } else {
             if (filterProductRequest.getIsBestSell().equals(false)) {
                 if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getPriceFrom() != null || filterProductRequest.getPriceTo() != null) {
-                    logger.info("Creating Token for user : {}", filterProductRequest);
-                    return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
+                    if(filterProductRequest.getIsFindCollections().equals(false)) {
+                        return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
+                    }
+                    else {
+                        return productRepository.findPageProductFilterAndCollections(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCollectionId(), pageable);
+
+                    }
                 } else {
                     logger.info("69 : {}", filterProductRequest);
                     return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);

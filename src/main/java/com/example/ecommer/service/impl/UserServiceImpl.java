@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         if (!user.isPresent()) {
             throw new CustomException("User not found");
         }
-        if ((!encoder.encode(changePasswordRequest.getNewPassword()).equals(user.get().getPassword())) &&
+        if ((!changePasswordRequest.getNewPassword().equals(user.get().getPassword())) &&
                 !(changePasswordRequest.getIsOTPMail().equals("true"))) {
             throw new CustomException("Mật Khẩu Không Khớp Với Mật Khẩu Hiện Tại");
         }
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         if (changePasswordRequest.getNewPassword().length() < 4) {
             throw new CustomException("Mật Khẩu Phải Lớn Hơn 4 Ký Tự");
         }
-        user.get().setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
+        user.get().setPassword(changePasswordRequest.getNewPassword());
         User user1 = userRepository.save(user.get());
         if (user1 != null) {
             return true;
