@@ -122,7 +122,7 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Đăng Nhập
                         </Typography>
-                        <Box  noValidate onClick={handleSubmit} sx={{mt: 1}}>
+                        <Box  noValidate sx={{mt: 1}}>
                             <TextField
                                 margin="normal"
                                 required
@@ -160,6 +160,7 @@ export default function Login() {
                                 variant="contained"
                                 sx={{mt: 3, mb: 2}}
                                 ref={checkBtn}
+                                onClick={handleSubmit}
                             >
                                 Đăng nhập
                             </Button>

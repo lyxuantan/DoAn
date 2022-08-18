@@ -11,6 +11,7 @@ import {useSelector} from "react-redux";
 import {toast} from "react-toastify";
 import images from "./../../Components/Footer/dataImg";
 import {createPayment} from "../../api/payment";
+import {useOutsideAlerter} from "../../component-utility/hook";
 
 const sumPrice = (listOrderDetails) => {
     let total = 0;
@@ -34,7 +35,6 @@ const PaymentOrder = () => {
         customerOrderDetails: [],
         price: 0,
     });
-    // const navigator = useNavigate();
 
 
     const [pricesOrder, setPricesOrder] = useState({
@@ -109,6 +109,7 @@ const PaymentOrder = () => {
                     const {data} = res;
                     if (data.errorCode == "200") {
                         toast.success("Đặt Hàng Thành Công")
+                        navigator("/");
                     } else {
                         toast.error("Thất Bại")
                     }
@@ -135,7 +136,13 @@ const PaymentOrder = () => {
     }
 
     function paymentVNPay(item) {
-        setPaymentType(item.key)
+        if(!paymentType.id) {
+            setPaymentType(item.key)
+        }
+        else {
+            setPaymentType("")
+
+        }
         // if (item.key === "VNPAY") {
         //
         // }
