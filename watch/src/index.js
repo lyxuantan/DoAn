@@ -23,15 +23,12 @@ root.render(
     <React.StrictMode>
         <Provider store={store}>
             {/*<PersistGate persistor={customPersistStore}>*/}
-                <HashRouter>
-
+            <BrowserRouter>
                     <ScrollToTop/>
-
                     <Suspense fallback="Loading...">
                         <App/>
                     </Suspense>
-
-                </HashRouter>
+                </BrowserRouter>
             <ToastContainer />
             {/*</PersistGate>*/}
         </Provider>,

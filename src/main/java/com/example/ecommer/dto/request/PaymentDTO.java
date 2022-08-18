@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 public class PaymentDTO {
     Long idOrder;
     Float amount;
+    Long amountLong;
     String description;
     String bankCode;
+    String username;
+    String address;
 }

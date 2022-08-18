@@ -35,20 +35,27 @@ function Navbar() {
     const [listCategory, setListCategory] = useState([]);
     const [showAdminBoard, setShowAdminBoard] = useState(false);
     const navigator = useNavigate();
-    const {user: currentUser} = useSelector((state) => state.userSlice);
+    const {user: user} = useSelector((state) => state.userSlice);
+    const [currentUser, setCurrentUser] = useState({
+        username: "",
+        fullName: "",
+        address: "",
+        token: ""
+    })
     const [showAccountInfor, setShowAccountInfor] = useState(false);
     const dispatch = useDispatch();
 
     // const [user, setUser] = useState(null);
     //
-    // useEffect(() => {
-    //     getUserDetails().then(res => {
-    //         const {data} = res.data;
-    //         if(data) {
-    //             setUser(data);
-    //         }
-    //     })
-    // }, [currentUser])
+    useEffect(() => {
+        // getUserDetails().then(res => {
+        //     const {data} = res.data;
+        //     if(data) {
+        //     }
+        // })
+        setCurrentUser({...currentUser, token: user?.token, address: user?.address, fullName: user?.fullName, phoneNumber: user?.phoneNumber, role: user?.roles })
+
+    }, [user?.token])
     // console.log(52, user)
     const categoryStore = useSelector(state => state);
 
@@ -59,7 +66,7 @@ function Navbar() {
 
     useEffect(() => {
         if (currentUser) {
-            setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+            setShowAdminBoard(currentUser?.roles?.includes("ROLE_ADMIN"));
         } else {
             setShowAdminBoard(false);
         }
@@ -145,6 +152,7 @@ function Navbar() {
                 </span>
                         </li>
                         <div className="avatar">
+                            {console.log(currentUser?.username)}
 
                             {currentUser?.username ?
                                 <div className="account"

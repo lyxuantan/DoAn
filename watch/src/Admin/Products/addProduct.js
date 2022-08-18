@@ -55,7 +55,8 @@ function AddProduct(props) {
         "sizeId": null,
         "collectionId": null,
         glassSurface: "",
-        thinkness: ""
+        thinkness: "",
+        collection_name: ""
     })
     const navigate = useNavigate();
 
@@ -360,20 +361,28 @@ function AddProduct(props) {
                                         </Grid>
                                         <Grid item xs={12}>
                                             {headerField(8, "Chọn bộ sưu tập")}
-                                            <RadioGroup
-                                                aria-labelledby="demo-radio-buttons-group-label"
-                                                defaultValue={product.collectionId}
-                                                value={product.collectionId}
-                                                name="radio-buttons-group"
-                                            >
-                                                <div className="ratio-list">
-                                                    {collections && collections.length ? collections.map((item, index) =>
-                                                        <FormControlLabel value={item.id} control={<Radio/>}
-                                                                          label={<div>{item.name}</div>}
-                                                                          onChange={(e) => handleChangeCollection(e.target.value)}/>
-                                                    ) : null}
-                                                </div>
-                                            </RadioGroup>
+                                            <TextField
+                                                id="outlined-multiline-flexible"
+                                                label="Nhập độ dày"
+                                                fullWidth={true}
+                                                multiline
+                                                value={product.collection_name}
+                                                onChange={(e) =>  handleChangeCollection(e.target.value)}
+                                            />
+                                            {/*<RadioGroup*/}
+                                            {/*    aria-labelledby="demo-radio-buttons-group-label"*/}
+                                            {/*    defaultValue={product.collectionId}*/}
+                                            {/*    value={product.collectionId}*/}
+                                            {/*    name="radio-buttons-group"*/}
+                                            {/*>*/}
+                                            {/*    <div className="ratio-list">*/}
+                                            {/*        {collections && collections.length ? collections.map((item, index) =>*/}
+                                            {/*            <FormControlLabel value={item.id} control={<Radio/>}*/}
+                                            {/*                              label={<div>{item.name}</div>}*/}
+                                            {/*                              onChange={(e) => handleChangeCollection(e.target.value)}/>*/}
+                                            {/*        ) : null}*/}
+                                            {/*    </div>*/}
+                                            {/*</RadioGroup>*/}
                                             <CustomError message={validate(product)?.collectionId}
                                                          isSaveClick={isSaveClick}/>
                                         </Grid>

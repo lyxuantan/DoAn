@@ -16,25 +16,28 @@ import footerImg15 from "../../Images/footer6 - Copy.png";
 import footerImg16 from "../../Images/footer7 - Copy.png";
 import footerImg17 from "../../Images/footer8 - Copy.png";
 import footerImg18 from "../../Images/footer9 - Copy.png";
-const images = [
-    footerImg1,
-    footerImg2,
-    footerImg3,
-    footerImg4,
-    footerImg5,
-    footerImg6,
-    footerImg7,
-    footerImg8,
-    footerImg9,
-    footerImg10,
-    footerImg11,
-    footerImg12,
-    footerImg13,
-    footerImg14,
-    footerImg15,
-    footerImg16,
-    footerImg17,
-    footerImg18,
-  ];
+import vnPayIcon from "../../assets/img/vnpay.png";
+
+const images = {
+    // footerImg1,
+    // footerImg2,
+    // footerImg3,
+    // footerImg4,
+    // footerImg5,
+    // footerImg6,
+    // footerImg7,
+    // footerImg8,
+    // footerImg9,
+    // footerImg10,
+    // footerImg11,
+    // footerImg12,
+    // footerImg13,
+    // footerImg14,
+    // footerImg15,
+    // footerImg16,
+    // footerImg17,
+    // footerImg18,
+    vnPayIcon: vnPayIcon
+};
 
 export default images;

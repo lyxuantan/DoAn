@@ -17,7 +17,8 @@ export const FILTER = {
     GET_ALL_COLLECTION: "/filter/get-all-collection",
     GET_ALL_COLOR: "/filter/get-all-color",
     GET_ALL_SIZE: "/filter/get-all-size",
-    GET_BY_CATEGORY: "/filter/get-by-category"
+    GET_BY_CATEGORY: "/filter/get-by-category",
+    ADD_COLLECTION: "/admin/filter/add-collection"
 }
 
 export const CUSTOMER_ORDER = {
@@ -51,4 +52,7 @@ export const UPLOAD_FILE= {
     DELETE: "/admin/upload/delete",
 }
 
+export const PAYMENT = {
+    CREATE_PAYMENT: "/payment/create_payment"
+}
 

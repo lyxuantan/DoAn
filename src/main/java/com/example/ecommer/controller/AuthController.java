@@ -102,6 +102,7 @@ public class AuthController {
                 userDetails.getEmail(),
                 userDetails.getAddress(),
                 userDetails.getPhoneNumber(),
+                userDetails.getFullName(),
                 roles
         ));
     }

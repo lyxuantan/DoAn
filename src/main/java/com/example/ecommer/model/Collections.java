@@ -30,7 +30,6 @@ public class Collections extends Base {
 
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    // Quan hệ n-n với đối tượng ở dưới (Person) (1 địa điểm có nhiều người ở)
 
     @JoinTable(name = "category_collection", //Tạo ra một join Table tên là "address_person"
             joinColumns = @JoinColumn(name = "collection_id"),  // TRong đó, khóa ngoại chính là address_id trỏ tới class hiện tại (Address)

@@ -22,6 +22,7 @@
     //}
   }
   &-footer {
+    margin-top: 20px;
     padding: 20px 60px;
     .row {
       padding: 8px 0;
@@ -31,6 +32,15 @@
       font-weight: bold;
       text-align: right;
     }
+    .payment-item {
+      padding: 12px;
+
+    }
+    .payment-item.active {
+      border: 1px solid var(--color-gray);
+      background-color: var(--color-gray-2);
+    }
+
   }
   .pay-now {
     background: #53c66e;
@@ -38,6 +48,10 @@
     border: unset;
     color: white;
     padding: 12px;
+  }
+  .user-info-footer {
+    margin: 16px;
+    border: 1px solid var(--color-gray);
   }
 
 }
@@ -50,6 +64,7 @@
     width: 300px;
     background-color: white;
     padding: 16px;
+
     .payment-header {
       font-weight: bold;
       padding-bottom: 16px;

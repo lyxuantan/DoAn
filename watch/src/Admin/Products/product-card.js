@@ -150,7 +150,6 @@ export const ProductCard = ({keyword}) => {
         ).then(
             res => {
                 const {data} = res;
-                console.log(145, data)
                 if(data.errorCode == "200") {
                     toast.success("Xóa Thành Công")
                     fetchProduct();
@@ -174,6 +173,8 @@ export const ProductCard = ({keyword}) => {
         "Số lượng",
         "Tuỳ chọn",
     ];
+
+    console.log(177, data);
 
     return (
         <Card className="list-product">
@@ -250,7 +251,7 @@ export const ProductCard = ({keyword}) => {
                                         {thousandsSeparators(customer.priceRef)} VNĐ
                                     </TableCell>
                                     <TableCell>{customer.perDiscount}%</TableCell>
-                                    <TableCell>{customer.total}</TableCell>
+                                    <TableCell>{thousandsSeparators(customer?.total || 0)}</TableCell>
                                     <TableCell>
                                         <div className="product-action">
                                             <div>

@@ -27,3 +27,4 @@ export const getUserDetails = (payload) => {
         params: payload,
     })
 }
+

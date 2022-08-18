@@ -28,3 +28,12 @@ export const getSizes = (payload) => {
         headers: authHeader()
     })
 }
+
+export const addCollections = (payload) => {
+    return HTTP({
+        url: FILTER.GET_ALL_SIZE,
+        method: "GET",
+        data: payload,
+        headers: authHeader()
+    })
+}

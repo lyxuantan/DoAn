@@ -9,6 +9,8 @@ import {Box, Button, Modal} from "@mui/material";
 import {getUserDetails} from "../../api/user";
 import {useSelector} from "react-redux";
 import {toast} from "react-toastify";
+import images from "./../../Components/Footer/dataImg";
+import {createPayment} from "../../api/payment";
 
 const sumPrice = (listOrderDetails) => {
     let total = 0;
@@ -18,6 +20,13 @@ const sumPrice = (listOrderDetails) => {
     return total;
 }
 
+const PAYMENT = [
+    {
+        key: "VNPAY",
+        name: "Thanh toán VNPAY",
+        image: images.vnPayIcon
+    },
+]
 const PaymentOrder = () => {
 
     const {id} = useParams();
@@ -25,12 +34,16 @@ const PaymentOrder = () => {
         customerOrderDetails: [],
         price: 0,
     });
+    // const navigator = useNavigate();
+
+
     const [pricesOrder, setPricesOrder] = useState({
         price: 0,
         feeShip: 0,
         totalPrice: 0,
     })
     const [showPayment, setShowPayment] = useState(false);
+    const [paymentType, setPaymentType] = useState("");
     const navigator = useNavigate();
 
     const {user: user} = useSelector((state) => state.userSlice);
@@ -70,30 +83,113 @@ const PaymentOrder = () => {
     }
 
     function onPayment() {
-        paymentOrder({
-            idOrder: id,
-            "amount": pricesOrder.totalPrice,
-            description: "",
-            bankCode: "",
-        }).then(res => {
-            const {data} = res;
-            console.log(96, data)
-            if(data.errorCode == "200") {
-                toast.success("Đặt Hàng Thành Công")
-                navigator("/")
-            }
-            else {
-                toast.error("Thất Bại")
-            }
-        })
+        switch (paymentType) {
+            case "VNPAY":
+                createPayment({
+                    idOrder: id,
+                    amountLong: pricesOrder.totalPrice,
+                    description: "pay",
+                    bankCode: "NCB"
+                }).then(res => {
+                    const {data} = res;
+                    if (data) {
+                        window.location.href = data.url;
+                    }
+                }).catch(err => {
+                    setShowPayment(false);
+                })
+                break;
+            default:
+                paymentOrder({
+                    idOrder: id,
+                    amount: pricesOrder.totalPrice,
+                    description: "",
+                    bankCode: "",
+                }).then(res => {
+                    const {data} = res;
+                    if (data.errorCode == "200") {
+                        toast.success("Đặt Hàng Thành Công")
+                    } else {
+                        toast.error("Thất Bại")
+                    }
+                })
+                break;
+
+        }
+
+        // paymentOrder({
+        //     idOrder: id,
+        //     "amount": pricesOrder.totalPrice,
+        //     description: "",
+        //     bankCode: "",
+        // }).then(res => {
+        //     const {data} = res;
+        //     console.log(96, data)
+        //     if (data.errorCode == "200") {
+        //         toast.success("Đặt Hàng Thành Công")
+        //         navigator("/")
+        //     } else {
+        //         toast.error("Thất Bại")
+        //     }
+        // })
+    }
+
+    function paymentVNPay(item) {
+        setPaymentType(item.key)
+        // if (item.key === "VNPAY") {
+        //
+        // }
+    }
+
+    function onPay() {
+        // switch (paymentType) {
+        //     case "VNPAY":
+        //         paymentOrder({
+        //             idOrder: id,
+        //             "amount": pricesOrder.totalPrice,
+        //             description: "",
+        //             bankCode: "",
+        //         }).then(res => {
+        //             const {data} = res;
+        //             console.log(96, data)
+        //             if (data.errorCode == "200") {
+        //                 toast.success("Đặt Hàng Thành Công")
+        //                 navigator("/")
+        //             } else {
+        //                 toast.error("Thất Bại")
+        //             }
+        //         })
+        //         break;
+        //     default:
+        //         paymentOrder({
+        //             idOrder: id,
+        //             "amount": pricesOrder.totalPrice,
+        //             description: "",
+        //             bankCode: "",
+        //         }).then(res => {
+        //             const {data} = res;
+        //             console.log(96, data)
+        //             if (data.errorCode == "200") {
+        //                 toast.success("Đặt Hàng Thành Công")
+        //                 navigator("/")
+        //             } else {
+        //                 toast.error("Thất Bại")
+        //             }
+        //         })
+        //         break;
+        //
+        // }
+    }
+
+    const onChoosePay = (item) => {
+        setPaymentType(item.key)
     }
 
     return <>
         <div className="payment">
             <div className="row">
                 <div className="col-6">
-                    <div className="user-info
-                    ">
+                    <div className="user-info">
                         <div className="user-info-title">THÔNG TIN KHÁCH HÀNG</div>
                         <div className="user-info-body">
                             <div className="row">
@@ -138,6 +234,13 @@ const PaymentOrder = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="user-info-footer">
+                            {PAYMENT.map((item) =>
+                                <div className={`payment-item ${paymentType === item.key ? "active" : ""}`}
+                                     onClick={() => onChoosePay(item)}>
+                                    Thanh Toán VNPAY <img src={item.image}/>
+                                </div>)}
+                        </div>
                         <button
                             className="pay-now"
                             // type="submit"
@@ -145,8 +248,9 @@ const PaymentOrder = () => {
 
                         >
                             THANH TOÁN
-                            <FontAwesomeIcon icon="check-square"/>
+                            <FontAwesomeIcon icon="check-square" onClick={() => onPay()}/>
                         </button>
+
                     </div>
 
                 </div>
@@ -156,7 +260,7 @@ const PaymentOrder = () => {
                         {customerOrder && customerOrder.customerOrderDetails && customerOrder.customerOrderDetails.length ?
                             customerOrder.customerOrderDetails.map((item, index) =>
                                 <CartItem item={item}
-                                          />
+                                />
                             ) : null}
 
                     </div>
@@ -181,7 +285,7 @@ const PaymentOrder = () => {
                         </div>
                         <div className="row">
                             <div className="col-6">
-                            TỔNG
+                                TỔNG
                             </div>
                             <div className="col-6">
                                 {thousandsSeparators(pricesOrder?.totalPrice)} VNĐ
@@ -201,14 +305,14 @@ const PaymentOrder = () => {
             aria-describedby="modal-modal-description"
             className="payment-wrapper"
         >
-            <Box >
-                <div >
+            <Box>
+                <div>
                     <div className="payment-popup">
                         <div className="payment-header">
                             Xác Nhận Thanh Toán
                         </div>
                         <div className="payment-body">
-                            <Button color="primary" variant="contained" onClick={onPayment} >
+                            <Button color="primary" variant="contained" onClick={onPayment}>
                                 Xác Nhận
                             </Button>
                             <Button color="secondary" variant="contained" onClick={onClosePayment}>

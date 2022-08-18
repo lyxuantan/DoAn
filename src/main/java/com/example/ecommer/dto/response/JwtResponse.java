@@ -27,6 +27,8 @@ public class JwtResponse {
     private String address;
 
     private String phoneNumber;
+
+    private String fullName;
     private List<String> roles;
 
 }

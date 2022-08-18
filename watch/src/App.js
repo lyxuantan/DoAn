@@ -29,6 +29,7 @@ import {Payment} from "@mui/icons-material";
 import PaymentOrder from "./Components/Payment";
 import {logoutService} from "./api/action/auth";
 import HomePageCollection from "./Components/HomeFilterCollections";
+import PaymentSuccess from "./Components/PaymenSuccess";
 
 
 function App() {
@@ -50,12 +51,12 @@ function App() {
     useEffect(() => {
         if (currentUser) {
             setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
-            if(currentUser.roles.includes("ROLE_ADMIN")) {
-                navigator("/admin")
-            }
-            else {
-                navigator("/")
-            }
+            // if(currentUser.roles.includes("ROLE_ADMIN")) {
+            //     // navigator("/admin")
+            // }
+            // else {
+            //     navigator("/")
+            // }
 
         } else {
             setShowAdminBoard(false);
@@ -76,10 +77,13 @@ function App() {
                     <Route path='/' name="Home" element={<HomePage/>}/>
                     <Route path='/account/:id' element={<AccountInfo/>}/>
                     <Route path='/payment/:id' element={<PaymentOrder/>}/>
+                    <Route path="/payment-success" element={<PaymentSuccess/>}/>
 
                     <Route path='product' exact={true} name="Product" element={<HomePageMan/>}/>
                     <Route path='product/:id' exact={true} name="Product Detail" element={<HomePageMan/>}/>
                     <Route path='collections/:id' exact={true} name="Product Detail" element={<HomePageCollection/>}/>
+
+
 
                     <Route path='product/best-seller/:id' name="Product Detail"
                            element={<HomePageMan isBestSeller={true}/>}/>
