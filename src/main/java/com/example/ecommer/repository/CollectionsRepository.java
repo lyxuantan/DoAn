@@ -15,4 +15,6 @@ public interface CollectionsRepository extends JpaRepository<Collections, Long> 
     Optional<Collections> findById(long id);
 
     List<Collections> findByCategoryId(Long categoryId);
+
+    boolean existsCollectionsByNameAndCategoryId(String name, Long categoryId);
 }

@@ -1,5 +1,6 @@
 package com.example.ecommer.service;
 
+import com.example.ecommer.dto.request.CollectionRequest;
 import com.example.ecommer.model.Collections;
 import com.example.ecommer.model.Color;
 import com.example.ecommer.model.Sizes;
@@ -10,7 +11,7 @@ public interface FilterService {
 
     List<Collections> listCollections();
 
-    void saveCollections(Collections collections);
+    void saveCollections(CollectionRequest collections);
 
     void delete(Long id);
 

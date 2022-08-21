@@ -9,6 +9,6 @@ public class ChangePasswordRequest {
     private String password;
     private String newPassword;
     private String reNewPassword;
-    private Integer otpNo;
+    private String otpNo;
     private Boolean isOTPMail;
 }

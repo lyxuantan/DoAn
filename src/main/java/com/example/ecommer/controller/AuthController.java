@@ -73,7 +73,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     public boolean changePassword(String email, String password) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email));
+        Optional<User> user = userRepository.findByEmail(email);
         if (!user.isPresent()) {
             throw new CustomException("User not found");
         }
@@ -112,12 +112,12 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("username đã được sử dụng!"));
         }
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("email đã được sử dụng!"));
         }
 
         // Create new user's account
@@ -131,19 +131,19 @@ public class AuthController {
         Set<Role> roles = new HashSet<>();
         if (strRoles == null) {
             Role userRole = roleRepository.findByType(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findByType(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
                         roles.add(adminRole);
                         break;
                     default:
                         Role userRole = roleRepository.findByType(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
                         roles.add(userRole);
                 }
             });
@@ -178,7 +178,7 @@ public class AuthController {
     @PostMapping("/send-email")
     public ResponseEntity<?> sendVerificationMail(@Valid @RequestBody VerifyEmailRequest emailRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(emailRequest.getEmail()))) {
-                User user = userRepository.findByEmail(emailRequest.getEmail());
+                User user = userRepository.findByEmail(emailRequest.getEmail()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
                 ConfirmationToken token = confirmationTokenService.createToken(user);
                 emailSenderService.sendMail(user.getEmail(), token.getConfirmationToken());
                 return ResponseEntity.ok(new ApiResponse(ErrorCode.VERTIFICATION_SEND_MAIL));
@@ -213,16 +213,4 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/user/update-user")
-    public ResponseEntity<?> updateUser(@RequestBody SignupRequest user) {
-        ApiResponse response;
-        try {
-            userServiceImpl.updateUser(user);
-            response = new ApiResponse(ErrorCode.SUCCESS);
-        }
-        catch (CustomException e) {
-            response = new ApiResponse(e);
-        }
-        return ResponseEntity.ok(response);
-    }
 }

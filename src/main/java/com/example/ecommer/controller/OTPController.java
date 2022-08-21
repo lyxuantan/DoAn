@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/otp")
@@ -30,10 +32,9 @@ public class OTPController {
     private UserServiceImpl userServiceImpl;
 
     @PostMapping("/generate-otp")
-    public ResponseEntity<?> generateOtp(@Valid @RequestBody VerifyEmailRequest emailRequest) {
-
+    public ResponseEntity<?> generateOtp(@Valid @RequestBody VerifyEmailRequest emailRequest) throws MessagingException, UnsupportedEncodingException {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(emailRequest.getEmail()))) {
-            otpService.generateOTP(emailRequest.getEmail());
+            userServiceImpl.generateOneTimePassword(emailRequest.getEmail());
             return ResponseEntity.ok(new ApiResponse(ErrorCode.SUCCESS));
 
         } else {
@@ -44,11 +45,9 @@ public class OTPController {
     @PostMapping("/validate-otp")
     public ResponseEntity<?> validateOtp(@Valid @RequestBody ChangePasswordRequest emailRequest) {
         if (emailRequest.getOtpNo() != null) {
-            if (Boolean.TRUE.equals(otpService.validateOTP(emailRequest.getEmail(), emailRequest.getOtpNo()))) {
-                if (userServiceImpl.changePassword(emailRequest.getEmail(), emailRequest.getPassword())) {
+                if (userServiceImpl.changePassword(emailRequest.getEmail(), emailRequest.getPassword(), emailRequest.getOtpNo())) {
                     return ResponseEntity.ok(new ApiResponse(ErrorCode.CHANGE_PASSWORD_SUCCESS));
                 }
-            }
         }
         return ResponseEntity.badRequest().body("Invalid OTP");
     }

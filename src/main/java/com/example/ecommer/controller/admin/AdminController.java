@@ -65,18 +65,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/user/change-password")
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> changeUser(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        ApiResponse response;
-        try {
-            userService.changePasswordLogined(changePasswordRequest);
-            response = new ApiResponse(ErrorCode.SUCCESS);
-        } catch (CustomException e) {
-            response = new ApiResponse(e);
-        }
-        return ResponseEntity.ok(response);
-    }
+
 
     @GetMapping("/user/get-details")
     public ResponseEntity<ApiResponse> getUserDetails(@RequestBody ChangePasswordRequest changePasswordRequest) {

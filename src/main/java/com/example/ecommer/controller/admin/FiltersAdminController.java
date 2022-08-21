@@ -2,6 +2,7 @@ package com.example.ecommer.controller.admin;
 
 import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.ApiResponse;
+import com.example.ecommer.dto.request.CollectionRequest;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.Collections;
 import com.example.ecommer.model.Color;
@@ -20,10 +21,9 @@ public class FiltersAdminController {
     private FilterService collectionsService;
 
     @PostMapping("/add-collection")
-    public ResponseEntity<ApiResponse> addUser(@RequestBody Collections collections) {
+    public ResponseEntity<ApiResponse> addUser(@RequestBody CollectionRequest collections) {
         ApiResponse response;
         try {
-
             collectionsService.saveCollections(collections);
             response = new ApiResponse(ErrorCode.SUCCESS);
         } catch (CustomException e) {

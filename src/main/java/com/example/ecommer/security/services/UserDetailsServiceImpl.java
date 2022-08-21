@@ -5,10 +5,13 @@ import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.User;
 import com.example.ecommer.repository.UserRepository;
 import com.example.ecommer.service.UserService;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -27,6 +34,10 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    JavaMailSender mailSender;
+
+    PasswordEncoder encoder;
 
     @Override
     @Transactional
@@ -48,6 +59,47 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
         return userRepository.findById(id).orElseThrow(() -> new CustomException("Không tìm thấy user"));
     }
 
+    @Override
+    public void generateOneTimePassword(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        String OTP = RandomString.make(8);
+        String encodedOTP = encoder.encode(OTP);
+
+        user.get().setOneTimePassword(encodedOTP);
+        user.get().setOtpRequestedTime(new Date());
+    }
+
+    @Override
+    public void sendOTPEmail(User customer, String OTP) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom("contact@shopme.com", "Shopme Support");
+        helper.setTo(customer.getEmail());
+
+        String subject = "Here's your One Time Password (OTP) - Expire in 5 minutes!";
+
+        String content = "<p>Hello " + customer.getFullName() + "</p>"
+                + "<p>For security reason, you're required to use the following "
+                + "One Time Password to login:</p>"
+                + "<p><b>" + OTP + "</b></p>"
+                + "<br>"
+                + "<p>Note: this OTP is set to expire in 5 minutes.</p>";
+
+        helper.setSubject(subject);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void clearOTP(User customer) {
+        customer.setOneTimePassword(null);
+        customer.setOtpRequestedTime(null);
+        userRepository.save(customer);
+    }
+
     public User findByUsername() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -66,7 +118,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
 //    }
 
     public void updateResetPasswordToken(String token, String email) throws UsernameNotFoundException {
-        User customer = userRepository.findByEmail(email);
+        User customer = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         if (customer != null) {
             customer.setResetPasswordToken(token);
             userRepository.save(customer);

@@ -37,7 +37,7 @@ public class FilterProductRequest {
 
     private String direction = "ASC";
 
-    private String orderBy = "id";
+    private String orderBy = "product_id";
 
     private Boolean isBestSell = false;
 

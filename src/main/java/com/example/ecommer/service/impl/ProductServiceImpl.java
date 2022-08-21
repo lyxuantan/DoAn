@@ -9,6 +9,7 @@ import com.example.ecommer.repository.*;
 import com.example.ecommer.security.jwt.JwtUtils;
 import com.example.ecommer.service.ProductImageService;
 import com.example.ecommer.service.ProductService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,18 +77,32 @@ public class ProductServiceImpl implements ProductService {
         if (filterProductRequest.getIsAdminPageProduct().equals(true)) {
             return productRepository.findAllByKeyword(filterProductRequest.getKeyword(), pageable);
         } else {
-            if (filterProductRequest.getIsBestSell().equals(false)) {
-                if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0 || filterProductRequest.getPriceFrom() != null || filterProductRequest.getPriceTo() != null) {
-                    if(filterProductRequest.getIsFindCollections().equals(false)) {
-                        return productRepository.findPageProductFilter(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
-                    }
-                    else {
-                        return productRepository.findPageProductFilterAndCollections(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCollectionId(), pageable);
+             if (filterProductRequest.getIsBestSell().equals(false)) {
+                if((filterProductRequest.getPriceFrom() == null || StringUtils.isEmpty(String.valueOf(filterProductRequest.getPriceFrom()))) || (filterProductRequest.getPriceTo() == null || StringUtils.isEmpty(String.valueOf(filterProductRequest.getPriceTo())))) {
+                    if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0) {
+                        if (filterProductRequest.getIsFindCollections().equals(false) || !filterProductRequest.getIsFindCollections()) {
+                            return productRepository.findPageProductFilterCategory(filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
+                        } else {
+                            return productRepository.findPageProductFilterAndCollections(filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCollectionId(), pageable);
 
+                        }
+                    } else {
+                        logger.info("69 : {}", filterProductRequest);
+                        return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
                     }
-                } else {
-                    logger.info("69 : {}", filterProductRequest);
-                    return productRepository.findAllByCategoryId(filterProductRequest.getCategoryId(), pageable);
+                }
+                else {
+                    if (filterProductRequest.getCollections().size() != 0 || filterProductRequest.getColors().size() != 0 || filterProductRequest.getSize().size() != 0) {
+                        if (filterProductRequest.getIsFindCollections().equals(false) || !filterProductRequest.getIsFindCollections()) {
+                            return productRepository.findPageProductFilterCategoryAndPrice(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCollections(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCategoryId(), pageable);
+                        } else {
+                            return productRepository.findPageProductFilterAndCollectionsAndPrice(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getSize(), filterProductRequest.getColors(), filterProductRequest.getCollectionId(), pageable);
+
+                        }
+                    } else {
+                        logger.info("69 : {}", filterProductRequest);
+                        return productRepository.findAllByCategoryIdAndPrice(filterProductRequest.getPriceFrom(), filterProductRequest.getPriceTo(), filterProductRequest.getCategoryId(), pageable);
+                    }
                 }
             } else {
 //            logger.info("72 ", JwtUtils.authentication.getName());
@@ -175,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
 
-            if (productRequest.getCollections() != null) {
+            if (productRequest.getCollectionId() != null) {
                 Optional<Collections> collections = collectionsRepository.findById(productRequest.getCollectionId());
                 if (collections.isPresent()) {
                     product.setCollections(collections.get());

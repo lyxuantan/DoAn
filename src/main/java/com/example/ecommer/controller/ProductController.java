@@ -4,21 +4,15 @@ import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.ApiResponse;
 import com.example.ecommer.dto.request.FilterProductRequest;
 import com.example.ecommer.exception.CustomException;
-import com.example.ecommer.security.services.UserDetailsImpl;
 import com.example.ecommer.service.ProductService;
 import com.example.ecommer.service.impl.ProductServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-
-import static com.example.ecommer.security.jwt.JwtUtils.authentication;
 
 @RestController
 @RequestMapping("product")

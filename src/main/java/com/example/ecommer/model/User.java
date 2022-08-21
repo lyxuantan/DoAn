@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.Set;
 @Setter
 @Getter
 public class User extends Base{
+
+    private static final long OTP_VALID_DURATION = 5 * 60 * 1000;
 
     @Column(name = "username", length = 30)
     private String username;
@@ -31,8 +34,13 @@ public class User extends Base{
     private String email;
 
     @Column(name = "address")
-
     private String address;
+
+    @Column(name = "one_time_password")
+    private String oneTimePassword;
+
+    @Column(name = "otp_request_time")
+    private Date otpRequestedTime;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -62,5 +70,21 @@ public class User extends Base{
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.password = encode;
+    }
+
+    public boolean isOTPRequired() {
+        if (this.getOneTimePassword() == null) {
+            return false;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        long otpRequestedTimeInMillis = this.otpRequestedTime.getTime();
+
+        if (otpRequestedTimeInMillis + OTP_VALID_DURATION < currentTimeInMillis) {
+            // OTP expires
+            return false;
+        }
+
+        return true;
     }
 }

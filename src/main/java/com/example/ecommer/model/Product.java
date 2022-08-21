@@ -127,7 +127,7 @@ public class Product implements UploadsFiles, Serializable {
     @Fetch(FetchMode.JOIN)
     private Collections collections;
 //
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "product")
     @JsonIgnore
     private Set<CustomerOrderDetail> customerOrderDetails = new HashSet<>();
 

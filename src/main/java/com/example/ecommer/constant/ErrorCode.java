@@ -6,8 +6,10 @@ public enum ErrorCode {
     FILE_UPDATE_LARGE("400", "File Quá rộng"),
 
     API_FAIL_UNKNOW("ERR001", "Lỗi hệ thống"),
-
+    COLLECTION_EXITS("ERR001", "Bộ sưu tập đã tồn tại"),
     NOT_FOUND("ERR002", "Không tìm thấy thông tin"),
+    COLLECTION_NAME_INVALID("ERR002", "Tên không hợp lệ"),
+
     NOT_FOUND_CATEGORY("ERR002", "Danh mục sản phẩm không tồn tại"),
     NOT_FOUND_PRODUCT("ERR002", "Sản phẩm không tồn tại"),
     NOT_FOUND_COLLECTION("ERR002", "Bộ sưu tập không tồn tại"),

@@ -1,6 +1,7 @@
 package com.example.ecommer.service.impl;
 
 import com.example.ecommer.constant.ErrorCode;
+import com.example.ecommer.dto.request.CollectionRequest;
 import com.example.ecommer.exception.CustomException;
 import com.example.ecommer.model.Category;
 import com.example.ecommer.model.Collections;
@@ -8,6 +9,7 @@ import com.example.ecommer.model.Color;
 import com.example.ecommer.model.Sizes;
 import com.example.ecommer.repository.*;
 import com.example.ecommer.service.FilterService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +38,25 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
-    public void saveCollections(Collections collections) {
+    public void saveCollections(CollectionRequest collections) {
         Collections col = new Collections();
-        col.setName(collections.getName());
-        col.setCategories(collections.getCategories());
-        collectionsRepository.save(col);
+
+        if(!collectionsRepository.existsCollectionsByNameAndCategoryId(collections.getName(), collections.getCategoryId())) {
+            if(StringUtils.isEmpty(collections.getName())) {
+                throw new CustomException(ErrorCode.COLLECTION_NAME_INVALID);
+            }
+            else {
+                col.setName(collections.getName());
+//                Optional<Category> category = categoryRepository.findById(collections.getCategoryId());
+//                if(category.isPresent()) {
+                    col.setCategoryId(collections.getCategoryId());
+//                }
+                collectionsRepository.save(col);
+            }
+        }
+        else {
+            throw new CustomException(ErrorCode.COLLECTION_EXITS);
+        }
     }
 
     @Override
