@@ -38,10 +38,12 @@ const LIST_SORT = [
     },
     {
         key: SORT_TYPE.ASC,
+        orderBy: "price_sale",
         name: "Giá tăng dần"
     },
     {
         key: SORT_TYPE.DESC,
+        orderBy: "price_sale",
         name: "Giá giảm dần"
     }
 ]

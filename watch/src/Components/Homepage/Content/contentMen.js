@@ -24,9 +24,10 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
         colors: [],
         sizes: [],
         collections: [],
-        priceFrom: 0,
-        priceTo: 9999999,
+        priceFrom: "",
+        priceTo: "",
         direction: "",
+        orderBy: "product_id"
     })
     const [page, setPage] = useState({});
     const [elementSize, setElementSize] = useState(8);
@@ -45,7 +46,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                     "direction": filterProduct.direction,
                     "pageNo": pageNo,
                     "pageSize": elementSize,
-                    "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
+                    "orderBy": `${isBestSeller ? "sale_number" : filterProduct.orderBy}`,
                     "isBestSell": false,
                     "parentCategoryId": categoryDetail?.parentId,
 
@@ -74,7 +75,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                     "direction": filterProduct.direction,
                     "pageNo": pageNo,
                     "pageSize": elementSize,
-                    "orderBy": `${isBestSeller ? "sale_number" : "product_id"}`,
+                    "orderBy": `${isBestSeller ? "sale_number" : filterProduct.orderBy}`,
                     "isBestSell": false,
                     "parentCategoryId": categoryDetail?.parentId,
                     collectionId: collectionsId,
@@ -83,7 +84,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                 .then(res => {
                     if (res && res.data) {
                         const {data} = res.data;
-                        setData(data.content)
+                        setData(data.content);
                         setTotalElement(data?.totalElements || 0);
                         setTotalPages(data?.totalPages || 0);
                         setNumberOfElements(data?.numberOfElements || 0);
@@ -91,7 +92,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                 })
                 .catch(error => console.log(error));
         }
-    }, [categoryDetail, isBestSeller, filterProduct, pageNo]);
+    }, [categoryDetail, isBestSeller, filterProduct, pageNo, collectionsId]);
 
     const onChangeCollection = (item) => {
         const tmp = {...filterProduct};
@@ -133,8 +134,6 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                 setFilterProduct(tmp);
             }
         }
-        console.log(tmp)
-
     }
 
     const onChangePriceFrom = (value) => {
@@ -157,8 +156,8 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
             colors: [],
             sizes: [],
             collections: [],
-            priceFrom: 0,
-            priceTo: 999999999999999,
+            priceFrom: "",
+            priceTo: "",
             direction: "",
         }
         setFilterProduct(tmpClear);
@@ -167,6 +166,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
     const onChangeSort = (item) => {
         const tmp = {...filterProduct};
         tmp.direction = item?.key;
+        tmp.orderBy = item?.orderBy;
         setFilterProduct(tmp);
     }
 

@@ -13,7 +13,8 @@ const PaymentSuccess = ({location}) => {
     const [infoPayment, setInfoPayment] = useState({
         amount: "",
         orderInfo: "",
-        username: ""
+        username: "",
+        orderCode: ""
     });
 
     const navigator = useNavigate();
@@ -24,6 +25,7 @@ const PaymentSuccess = ({location}) => {
             const query = new URLSearchParams(search);
             const amount = query.get('amount');
             const orderInfo = query.get('orderInfo');
+            const orderCode = query.get('orderCode');
             if(amount) {
                 paymentOrder({
                     idOrder: orderInfo,
@@ -39,10 +41,8 @@ const PaymentSuccess = ({location}) => {
                     }
                 })
             }
-
             const username = query.get('username');
-            setInfoPayment({amount: amount, orderInfo: orderInfo, username: username});
-            console.log(infoPayment);
+            setInfoPayment({amount: amount, orderInfo: orderInfo, username: username, orderCode: orderCode});
         }
     }, [window.location])
 
@@ -53,12 +53,10 @@ const PaymentSuccess = ({location}) => {
     return <div className="payment-success">
         <div className="payment-success-body">
             <FontAwesomeIcon icon={faCheck}  color={"green"} fontSize={"5rem"}/>
-            <div>Mã Đơn Hàng: {infoPayment.orderInfo}</div>
+            <div>Mã Đơn Hàng: {infoPayment.orderCode}</div>
             <div><strong>Số Tiền: {thousandsSeparators(infoPayment.amount)} VNĐ</strong></div>
             <Button variant="contained" color="success" className="btn-success" onClick={onRedirectHomePage}>Tiếp tục mua hàng</Button>
         </div>
-
     </div>
-
 }
 export default PaymentSuccess;

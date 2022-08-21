@@ -83,7 +83,7 @@ const PaymentOrder = () => {
     }
 
     function onPayment() {
-        switch (paymentType) {
+        switch (paymentType?.key) {
             case "VNPAY":
                 createPayment({
                     idOrder: id,
@@ -143,53 +143,29 @@ const PaymentOrder = () => {
             setPaymentType("")
 
         }
-        // if (item.key === "VNPAY") {
-        //
-        // }
+
     }
 
     function onPay() {
-        // switch (paymentType) {
-        //     case "VNPAY":
-        //         paymentOrder({
-        //             idOrder: id,
-        //             "amount": pricesOrder.totalPrice,
-        //             description: "",
-        //             bankCode: "",
-        //         }).then(res => {
-        //             const {data} = res;
-        //             console.log(96, data)
-        //             if (data.errorCode == "200") {
-        //                 toast.success("Đặt Hàng Thành Công")
-        //                 navigator("/")
-        //             } else {
-        //                 toast.error("Thất Bại")
-        //             }
-        //         })
-        //         break;
-        //     default:
-        //         paymentOrder({
-        //             idOrder: id,
-        //             "amount": pricesOrder.totalPrice,
-        //             description: "",
-        //             bankCode: "",
-        //         }).then(res => {
-        //             const {data} = res;
-        //             console.log(96, data)
-        //             if (data.errorCode == "200") {
-        //                 toast.success("Đặt Hàng Thành Công")
-        //                 navigator("/")
-        //             } else {
-        //                 toast.error("Thất Bại")
-        //             }
-        //         })
-        //         break;
-        //
-        // }
     }
 
     const onChoosePay = (item) => {
-        setPaymentType(item.key)
+        if(!paymentType) {
+            setPaymentType(item);
+        }
+        else  {
+            setPaymentType("");
+        }
+    }
+
+    const onRenderPay = () => {
+        if(!paymentType) {
+            return "THANH TOÁN";
+        }
+        else {
+            return paymentType?.name || "THANH TOÁN";
+        }
+
     }
 
     return <>
@@ -243,18 +219,16 @@ const PaymentOrder = () => {
                         </div>
                         <div className="user-info-footer">
                             {PAYMENT.map((item) =>
-                                <div className={`payment-item ${paymentType === item.key ? "active" : ""}`}
+                                <div className={`payment-item ${paymentType?.key === item.key ? "active" : ""}`}
                                      onClick={() => onChoosePay(item)}>
                                     Thanh Toán VNPAY <img src={item.image}/>
                                 </div>)}
                         </div>
                         <button
                             className="pay-now"
-                            // type="submit"
                             onClick={onShowPayment}
-
                         >
-                            THANH TOÁN
+                            {onRenderPay()}
                             <FontAwesomeIcon icon="check-square" onClick={() => onPay()}/>
                         </button>
 

@@ -19,6 +19,8 @@ import {deleteCustomerOrderDetail, getCustomerOrder, updateCustomerOrder} from "
 import {getCart} from "../../redux/cartSlice";
 import {thousandsSeparators} from "../../common/fCommon";
 import {useNavigate} from "react-router-dom";
+import {logoutService} from "../../api/action/auth";
+import {logout} from "../../redux/userSlice";
 
 const totalPrice = (listOrderDetails) => {
     let total = 0;
@@ -36,13 +38,27 @@ export default function Cart({currentUser}) {
     const navigator = useNavigate();
 
     const toggleDrawer = (anchor, open) => (event) => {
-        if (
-            event.type === "keydown" &&
-            (event.key === "Tab" || event.key === "Shift")
-        ) {
-            return;
+        if(!currentUser?.token) {
+            dispatch(logoutService());
+            dispatch(logout());
+            navigator("/login");
         }
-        setState({...state, [anchor]: open});
+        else {
+            if (
+                event.type === "keydown" &&
+                (event.key === "Tab" || event.key === "Shift")
+            ) {
+                return;
+            }
+            setState({...state, [anchor]: open});
+        }
+        // if (
+        //     event.type === "keydown" &&
+        //     (event.key === "Tab" || event.key === "Shift")
+        // ) {
+        //     return;
+        // }
+        // setState({...state, [anchor]: open});
     };
 
     const cartStore = useSelector(state => state.cartSlice);
@@ -123,8 +139,6 @@ export default function Cart({currentUser}) {
             }
         })
     }
-
-    console.log(112, customerOrder)
 
     function onPayNow() {
         navigator(`/payment/${cartStore.id}`)

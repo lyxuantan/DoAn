@@ -38,17 +38,24 @@ export const OrderListResults = () => {
 
     useEffect(() => {
         fetchCustomerOrder();
-    }, []);
+    }, [keyword, pageNo]);
 
     const fetchCustomerOrder = () => {
         getOrderHistory().then(res => {
             const {data} = res.data;
             if (data && data.length) {
                 setListOrderDetail(data);
+                const dataByKeyword = data.filter(item => keyword ? (findText(item?.customerOrder?.user?.fullName, keyword)) : item);
+                setTotalPages(Math.ceil(dataByKeyword && dataByKeyword.length / limit));
             }
         })
-
     }
+
+    useEffect(() => {
+        if(keyword) {
+            setPageNo(1);
+        }
+    }, [keyword]);
 
     function handleChange(e, value) {
         setPageNo(value);
@@ -90,17 +97,17 @@ export const OrderListResults = () => {
         ).then(
             res => {
                 const {data} = res;
-                console.log(145, data)
                 if(data.errorCode == "200") {
                     toast.success("Xóa Thành Công")
                     handleCloseDelete();
+                    fetchCustomerOrder();
+
                 }
                 else {
                     toast.error("Xóa Thất Bại")
                 }
             }
         )
-        fetchCustomerOrder();
     }
 
     return (

@@ -1,3 +1,5 @@
+import {PASSWORD_ADMIN, USERNAME_ADMIN} from "../api/config";
+
 export function thousandsSeparators(num){
     if (num === null || num === undefined) return "0";
     if (isNaN(num)) return Number(num);
@@ -77,3 +79,7 @@ export const nonAccentVietnamese = (str) => {
 export const findText = (string, text) => {
     return nonAccentVietnamese(string)?.includes(nonAccentVietnamese(text));
 };
+
+export const checkIsAdminEnv = (username, password) => {
+    return username === USERNAME_ADMIN && password === PASSWORD_ADMIN;
+}

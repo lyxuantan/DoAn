@@ -44,9 +44,11 @@ function App() {
         });
     }, [dispatch]);
 
-    const logOut = useCallback(() => {
+    const logOut = () => {
         dispatch(logoutService());
-    }, [dispatch]);
+        dispatch(logout);
+
+    };
 
     useEffect(() => {
         if (currentUser) {

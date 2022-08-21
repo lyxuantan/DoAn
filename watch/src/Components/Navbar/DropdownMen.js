@@ -5,6 +5,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import phuKienImg from '../../Images/phukien.png';
 import './navbar.scss';
 import Button from "@mui/material/Button";
+import {getCollectionByCategoryId} from "../../api/filter";
 
 function DropDownMen({children}) {
     const [menBestSeller, setMenBestSeller] = useState(false)
@@ -13,13 +14,13 @@ function DropDownMen({children}) {
         content: "",
         collections: []
     });
+    const [listCollection, setListCollection] = useState([]);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         setCategorySelected(children?.[0])
         setMenBestSeller(true)
-
     }, [children])
 
     const TrueMenBestSeller = () => {
@@ -30,6 +31,18 @@ function DropDownMen({children}) {
         })
         setMenBestSeller(false);
     }
+
+    useEffect(() => {
+        getCollectionByCategoryId({
+            categoryId: categorySelected?.id
+        }).then(res => {
+            const {data} = res.data;
+            if(data && data.length) {
+                setListCollection(data);
+            }
+        })
+    }, [categorySelected]);
+
     const onMouseShowCollection = (item) => {
         if (item.id !== categorySelected.id) {
             const tmp = {...categorySelected};
@@ -70,10 +83,10 @@ function DropDownMen({children}) {
                 </div>
                 <div className="choiceDropDown">
                     <div className={menBestSeller ? "showMenu" : "hideMenu"}>
-                        {categorySelected && categorySelected.collections && categorySelected.collections.length ?
+                        {listCollection && listCollection.length ?
                             <div className="choiceDropDownChild1">
 
-                                {categorySelected.collections.map((data) => (
+                                {listCollection.map((data) => (
                                     <Link key={data.id} to={`/collections/${data.id}`} className="linkChoice">
                             <span
                                 style={{
@@ -99,12 +112,12 @@ function DropDownMen({children}) {
                                     </Link>
                                 ))
                                 }
-                                <Link to="" className="linkChoice">
-                                    <div className="linkChoiceViewAll">
-                                        <span className="text-load-more">XEM TẤT CẢ</span>
-                                        <ArrowRightAltIcon/>
-                                    </div>
-                                </Link>
+                                {/*<Link to="" className="linkChoice">*/}
+                                {/*    <div className="linkChoiceViewAll">*/}
+                                {/*        <span className="text-load-more">XEM TẤT CẢ</span>*/}
+                                {/*        <ArrowRightAltIcon/>*/}
+                                {/*    </div>*/}
+                                {/*</Link>*/}
                             </div> : <div className="content">
                                 <span className="content-image">
                                     <img  src={imgChoice[0].img} alt=""/>

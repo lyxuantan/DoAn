@@ -23,8 +23,6 @@ import {numberToString} from "../../common/fCommon";
         ).then(res => {
             const {data} = res.data;
             if (data) {
-                console.log(25, data)
-                // setData(data.content);
                 setTotal(data?.totalElements)
             }
         })

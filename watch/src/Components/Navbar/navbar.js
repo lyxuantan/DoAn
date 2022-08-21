@@ -45,24 +45,29 @@ function Navbar() {
     const [showAccountInfor, setShowAccountInfor] = useState(false);
     const dispatch = useDispatch();
 
-    // const [user, setUser] = useState(null);
-    //
     useEffect(() => {
-        // getUserDetails().then(res => {
-        //     const {data} = res.data;
-        //     if(data) {
-        //     }
-        // })
-        setCurrentUser({...currentUser, token: user?.token, address: user?.address, fullName: user?.fullName, phoneNumber: user?.phoneNumber, role: user?.roles })
-
-    }, [user?.token])
+        if(user) {
+            setCurrentUser({
+                ...currentUser,
+                username: user?.username,
+                token: user?.token,
+                address: user?.address,
+                fullName: user?.fullName,
+                phoneNumber: user?.phoneNumber,
+                role: user?.roles
+            })
+        }
+    }, [dispatch])
     // console.log(52, user)
     const categoryStore = useSelector(state => state);
 
-    const logOut = useCallback(() => {
+    const logOut = () => {
         dispatch(logoutService());
+        dispatch(logout());
+        setCurrentUser(null)
         navigator("/login");
-    }, [dispatch]);
+    };
+
 
     useEffect(() => {
         if (currentUser) {
@@ -152,8 +157,6 @@ function Navbar() {
                 </span>
                         </li>
                         <div className="avatar">
-                            {console.log(currentUser?.username)}
-
                             {currentUser?.username ?
                                 <div className="account"
                                 ><Avatar sx={{

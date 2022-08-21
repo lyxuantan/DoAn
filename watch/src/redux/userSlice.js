@@ -37,7 +37,7 @@ const userSlice = createSlice({
         },
         logout(state, action) {
             return {
-                ...state,
+                // ...state,
                 isLoggedIn: false,
                 user: null,
             }

@@ -12,7 +12,6 @@ function AdminHome() {
 
 
     if(currentUser?.roles?.includes("ROLE_ADMIN")) {
-        console.log(currentUser)
         return (
             <ThemeProvider theme={theme}>
                 <div className="dashBoardNarBar">

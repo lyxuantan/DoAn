@@ -67,8 +67,6 @@ const OrderList = ({user}) => {
 
     }, [user])
 
-    console.log(66, listOrderDetail)
-
     function handleChange(e, value) {
         setPageNo(value);
     }
@@ -359,7 +357,6 @@ const AccountInfo = () => {
                 res => {
                     const {data} = res.data;
                     if (data) {
-                        console.log(data)
                         setUser({
                             ...user,
                             address: data.address,

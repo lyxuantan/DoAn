@@ -3,12 +3,16 @@ import {useEffect, useState} from 'react'
 import Footer from '../../Footer/footer';
 import Navbar from '../../Navbar/navbar';
 import Infor from "../../InforHeader/infor-header";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {getProductDetail} from "../../../api/product";
 import {thousandsSeparators} from "../../../common/fCommon";
 import {addToCart, getCart} from "../../../redux/cartSlice";
 import {updateCustomerOrder} from "../../../api/customer-order";
 import {useDispatch, useSelector} from "react-redux";
+import {toast} from "react-toastify";
+import {getAllCategory} from "../../../api/category";
+import {logoutService} from "../../../api/action/auth";
+import {logout} from "../../../redux/userSlice";
 
 const TAB_KEY = [
     {
@@ -29,6 +33,14 @@ const TAB_KEY = [
     }
 ]
 
+const nest = (items, id = 0, link = 'parentId') =>
+    items
+        .filter(item => item[link] === id)
+        .map(item => ({
+            ...item,
+            children: nest(items, item.id)
+        }));
+
 function DetailProduct() {
 
     const {id} = useParams();
@@ -36,9 +48,25 @@ function DetailProduct() {
     const [product, setProduct] = useState(null)
 
     const [tabSelected, setTabSelected] = useState(TAB_KEY[0]);
+    const categorySlice = useSelector(state => state.categorySlice)?.listCategory;
     const [imgPresent, setImgPresent] = useState("");
+    const [listCategory, setListCategory] = useState([]);
+    const navigator = useNavigate();
 
     const cartStore = useSelector(state => state.cartSlice);
+    const { user: currentUser } = useSelector((state) => state.userSlice);
+
+
+    useEffect(() => {
+        getAllCategory().then(res => {
+            const {data} = res.data;
+            if (data && data.length) {
+                setListCategory(data);
+            }
+        })
+    }, [id])
+
+
     const dispatch = useDispatch();
     useEffect(() => {
         getProductDetail(
@@ -50,7 +78,6 @@ function DetailProduct() {
                 const projectImageSelected = data?.productImages?.[0]?.photosImagePath;
                 setImgPresent(projectImageSelected)
             }
-            console.log(data)
         })
     }, [id])
 
@@ -58,6 +85,9 @@ function DetailProduct() {
         switch (tabSelected.key) {
             case "TAB_1":
                 return <>
+                    <div className="product-content">
+                        {item?.content}
+                    </div>
                     <div className="product-detail">
                         <table>
                             <tr>
@@ -70,14 +100,6 @@ function DetailProduct() {
                             </tr>
                             <tr>
                                 <td className="detail-title">
-                                    Độ dày
-                                </td>
-                                <td className="detail-right">
-                                    {item?.thickness}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="detail-title">
                                     Màu mặt
                                 </td>
                                 <td className="detail-right">
@@ -86,10 +108,19 @@ function DetailProduct() {
                             </tr>
                             <tr>
                                 <td className="detail-title">
-                                    Loại máy
+                                    Thương hiệu
                                 </td>
                                 <td className="detail-right">
-                                    {item?.machineType}
+                                    {item?.collections?.name}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td className="detail-title">
+                                    Danh mục
+                                </td>
+                                <td className="detail-right">
+                                    {listCategory && listCategory.length ? listCategory.find(i => i.id == item?.categoryId)?.name : ""}
                                 </td>
                             </tr>
                         </table>
@@ -118,8 +149,19 @@ function DetailProduct() {
     }
 
     const onAddToCart = (item) => {
+        // if (item.total <= 0) return;
+        if(!currentUser?.token) {
+            dispatch(logoutService());
+            dispatch(logout());
+            navigator("/login");
+        }
         const findIndexItem = cartStore?.customerOrderDetails && cartStore?.customerOrderDetails.length ? cartStore?.customerOrderDetails.findIndex(i => i?.product?.id === item?.id) : -1;
         const newDetail = [];
+        const cartItem = cartStore?.customerOrderDetails?.[findIndexItem];
+        if (cartItem?.quantity >= item?.total || item.total <= 0) {
+            toast.success("Không đủ số lượng sản phẩm");
+            return;
+        }
         if (findIndexItem > -1) {
             cartStore?.customerOrderDetails.forEach((item, index) => {
                 if (index === findIndexItem) {
@@ -175,6 +217,11 @@ function DetailProduct() {
         setImgPresent(img);
     }
 
+    function onPayNow(item) {
+        onAddToCart(item);
+        navigator(`/payment/${cartStore?.id}`)
+    }
+
     return (
         <>
             <Navbar/>
@@ -184,7 +231,8 @@ function DetailProduct() {
                         {product && product.productImages && product.productImages.length ?
                             <div className="row detailImgProduct">
                                 <div className="col-2 detailMiniProduct">
-                                    {product.productImages.map((item) => <div className={`mini-ImgProduct ${imgPresent === item.photosImagePath ? "active" : ""}`}>
+                                    {product.productImages.map((item) => <div
+                                        className={`mini-ImgProduct ${imgPresent === item.photosImagePath ? "active" : ""}`}>
                                         <img className="miniShow"
                                              onClick={() => onSelectImgPresent(item.photosImagePath)}
                                              src={item.photosImagePath}/>
@@ -210,10 +258,11 @@ function DetailProduct() {
                                 <span className="text-endNote">Giá sau khi giảm </span>
                             </div>
                             <div style={{textAlign: 'center'}} className="product-details-footer">
-                                <button type="button" className="btn btn-success btnPayment">THANH TOÁN NGAY
-                                </button>
+                                {product?.total > 0 ? <button type="button" className="btn btn-success btnPayment"
+                                                              onClick={() => onPayNow(product)}>THANH TOÁN NGAY
+                                </button> : null}
                                 <button type="button" className="btn btn-outline-dark btnAddStore"
-                                        onClick={() => onAddToCart(product)}>THÊM VÀO GIỎ
+                                        onClick={() => onAddToCart(product)}>{product?.total > 0 ? "THÊM VÀO GIỎ" : "HẾT HÀNG"}
                                 </button>
                             </div>
                         </div>

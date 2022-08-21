@@ -65,10 +65,11 @@ export const DashboardNavbar = (props) => {
         navigator("/login");
     }
 
-    const logOut = useCallback(() => {
+    const logOut = () => {
         dispatch(logoutService());
+        dispatch(logout())
         navigator("/login");
-    }, [dispatch]);
+    };
 
 
 

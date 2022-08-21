@@ -79,13 +79,11 @@ const Chart = ({listOrderHistory, listAllProduct}) => {
         lineChart: "month",
     })
 
-    console.log("categoryStore", listCategory?.[0])
     useEffect(() => {
         setCategorySelected(listCategory?.[0]?.id)
     }, [listCategory])
 
     useEffect(() => {
-        console.log("categorySelected", categorySelected)
         getProduct({
             "direction": "DESC",
             "pageNo": 1,
@@ -109,11 +107,9 @@ const Chart = ({listOrderHistory, listAllProduct}) => {
     }
 
     function onChangeTypeLineChart(value) {
-        console.log(107, value)
         setTypeChart({...typeChart, lineChart: value})
     }
 
-    console.log(listBestSeller)
     return (
 
         <div className="chart-wrapper">
@@ -167,7 +163,6 @@ const BarChart = ({listAllProduct, listBestSeller}) => {
     // const sortBySale = listAllProduct && listAllProduct.length ? listAllProduct.sort((a, b) => b.saleNumber - a.saleNumber) : [];
 
     const nestListProduct = nest(listAllProduct)
-    console.log(81, listAllProduct)
     const cData = [];
     listBestSeller?.forEach((item, index) => {
         if (index < 10) {
@@ -175,7 +170,6 @@ const BarChart = ({listAllProduct, listBestSeller}) => {
         }
     })
 
-    console.log(174, cData)
     const options = {
         dataset: {
             source: cData,
@@ -270,7 +264,6 @@ const LineChart = ({data, listOrderHistory, type}) => {
         tooltip: {
             trigger: "axis",
             formatter: function (a) {
-                console.log(265, a)
                 return `
             <div style="padding: 5px;">
             <div>${a?.[0]?.name}</div>

@@ -41,7 +41,6 @@ export default function ForgotPass() {
     generateOTP({email: email}).then(
         res => {
           const {data} = res;
-          console.log(data)
           if(data.errorCode == "200") {
             navigator("/reset/password")
           }

@@ -51,7 +51,6 @@ export default function SignUp() {
     const handleSubmit = (event) => {
         event.preventDefault();
         setIsSaveClick(true);
-        console.log(54, Object.keys(validate()))
         if(Object.keys(validate()) && Object.keys(validate()).length) return;
         registerApi({
             ...user,
@@ -74,6 +73,9 @@ export default function SignUp() {
                     toast.error("Thất bại!")
                 }
             }
+        }).catch(err => {
+            const {data} = err?.response;
+            toast.error(data.message)
         })
     };
 

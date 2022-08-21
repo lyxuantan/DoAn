@@ -31,9 +31,20 @@ export const getSizes = (payload) => {
 
 export const addCollections = (payload) => {
     return HTTP({
-        url: FILTER.GET_ALL_SIZE,
-        method: "GET",
+        url: FILTER.ADD_COLLECTION,
+        method: "POST",
         data: payload,
         headers: authHeader()
     })
 }
+
+export const getCollectionByCategoryId = (payload) => {
+    return HTTP({
+        url: FILTER.GET_BY_CATEGORY,
+        method: "GET",
+        params: payload,
+        headers: authHeader()
+    })
+}
+
+

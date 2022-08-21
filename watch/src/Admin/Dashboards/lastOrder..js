@@ -61,7 +61,6 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
         ).then(
             res => {
                 const {data} = res;
-                console.log(145, data)
                 if(data.errorCode == "200") {
                     toast.success("Xóa Thành Công")
                     onFetchOrderHistory();

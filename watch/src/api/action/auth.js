@@ -51,4 +51,5 @@ export const login = (username, password) => (dispatch) => {
 export const logoutService = () => (dispatch) => {
     AuthService.logout();
     dispatch(logout);
+    dispatch(logout());
 };

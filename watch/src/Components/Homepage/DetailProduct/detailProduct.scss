@@ -4,6 +4,14 @@
     margin: 60px 0;
 }
 
+.custom-tab-content {
+    display: flex;
+    .product-content {
+        padding: 16px;
+        word-break: break-word;
+        width: 50%;
+    }
+}
 
 .miniShow{
     width: 70px;

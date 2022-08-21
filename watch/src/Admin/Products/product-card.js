@@ -83,8 +83,9 @@ export const ProductCard = ({keyword}) => {
                 if (res && res.data) {
                     const {data} = res.data;
                     if(data && data.length) {
+                        console.log(data)
                         setData(data)
-                        setTotalPages(Math.ceil(data && data?.length / limit));
+                        setTotalPages(Math.ceil(data && data.length && data.filter(item => keyword ? (findText(item.name, keyword) || findText(item?.collections?.name, keyword)) : item).length / limit));
                     }
                 }
             })
@@ -94,6 +95,12 @@ export const ProductCard = ({keyword}) => {
     useEffect(() => {
       fetchProduct();
     }, [pageNo, keyword]);
+
+    useEffect(() => {
+        if(keyword) {
+            setPageNo(1);
+        }
+    }, [keyword]);
 
 
     function handleClickOpen(img, title, brand) {
@@ -129,7 +136,6 @@ export const ProductCard = ({keyword}) => {
     }
 
     const onModifiledProduct = (product) => {
-        console.log(product)
         navigate(`/admin/product/addProduct/${product?.id}`)
     }
 
@@ -173,8 +179,6 @@ export const ProductCard = ({keyword}) => {
         "Số lượng",
         "Tuỳ chọn",
     ];
-
-    console.log(177, data);
 
     return (
         <Card className="list-product">

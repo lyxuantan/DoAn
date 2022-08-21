@@ -5,7 +5,6 @@ import {numberToString} from "../../common/fCommon";
 
 export const Budget = ({listOrderHistory}) => {
 
-    {console.log(8, listOrderHistory)}
   return (<Card
     sx={{ height: '100%' }}
   >

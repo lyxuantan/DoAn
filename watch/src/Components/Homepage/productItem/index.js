@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import productImg1 from "../../../Images/1.jpg";
 import {formatCurrency} from "../../../common/fCommon";
 import UpDownSaleOff from "../../../component-utility/UpDownSaleOff";
@@ -8,17 +8,33 @@ import {useEffect} from "react";
 import {getCustomerOrder, updateCustomerOrder} from "../../../api/customer-order";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faImage } from '@fortawesome/free-solid-svg-icons';
+import {toast} from "react-toastify";
+import {logoutService} from "../../../api/action/auth";
+import {logout} from "../../../redux/userSlice";
 
 const ProductItem = ({item}) => {
 
     const cartStore = useSelector(state => state.cartSlice);
+    const { user: currentUser } = useSelector((state) => state.userSlice);
+    const navigator = useNavigate();
+
     const dispatch = useDispatch();
 
 
     const onAddToCart = (item) => {
+        if(!currentUser?.token) {
+            dispatch(logoutService());
+            dispatch(logout());
+            navigator("/login");
+        }
         // dispatch(addToCart(item));
         // eslint-disable-next-line no-unused-expressions
         const findIndexItem = cartStore?.customerOrderDetails && cartStore?.customerOrderDetails.length ? cartStore?.customerOrderDetails.findIndex(i => i?.product?.id === item?.id) : -1;
+        const cartItem = cartStore?.customerOrderDetails?.[findIndexItem];
+        if(cartItem?.quantity >= item?.total || item.total <= 0) {
+            toast.success("Không đủ số lượng sản phẩm");
+            return;
+        }
         const newDetail = [];
         if (findIndexItem > -1) {
             cartStore?.customerOrderDetails.forEach((item, index) => {
@@ -106,7 +122,7 @@ const ProductItem = ({item}) => {
                     </Link>
                 </div>
                 <div className="card-body">
-                    <button className="btn-addStore" type="button" onClick={() => onAddToCart(item)}>THÊM VÀO GIỎ
+                    <button className="btn-addStore" type="button" onClick={() => onAddToCart(item)}>{item?.total > 0 ? "THÊM VÀO GIỎ" : "HẾT HÀNG"}
                     </button>
                     <div className="cardBrand">{item?.collections?.name}</div>
                     <div><h4 className="cardTitle">{item.name}</h4></div>
