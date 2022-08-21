@@ -332,7 +332,6 @@ function AddProduct(props) {
                 categoryId: product.categoryId,
                 name: collectionName?.trim()
             }).then(res => {
-                console.log(res);
                 const {data} = res;
                 if(data?.errorCode == "200") {
                     toast.success("Tạo bộ sưu tập thành công!");

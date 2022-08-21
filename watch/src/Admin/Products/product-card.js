@@ -83,7 +83,6 @@ export const ProductCard = ({keyword}) => {
                 if (res && res.data) {
                     const {data} = res.data;
                     if(data && data.length) {
-                        console.log(data)
                         setData(data)
                         setTotalPages(Math.ceil(data && data.length && data.filter(item => keyword ? (findText(item.name, keyword) || findText(item?.collections?.name, keyword)) : item).length / limit));
                     }

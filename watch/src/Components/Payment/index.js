@@ -125,7 +125,6 @@ const PaymentOrder = () => {
         //     bankCode: "",
         // }).then(res => {
         //     const {data} = res;
-        //     console.log(96, data)
         //     if (data.errorCode == "200") {
         //         toast.success("Đặt Hàng Thành Công")
         //         navigator("/")

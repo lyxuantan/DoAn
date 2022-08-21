@@ -58,7 +58,6 @@ function Navbar() {
             })
         }
     }, [dispatch])
-    // console.log(52, user)
     const categoryStore = useSelector(state => state);
 
     const logOut = () => {
