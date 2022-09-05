@@ -1,8 +1,13 @@
 package com.example.ecommer.security.services;
 
+import com.example.ecommer.constant.ERole;
 import com.example.ecommer.constant.ErrorCode;
+import com.example.ecommer.dto.request.SignupRequest;
+import com.example.ecommer.dto.response.MessageResponse;
 import com.example.ecommer.exception.CustomException;
+import com.example.ecommer.model.Role;
 import com.example.ecommer.model.User;
+import com.example.ecommer.repository.RoleRepository;
 import com.example.ecommer.repository.UserRepository;
 import com.example.ecommer.service.UserService;
 import net.bytebuddy.utility.RandomString;
@@ -10,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
@@ -26,7 +32,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService, UserService {
@@ -36,6 +44,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
     JavaMailSender mailSender;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     PasswordEncoder encoder;
 
@@ -99,6 +110,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
         customer.setOtpRequestedTime(null);
         userRepository.save(customer);
     }
+
 
     public User findByUsername() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

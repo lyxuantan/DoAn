@@ -20,28 +20,36 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM product WHERE (category_id = :categoryId) and (price_sale > :priceFrom AND price_sale < :priceTo) and (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
     Page<Product> findPageProductFilterCategoryAndPrice(Long priceFrom, Long priceTo, List<Long> collectionId, List<Long> sizeId, List<Long> colorId, Long categoryId, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product WHERE (category_id = :categoryId) and (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
-    Page<Product> findPageProductFilterCategory(List<Long> collectionId, List<Long> sizeId, List<Long> colorId, Long categoryId, Pageable pageable);
+    @Query(value = "SELECT * FROM product WHERE (category_id = :categoryId) and (collection_id in :collectionId or size_id in :sizeId or color_id in :colorId) and name like %:keyword%", nativeQuery = true)
+    Page<Product> findPageProductFilterCategory(List<Long> collectionId, List<Long> sizeId, List<Long> colorId, Long categoryId, String keyword, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product where category_id = :categoryId", nativeQuery = true)
-    Page<Product> findAllByCategoryId(Long categoryId, Pageable pageable);
+    @Query(value = "SELECT * FROM product where category_id = :categoryId and name like %:keyword%", nativeQuery = true)
+    Page<Product> findAllByCategoryId(Long categoryId, String keyword, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product where category_id = :categoryId and (price_sale > :priceFrom AND price_sale < :priceTo)", nativeQuery = true)
-    Page<Product> findAllByCategoryIdAndPrice(Long priceFrom, Long priceTo, Long categoryId, Pageable pageable);
+    @Query(value = "SELECT * FROM product where category_id = :categoryId and (price_sale > :priceFrom AND price_sale < :priceTo) and name like %:keyword%", nativeQuery = true)
+    Page<Product> findAllByCategoryIdAndPrice(Long priceFrom, Long priceTo, Long categoryId, String keyword, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product WHERE category_id in :categoryId and name like %:keyword% ", nativeQuery = true)
+    @Query(value = "SELECT * FROM product WHERE category_id in :categoryId and name like %:keyword%", nativeQuery = true)
     Page<Product> findAllByCategory(Set<Long> categoryId, String keyword, Pageable pageable);
 
     @Query(value = "SELECT p FROM Product p JOIN Collections c on p.collections.id=c.id where p.name like %?1%")
     Page<Product> findAllByKeyword(String keyword, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and  (size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
-    Page<Product> findPageProductFilterAndCollections(List<Long> sizeId, List<Long> colorId, Long collectionsFiler, Pageable pageable);
+    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and  (size_id in :sizeId or color_id in :colorId) and name like %:keyword%", nativeQuery = true)
+    Page<Product> findPageProductFilterAndCollections(List<Long> sizeId, List<Long> colorId, Long collectionsFiler, String keyword, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and (price_sale > :priceFrom AND price_sale < :priceTo) and (size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
-    Page<Product> findPageProductFilterAndCollectionsAndPrice(Long priceFrom, Long priceTo, List<Long> sizeId, List<Long> colorId, Long collectionsFiler, Pageable pageable);
+    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and name like %:keyword%", nativeQuery = true)
+    Page<Product> findPageProductCollections( Long collectionsFiler, String keyword, Pageable pageable);
+
+
+
+    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and (price_sale > :priceFrom AND price_sale < :priceTo) and (size_id in :sizeId or color_id in :colorId) and name like %:keyword%", nativeQuery = true)
+    Page<Product> findPageProductFilterAndCollectionsAndPrice(Long priceFrom, Long priceTo, List<Long> sizeId, List<Long> colorId, Long collectionsFiler, String keyword, Pageable pageable);
 //    @Query(value = "SELECT p FROM Product p JOIN Collections c on p.collections.id=c.id where p.name like %?1%")
 //    List<Product> findAllProduct(String keyword, Pageable pageable);
+
+//    @Query(value = "SELECT * FROM product WHERE collection_id = :collectionsFiler and (price_sale > :priceFrom AND price_sale < :priceTo) and (size_id in :sizeId or color_id in :colorId)", nativeQuery = true)
+//    Page<Product> findPageProductFilterAndCollectionsAndPrice(Long priceFrom, Long priceTo, List<Long> sizeId, List<Long> colorId, Long collectionsFiler, Pageable pageable);
 
 }
 

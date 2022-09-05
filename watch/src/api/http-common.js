@@ -1,6 +1,10 @@
 import axios from "axios";
 import { BASE_URL } from "./config";
 import EventBus from "../common/EventBus";
+import {logout} from "./auth";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {useDispatch} from "react-redux";
 
 // const user = JSON.parse(localStorage.getItem("user"));
 export  function authHeader() {
@@ -60,8 +64,8 @@ const HTTP = axios.create({
     if (error.response) {
       const {status, data} = error.response;
       if (status === 401 && data.message) {
-        EventBus.on("logout", () => {
-        });
+        logout();
+
       }
     }
     return Promise.reject(error);
@@ -76,6 +80,35 @@ const HTTP = axios.create({
     (response) => responseHandler(response),
     (error) => errorHandler(error)
   );
-  
+
+  const AxiosInterceptor = ({children}) => {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+
+      const resInterceptor = response => {
+        return response;
+      }
+
+      const errInterceptor = error => {
+        if(error.response.status === 401) {
+
+          navigate("/login");
+        }
+        return Promise.reject(error);
+      }
+
+      const interceptor = HTTP.interceptors.response.use(resInterceptor, errInterceptor);
+
+      return () => HTTP.interceptors.response.eject(interceptor);
+
+    }, [navigate])
+
+    return children;
+  }
+
   export default HTTP;
+  export  {AxiosInterceptor}
   

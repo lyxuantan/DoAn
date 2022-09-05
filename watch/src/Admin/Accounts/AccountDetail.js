@@ -78,6 +78,20 @@ export const AccountListResults = ({keyword}) => {
         )
     }
 
+    function checkIsAdmin(customer) {
+        if(customer && customer.roles && customer.roles.length) {
+
+            const index = customer.roles.findIndex(item => item.type === "ROLE_ADMIN")
+            if(index > -1) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return false;
+    }
+
     let handleClose;
     return (
         <>
@@ -129,7 +143,7 @@ export const AccountListResults = ({keyword}) => {
                                         <TableCell>
                                             <div>
                                                 <Tooltip title="Xoá">
-                                                    <Button variant="contained" color="error" onClick={() => onDeleteUser(customer)}>
+                                                    <Button variant="contained" color="error" onClick={() => onDeleteUser(customer)} disabled={checkIsAdmin(customer)}>
                                                         <DeleteIcon />
                                                     </Button>
                                                 </Tooltip>

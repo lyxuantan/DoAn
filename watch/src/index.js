@@ -10,7 +10,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
 import {store} from "./store";
-
+import { AxiosInterceptor } from './api/http-common';
 import {Suspense} from "react";
 import './i18n';
 import {ToastContainer} from "react-toastify";
@@ -23,10 +23,13 @@ root.render(
     <React.StrictMode>
         <Provider store={store}>
             {/*<PersistGate persistor={customPersistStore}>*/}
+
             <BrowserRouter>
                     <ScrollToTop/>
                     <Suspense fallback="Loading...">
+                        <AxiosInterceptor>
                         <App/>
+                        </AxiosInterceptor>
                     </Suspense>
                 </BrowserRouter>
             <ToastContainer />

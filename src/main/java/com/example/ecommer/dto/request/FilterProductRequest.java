@@ -46,7 +46,7 @@ public class FilterProductRequest {
     private Long collectionId;
 
 
-    private Boolean isFindCollections = false;
+    private boolean isFindCollections;
 
     public FilterProductRequest() {
     }
@@ -72,6 +72,14 @@ public class FilterProductRequest {
 
     public Long getId() {
         return id;
+    }
+
+    public boolean isFindCollections() {
+        return isFindCollections;
+    }
+
+    public void setFindCollections(boolean findCollections) {
+        isFindCollections = findCollections;
     }
 
     public void setId(Long id) {

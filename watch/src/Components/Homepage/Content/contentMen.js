@@ -7,7 +7,8 @@ import {getProduct} from "../../../api/product";
 import ProductItem from "../productItem";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {Pagination, Stack} from "@mui/material";
+import {Pagination, Stack, TextField} from "@mui/material";
+import {getCollections} from "../../../api/filter";
 
 
 function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId}) {
@@ -19,6 +20,8 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
     const [totalPages, setTotalPages] = useState(0);
     const [pageNo, setPageNo] = useState(1);
     const [numberOfElements, setNumberOfElements] = useState(0);
+    const [keyword, setKeyword] = useState("");
+    const [collectionSelected, setCollectionSelected] = useState("");
 
     const [filterProduct, setFilterProduct] = useState({
         colors: [],
@@ -33,6 +36,16 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
     const [elementSize, setElementSize] = useState(8);
 
     useEffect(() => {
+        getCollections().then(res => {
+            const {data} = res.data;
+            if (data && data.length) {
+                const collectionNameSelected = data.find(item => item.id == collectionsId)?.name;
+                setCollectionSelected(collectionNameSelected);
+            }
+        })
+    }, [collectionsId]);
+
+    useEffect(() => {
         if(!isCollection) {
             getProduct(
                 {
@@ -44,6 +57,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                     "priceTo": filterProduct?.priceTo,
                     "categoryId": categoryDetail?.id,
                     "direction": filterProduct.direction,
+                    "keyword": keyword || "",
                     "pageNo": pageNo,
                     "pageSize": elementSize,
                     "orderBy": `${isBestSeller ? "sale_number" : filterProduct.orderBy}`,
@@ -74,6 +88,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                     "categoryId": categoryDetail?.id,
                     "direction": filterProduct.direction,
                     "pageNo": pageNo,
+                    "keyword": keyword || "",
                     "pageSize": elementSize,
                     "orderBy": `${isBestSeller ? "sale_number" : filterProduct.orderBy}`,
                     "isBestSell": false,
@@ -92,7 +107,7 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                 })
                 .catch(error => console.log(error));
         }
-    }, [categoryDetail, isBestSeller, filterProduct, pageNo, collectionsId]);
+    }, [categoryDetail, isBestSeller, filterProduct, pageNo, collectionsId, keyword]);
 
     const onChangeCollection = (item) => {
         const tmp = {...filterProduct};
@@ -174,9 +189,13 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
         setPageNo(value);
     }
 
+    function onChangeKeyword(value) {
+        setKeyword(value);
+    }
+
     return (
         <div className="container">
-            <FilterProduct categoryDetail={categoryDetail} filterProduct={filterProduct}
+            {!isCollection ? <FilterProduct categoryDetail={categoryDetail} filterProduct={filterProduct}
                            onChangeCollection={onChangeCollection}
                            onChangeSize={onChangeSize} onChangeColor={onChangeColor}
                            onChangePriceFrom={onChangePriceFrom}
@@ -186,7 +205,14 @@ function ContentMen({categoryDetail, isBestSeller, isCollection, collectionsId})
                            onClearFilter={onClearFilter}
                            onChangeSort={onChangeSort}
                            numberOfElements={numberOfElements}
-            />
+            /> : null}
+
+            {isCollection ? <h5>Bộ sưu tập: {collectionSelected}</h5> : null}
+                <div style={{marginTop: "20px"}}>
+
+            <TextField style={{width: "30%"}}
+                         id="outlined-basic" label="Tên Sản Phẩm" variant="outlined" fontSize="small" onChange={(e) => onChangeKeyword(e.target.value)}/>
+            </div>
 
             <div className="product-container mt-5">
                 {data && data.length ?

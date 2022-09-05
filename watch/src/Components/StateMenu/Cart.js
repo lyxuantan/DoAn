@@ -21,6 +21,7 @@ import {thousandsSeparators} from "../../common/fCommon";
 import {useNavigate} from "react-router-dom";
 import {logoutService} from "../../api/action/auth";
 import {logout} from "../../redux/userSlice";
+import {toast} from "react-toastify";
 
 const totalPrice = (listOrderDetails) => {
     let total = 0;
@@ -94,6 +95,13 @@ export default function Cart({currentUser}) {
     const onChangeTotal = (item, num) => {
         const tmp = {...customerOrder};
         const indexOrderDetail = customerOrder.customerOrderDetails.findIndex(i => i.id === item.id);
+        const cartItem = customerOrder?.customerOrderDetails?.[indexOrderDetail];
+        if(num === 1) {
+            if (cartItem?.quantity >= item?.total || item.total <= 0) {
+                toast.success("Không đủ số lượng sản phẩm");
+                return;
+            }
+        }
         if (indexOrderDetail > -1) {
             tmp.customerOrderDetails = customerOrder.customerOrderDetails.map((item, index) => {
                 if (indexOrderDetail === index) {

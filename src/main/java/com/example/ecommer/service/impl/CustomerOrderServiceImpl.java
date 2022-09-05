@@ -44,7 +44,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CartResponse> findByUserAndStatus(Long id, Boolean isPaid) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         List<CustomerOrder> customerOrderList = customerOrderRepository.findAllByUserAndIsPaid(user, isPaid);
         List<CartResponse> cartResponses = new ArrayList<>();

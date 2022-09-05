@@ -80,6 +80,6 @@ export const findText = (string, text) => {
     return nonAccentVietnamese(string)?.includes(nonAccentVietnamese(text));
 };
 
-export const checkIsAdminEnv = (username, password) => {
-    return username === USERNAME_ADMIN && password === PASSWORD_ADMIN;
+export const checkIsAdmin = (user) => {
+    return user?.role?.includes("ROLE_ADMIN")
 }

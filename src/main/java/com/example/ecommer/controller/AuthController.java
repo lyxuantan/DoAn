@@ -119,37 +119,42 @@ public class AuthController {
                     .badRequest()
                     .body(new MessageResponse("email đã được sử dụng!"));
         }
-
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getFullName(),
-                signUpRequest.getEmail(),
-                signUpRequest.getAddress(),
-                signUpRequest.getPhoneNumber(),
-                encoder.encode(signUpRequest.getPassword()));
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByType(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByType(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByType(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
-                        roles.add(userRole);
-                }
-            });
+        if (signUpRequest.getUsername().equals("admin")) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("không thể tạo username là admin!"));
         }
-        user.setRoles(roles);
-        userRepository.save(user);
+        // Create new user's account
+        userServiceImpl.signup(signUpRequest);
+//        User user = new User(signUpRequest.getUsername(),
+//                signUpRequest.getFullName(),
+//                signUpRequest.getEmail(),
+//                signUpRequest.getAddress(),
+//                signUpRequest.getPhoneNumber(),
+//                encoder.encode(signUpRequest.getPassword()));
+//        Set<String> strRoles = signUpRequest.getRole();
+//        Set<Role> roles = new HashSet<>();
+//        if (strRoles == null) {
+//            Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+//                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+//            roles.add(userRole);
+//        } else {
+//            strRoles.forEach(role -> {
+//                switch (role) {
+//                    case "admin":
+//                        Role adminRole = roleRepository.findByType(ERole.ROLE_ADMIN)
+//                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+//                        roles.add(adminRole);
+//                        break;
+//                    default:
+//                        Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+//                                .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+//                        roles.add(userRole);
+//                }
+//            });
+//        }
+//        user.setRoles(roles);
+//        userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
@@ -178,10 +183,10 @@ public class AuthController {
     @PostMapping("/send-email")
     public ResponseEntity<?> sendVerificationMail(@Valid @RequestBody VerifyEmailRequest emailRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(emailRequest.getEmail()))) {
-                User user = userRepository.findByEmail(emailRequest.getEmail()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-                ConfirmationToken token = confirmationTokenService.createToken(user);
-                emailSenderService.sendMail(user.getEmail(), token.getConfirmationToken());
-                return ResponseEntity.ok(new ApiResponse(ErrorCode.VERTIFICATION_SEND_MAIL));
+            User user = userRepository.findByEmail(emailRequest.getEmail()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+            ConfirmationToken token = confirmationTokenService.createToken(user);
+            emailSenderService.sendMail(user.getEmail(), token.getConfirmationToken());
+            return ResponseEntity.ok(new ApiResponse(ErrorCode.VERTIFICATION_SEND_MAIL));
 //            }
         } else {
             throw new CustomException("Email is not associated with any account");
@@ -206,8 +211,7 @@ public class AuthController {
         ApiResponse response;
         try {
             response = new ApiResponse(userDetailsService.findByUsername());
-        }
-        catch (CustomException e) {
+        } catch (CustomException e) {
             response = new ApiResponse(e);
         }
         return ResponseEntity.ok(response);

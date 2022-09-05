@@ -19,6 +19,7 @@ import moment from 'moment';
 import {deleteOrderHistory, updateStatusOrder} from "../../api/order-hitory";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -28,7 +29,8 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
     const [limit, setLimit] = useState(10);
     const [listOrderDetail, setListOrderDetail] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [orderDeleteSelected, setOrderDeleteSelected] = useState("")
+    const [orderDeleteSelected, setOrderDeleteSelected] = useState("");
+    const navigator = useNavigate();
 
     function handleChange(e, value) {
         setPageNo(value);
@@ -76,6 +78,12 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
     function onDeleteOrderHistory(order) {
         setOrderDeleteSelected(order.id);
 
+    }
+
+    function onViewCustomerOrder(order) {
+        if(order?.customerOrder?.id) {
+            navigator(`/admin-order-details/${order?.customerOrder?.id}`)
+        }
     }
 
     return (
@@ -127,6 +135,8 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
                                 <TableRow
                                     hover
                                     key={order?.id}
+                                    onClick={() => onViewCustomerOrder(order)}
+
                                 >
                                     <TableCell>
                                         {order?.id}

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Long> {
 
-    @Query("SELECT o FROM OrderHistory o")
-    List<OrderHistory> findAllOrderHistory();
+//    @Query(value = "SELECT * FROM order_history",  nativeQuery = true)
+//    List<OrderHistory> find;
 
 }

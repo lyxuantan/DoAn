@@ -1,6 +1,7 @@
 package com.example.ecommer.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,12 +38,11 @@ public class OrderHistory  {
     @JoinColumn(name = "customer_order_id")
     private CustomerOrder customerOrder;
 
-    @Column
-    @JoinColumn(name = "price")
+
+    @Column(name = "price")
     private Float price;
 
-    @Column
-    @JoinColumn(name = "date")
+    @Column(name = "date")
     private Long date;
 
     @Column(name = "status")

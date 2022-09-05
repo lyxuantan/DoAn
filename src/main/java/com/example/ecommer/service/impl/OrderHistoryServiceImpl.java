@@ -21,7 +21,7 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
 
     @Override
     public List<OrderHistory> orderHistoryList() {
-        return orderHistoryRepository.findAllOrderHistory();
+        return orderHistoryRepository.findAll();
     }
 
     @Override

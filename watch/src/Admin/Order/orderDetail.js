@@ -27,6 +27,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import {UploadFile} from "@mui/icons-material";
 import {deleteProduct} from "../../api/customer-order";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 export const OrderListResults = () => {
     const [pageNo, setPageNo] = useState(1);
@@ -34,6 +35,7 @@ export const OrderListResults = () => {
     const [listOrderDetail, setListOrderDetail] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [keyword, setKeyword] = useState("");
+    const navigator = useNavigate();
 
 
     useEffect(() => {
@@ -110,6 +112,12 @@ export const OrderListResults = () => {
         )
     }
 
+    function onViewCustomerOrder(order) {
+        if(order?.customerOrder?.id) {
+            navigator(`/admin-order-details/${order?.customerOrder?.id}`)
+        }
+    }
+
     return (
         <>
             <div style={{paddingBottom: "16px"}}>
@@ -183,6 +191,7 @@ export const OrderListResults = () => {
                                     <TableRow
                                         hover
                                         key={order?.id}
+                                        onClick={() => onViewCustomerOrder(order)}
                                     >
                                         <TableCell>
                                             {order?.id}

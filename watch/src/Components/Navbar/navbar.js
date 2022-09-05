@@ -18,6 +18,7 @@ import {deepOrange} from "@mui/material/colors";
 import {Logout} from "@mui/icons-material";
 import {logoutService} from "../../api/action/auth";
 import {getUserDetails} from "../../api/user";
+import {checkIsAdmin} from "../../common/fCommon";
 
 const nest = (items, id = 0, link = 'parentId') =>
     items
@@ -170,6 +171,9 @@ function Navbar() {
                                             <li onClick={() => navigator(`/account/${currentUser.id}`)}>
                                                 Thông tin tài khoản
                                             </li>
+                                            {checkIsAdmin(currentUser) ? <li onClick={() => navigator("/admin")}>
+                                                Trang admin
+                                            </li> : null}
                                             <li onClick={logOut}>
                                                 Đăng xuất <Logout sx={{size: "12px"}}/>
                                             </li>

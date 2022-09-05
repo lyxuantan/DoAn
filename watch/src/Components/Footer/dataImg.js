@@ -40,4 +40,25 @@ const images = {
     vnPayIcon: vnPayIcon
 };
 
+export const listImage = [
+    footerImg1,
+    footerImg2,
+    footerImg3,
+    footerImg4,
+    footerImg5,
+    footerImg6,
+    footerImg7,
+    footerImg8,
+    footerImg9,
+    footerImg10,
+    footerImg11,
+    footerImg12,
+    footerImg13,
+    footerImg14,
+    footerImg15,
+    footerImg16,
+    footerImg17,
+    footerImg18,
+]
+
 export default images;

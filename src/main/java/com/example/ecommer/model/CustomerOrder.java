@@ -39,6 +39,13 @@ public class CustomerOrder extends Base{
     @Column(name = "is_paid")
     private Boolean isPaid = true;
 
+    @OneToOne(mappedBy = "customerOrder", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JsonIgnore
+    private OrderHistory orderHistory;
+
+//    @OneToOne
+//    @JoinColumn(name = "order_history")
+//    private OrderHistory customerOrder;
 
 //    @OneToOne // Đánh dấu có mỗi quan hệ 1-1 với Person ở phía dưới
 //    @JoinColumn(name = "person_id") // Liên kết với nhau qua khóa ngoại person_id

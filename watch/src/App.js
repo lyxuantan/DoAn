@@ -30,6 +30,7 @@ import PaymentOrder from "./Components/Payment";
 import {logoutService} from "./api/action/auth";
 import HomePageCollection from "./Components/HomeFilterCollections";
 import PaymentSuccess from "./Components/PaymenSuccess";
+import VewCustomersDetail from "./Components/VewCustomersDetail";
 
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
                     <Route path='admin/customer/addCustomer' element = { <AddCustomer /> } />
                     <Route path='admin/account/addAccount' element = { <AddAccount /> } />
                     <Route path='admin/order' element = { <Orders /> } />
+                    <Route path="/admin-order-details/:id" element = { <VewCustomersDetail/>}/>
                     <Route path='admin/account' element = { <Accounts /> } />
                 </Routes>
 

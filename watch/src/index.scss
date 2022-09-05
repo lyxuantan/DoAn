@@ -6,6 +6,18 @@
   --color-red: #ff5e57;
   --color-white: #ffff;
   --border-value: 8px;
+
+  /* 	Size is a variable for both - height and width dimensions of the circle  */
+  --size: 300px;
+  /* 	First Color Value */
+  --clrFirstSpin: lightpink;
+  /* 	Second Color Value */
+  --clrSecondSpin: aqua;
+  /* 	Third Color Value */
+  --clrThirdSpin: purple;
+  /* 	Duration for text blinking animation  */
+  --displayingTextTime: 2500ms;
+  --spinnerFont: calc(var(--size)/10);
 }
 
 * {

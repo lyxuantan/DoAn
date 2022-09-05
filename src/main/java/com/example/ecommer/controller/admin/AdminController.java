@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping(value = "/admin")
 @CrossOrigin(origins = "${watch.port}")
@@ -83,8 +85,17 @@ public class AdminController {
     public ResponseEntity<ApiResponse> deleteUser(@RequestParam(name = "userId") Long userId) {
         ApiResponse response;
         try {
-            userRepository.deleteById(userId);
-            response = new ApiResponse(ErrorCode.SUCCESS);
+            Optional<User> userExists = userRepository.findById(userId);
+            if(userExists.isPresent()){
+                if(userExists.get().getRoles().contains("ADMIN")) {
+                    throw new CustomException(ErrorCode.NOT_DELETE_ADMIN);
+                }
+                userRepository.deleteById(userId);
+                response = new ApiResponse(ErrorCode.SUCCESS);
+            }
+            else {
+                throw new CustomException(ErrorCode.NOT_FOUND);
+            }
         } catch (CustomException e) {
             response = new ApiResponse(e);
         }

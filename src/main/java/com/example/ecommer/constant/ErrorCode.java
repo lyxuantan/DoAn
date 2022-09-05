@@ -9,6 +9,7 @@ public enum ErrorCode {
     COLLECTION_EXITS("ERR001", "Bộ sưu tập đã tồn tại"),
     NOT_FOUND("ERR002", "Không tìm thấy thông tin"),
     COLLECTION_NAME_INVALID("ERR002", "Tên không hợp lệ"),
+    NOT_DELETE_ADMIN("ERR", "Không thể xóa tài khoản admin"),
 
     NOT_FOUND_CATEGORY("ERR002", "Danh mục sản phẩm không tồn tại"),
     NOT_FOUND_PRODUCT("ERR002", "Sản phẩm không tồn tại"),

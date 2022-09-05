@@ -1,10 +1,13 @@
 package com.example.ecommer.service.impl;
 
+import com.example.ecommer.constant.ERole;
 import com.example.ecommer.constant.ErrorCode;
 import com.example.ecommer.dto.request.ChangePasswordRequest;
 import com.example.ecommer.dto.request.SignupRequest;
 import com.example.ecommer.exception.CustomException;
+import com.example.ecommer.model.Role;
 import com.example.ecommer.model.User;
+import com.example.ecommer.repository.RoleRepository;
 import com.example.ecommer.repository.UserRepository;
 import com.example.ecommer.service.UserService;
 import net.bytebuddy.utility.RandomString;
@@ -25,7 +28,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,6 +43,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    RoleRepository roleRepository;
+
 
     @Override
     public Page<User> findListUserPage(Integer pageNo, Integer limit, String keyword, Integer roleId) {
@@ -92,6 +101,80 @@ public class UserServiceImpl implements UserService {
         customer.setOneTimePassword(null);
         customer.setOtpRequestedTime(null);
         userRepository.save(customer);
+    }
+
+
+    public void signup(SignupRequest signupRequest) {
+        // Create new user's account
+        Optional<User> userAdminExits  = userRepository.findByUsername(signupRequest.getUsername());
+
+        if(userAdminExits.isPresent() && signupRequest.getUsername().equals("admin")) {
+            userAdminExits.get().setUsername(signupRequest.getUsername());
+            userAdminExits.get().setFullName(signupRequest.getFullName());
+            userAdminExits.get().setEmail(signupRequest.getEmail());
+            userAdminExits.get().setPassword(encoder.encode(signupRequest.getPassword()));
+
+//            User user = new User(signupRequest.getUsername(),
+//                    signupRequest.getFullName(),
+//                    signupRequest.getEmail(),
+//                    signupRequest.getAddress(),
+//                    signupRequest.getPhoneNumber(),
+//                    encoder.encode(signupRequest.getPassword()));
+            Set<String> strRoles = signupRequest.getRole();
+            Set<Role> roles = new HashSet<>();
+            if (strRoles == null) {
+                Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                roles.add(userRole);
+            } else {
+                strRoles.forEach(role -> {
+                    switch (role) {
+                        case "admin":
+                            Role adminRole = roleRepository.findByType(ERole.ROLE_ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                            roles.add(adminRole);
+                            break;
+                        default:
+                            Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+                                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                            roles.add(userRole);
+                    }
+                });
+            }
+            userAdminExits.get().setRoles(roles);
+            userRepository.save(userAdminExits.get());
+        }
+        else {
+            User user = new User(signupRequest.getUsername(),
+                    signupRequest.getFullName(),
+                    signupRequest.getEmail(),
+                    signupRequest.getAddress(),
+                    signupRequest.getPhoneNumber(),
+                    encoder.encode(signupRequest.getPassword()));
+            Set<String> strRoles = signupRequest.getRole();
+            Set<Role> roles = new HashSet<>();
+            if (strRoles == null) {
+                Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                roles.add(userRole);
+            } else {
+                strRoles.forEach(role -> {
+                    switch (role) {
+                        case "admin":
+                            Role adminRole = roleRepository.findByType(ERole.ROLE_ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                            roles.add(adminRole);
+                            break;
+                        default:
+                            Role userRole = roleRepository.findByType(ERole.ROLE_USER)
+                                    .orElseThrow(() -> new RuntimeException("Role không tìm thấy."));
+                            roles.add(userRole);
+                    }
+                });
+            }
+            user.setRoles(roles);
+            userRepository.save(user);
+        }
     }
 
     public User findUserLogin() {

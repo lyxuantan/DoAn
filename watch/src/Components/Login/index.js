@@ -93,6 +93,7 @@ export default function Login() {
             <Grid container component="main" sx={{height: '100vh'}}>
                 <CssBaseline/>
                 <Grid
+                    className="login"
                     item
                     xs={false}
                     sm={4}
@@ -122,38 +123,53 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Đăng Nhập
                         </Typography>
-                        <Box  noValidate sx={{mt: 1}}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Tài khoản"
-                                name="email"
-                                autoComplete="email"
-                                value={username}
-                                autoFocus
-                                onChange={onChangeUsername}
+
+                        <Box  noValidate sx={{mt: 1}} style={{width: "100%"}}>
+                            <div className="row">
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Tài khoản"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={username}
+                                    autoFocus
+                                    onChange={onChangeUsername}
 
 
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Mật khẩu"
-                                type="password"
-                                id="password"
-                                value={password}
-                                autoComplete="current-password"
-                                onChange={onChangePassword}
-                            />
-                            <CustomError message={messageError} isSaveClick={true}/>
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary"/>}
-                                label="Nhớ mật khẩu"
-                            />
+                                />
+                            </div>
+                            <div className="row">
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Mật khẩu"
+                                    type="password"
+                                    id="password"
+                                    value={password}
+                                    autoComplete="current-password"
+                                    onChange={onChangePassword}
+                                />
+                            </div>
+                            {/*<div className="row">*/}
+                            {/*    <CustomError message={messageError} isSaveClick={true}/>*/}
+                            {/*</div>*/}
+                            {/*<div className="row">*/}
+                            {/*    <CustomError message={messageError} isSaveClick={true}/>*/}
+                            {/*</div>*/}
+                            <div className="row">
+                                <CustomError message={messageError} isSaveClick={true}/>
+                            </div>
+
+
+                            {/*<FormControlLabel*/}
+                            {/*    control={<Checkbox value="remember" color="primary"/>}*/}
+                            {/*    label="Nhớ mật khẩu"*/}
+                            {/*/>*/}
                             <Button
                                 type="submit"
                                 fullWidth
