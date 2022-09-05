@@ -68,11 +68,11 @@ export const AccountListResults = ({keyword}) => {
             res => {
                 const {data} = res;
                 if (data.errorCode == "200") {
-                    toast.success("Xóa Thành Công")
+                    toast.success("Xóa thành công")
                     fetUserId();
                     handleCloseDelete();
                 } else {
-                    toast.error("Xóa Thất Bại")
+                    toast.error("Xóa thất bại")
                 }
             }
         )

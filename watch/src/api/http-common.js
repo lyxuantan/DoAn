@@ -93,15 +93,14 @@ const HTTP = axios.create({
       }
 
       const errInterceptor = error => {
-        if(error.response.status === 401) {
-
-          navigate("/login");
-        }
+        // if(error.response.status === 401) {
+        //
+        //   navigate("/login");
+        // }
         return Promise.reject(error);
       }
 
       const interceptor = HTTP.interceptors.response.use(resInterceptor, errInterceptor);
-
       return () => HTTP.interceptors.response.eject(interceptor);
 
     }, [navigate])

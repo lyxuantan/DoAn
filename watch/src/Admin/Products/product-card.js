@@ -156,12 +156,12 @@ export const ProductCard = ({keyword}) => {
             res => {
                 const {data} = res;
                 if(data.errorCode == "200") {
-                    toast.success("Xóa Thành Công")
+                    toast.success("Xóa thành công")
                     fetchProduct();
                     handleCloseDelete();
                 }
                 else {
-                    toast.error("Xóa Thất Bại")
+                    toast.error("Xóa thất bại")
                 }
             }
         )

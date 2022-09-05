@@ -58,9 +58,9 @@ const UploadFiles = ({productIsUpload, data, isPresident, onFetchProduct, handle
             const {data} = res;
             if (data.errorCode === "200") {
                 onFetchProduct();
-                toast.success("Xóa thành công!");
+                toast.success("Xóa thành công");
             } else {
-                toast.error("Xóa thất bại!");
+                toast.error("Xóa thất bại");
             }
         })
 

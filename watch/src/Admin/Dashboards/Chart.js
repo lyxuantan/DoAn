@@ -16,6 +16,7 @@ import LoadingSpinner from "../../Components/LoadingSpinner";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
+import {toast} from "react-toastify";
 
 
 const si = [
@@ -173,6 +174,7 @@ const Chart = ({listOrderHistory, listAllProduct}) => {
                     newHeight
                 );
                 doc.save("data-export.pdf");
+                toast.success("Xuất file thành công")
                 setIsExporting(false);
             })
             .catch(() => {
@@ -364,6 +366,12 @@ const BarChart = ({listAllProduct, listBestSeller, isExporting}) => {
         dataset: {
             source: cData,
         },
+        label: {
+            show: isExporting,
+            formatter: function (a) {
+                return thousandsSeparators(a?.data?.[0])
+            }
+        },
         grid: {
             containLabel: true,
             left: "2%",
@@ -468,14 +476,23 @@ const LineChart = ({data, listOrderHistory, type, isExporting}) => {
             name: "Doanh Thu",
             data: resultArr && resultArr.length ? resultArr.map(item => item.totalPrice) : [],
             type: 'line',
-            smooth: true
+            smooth: true,
+            label: {
+                show: isExporting,
+                formatter: function (a) {
+                    return thousandsSeparators(a.value)
+                }
+            },
         },
-        {
-            name: "Tổng số",
-            data: resultArr && resultArr.length ? resultArr.map(item => item.total) : [],
-            type: 'line',
-            smooth: true
-        }
+        // {
+        //     name: "Tổng số",
+        //     data: resultArr && resultArr.length ? resultArr.map(item => item.total) : [],
+        //     type: 'line',
+        //     smooth: true,
+        //     label: {
+        //         show: true,
+        //     },
+        // }
     ];
 
     const options = {
@@ -492,6 +509,7 @@ const LineChart = ({data, listOrderHistory, type, isExporting}) => {
             },
 
         },
+
         grid: {
             top: "10%",
             left: "10%",

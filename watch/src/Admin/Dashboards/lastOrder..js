@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import {SeverityPill} from '../severity-pill';
 import {useState} from "react";
-import {thousandsSeparators} from "../../common/fCommon";
+import {findText, thousandsSeparators} from "../../common/fCommon";
 import moment from 'moment';
 import {deleteOrderHistory, updateStatusOrder} from "../../api/order-hitory";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -64,12 +64,12 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
             res => {
                 const {data} = res;
                 if(data.errorCode == "200") {
-                    toast.success("Xóa Thành Công")
+                    toast.success("Xóa thành công")
                     onFetchOrderHistory();
                     handleCloseDelete();
                 }
                 else {
-                    toast.error("Xóa Thất Bại")
+                    toast.error("Xóa thất bại")
                 }
             }
         )
@@ -181,6 +181,12 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
                     </Table>
                 </Box>
             </PerfectScrollbar>
+            {!listOrderHistory || !listOrderHistory.length || !listOrderHistory.slice(
+                (pageNo - 1) * limit,
+                (pageNo - 1) * limit + limit
+            ).length ? <div className="empty-content">
+                Không tìm thấy đơn hàng
+            </div> : null}
             <div className="pagination-footer">
                 <Stack spacing={2}>
                     <Pagination count={totalPages} page={pageNo} variant="outlined" color="primary"

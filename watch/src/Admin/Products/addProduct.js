@@ -258,6 +258,13 @@ function AddProduct(props) {
             }
             const saveRes = id ? await updateProduct(payload) : await saveProduct(payload);
             if (saveRes.data.errorCode == "200") {
+                if(id) {
+                    toast.success("Sửa thành công!");
+
+                }
+                else {
+                    toast.success("Thêm thành công!");
+                }
                 navigate("/admin/product");
             }
 
@@ -406,39 +413,6 @@ function AddProduct(props) {
                                             <CustomError message={validate(product)?.title}
                                                          isSaveClick={isSaveClick}/>
                                         </Grid>
-                                        {/*<Grid item xs={6}>*/}
-                                        {/*    {headerField(4, "Nhập nội dung")}*/}
-                                        {/*    <TextField*/}
-                                        {/*        id="outlined-multiline-flexible"*/}
-                                        {/*        label="Nhập nội dung"*/}
-                                        {/*        fullWidth={true}*/}
-                                        {/*        multiline*/}
-                                        {/*        value={product.content}*/}
-                                        {/*        onChange={(e) => onChangeContent(e.target.value)}*/}
-                                        {/*    />*/}
-                                        {/*</Grid>*/}
-                                        {/*<Grid item xs={6}>*/}
-                                        {/*    {headerField(5, "Nhập chất liệu kính")}*/}
-                                        {/*    <TextField*/}
-                                        {/*        id="outlined-multiline-flexible"*/}
-                                        {/*        label="Nhập chất liệu kính"*/}
-                                        {/*        fullWidth={true}*/}
-                                        {/*        multiline*/}
-                                        {/*        value={product.glassSurface}*/}
-                                        {/*        onChange={(e) => onChangeGlassSurface(e.target.value)}*/}
-                                        {/*    />*/}
-                                        {/*</Grid>*/}
-                                        {/*<Grid item xs={6}>*/}
-                                        {/*    {headerField(6, "Độ dày")}*/}
-                                        {/*    <TextField*/}
-                                        {/*        id="outlined-multiline-flexible"*/}
-                                        {/*        label="Nhập độ dày"*/}
-                                        {/*        fullWidth={true}*/}
-                                        {/*        multiline*/}
-                                        {/*        value={product.thinkness}*/}
-                                        {/*        onChange={(e) => onChangeThinkness(e.target.value)}*/}
-                                        {/*    />*/}
-                                        {/*</Grid>*/}
                                         <Grid item xs={12}>
                                             {headerField(3, "Chọn danh mục")}
                                             <FormControl fullWidth>

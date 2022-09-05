@@ -90,6 +90,11 @@ code {
   padding: 16px;
 }
 
+.empty-content {
+  display: flex;
+  justify-content: center;
+}
+
 .popover {
   top: 40% !important;
   left: 50% !important;
