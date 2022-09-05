@@ -35,7 +35,7 @@ public class OrderHistory  {
     private Date updateTime;
 
     @OneToOne
-    @JoinColumn(name = "customer_order_id")
+    @JoinColumn(name = "customer_order_id", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private CustomerOrder customerOrder;
 
 
