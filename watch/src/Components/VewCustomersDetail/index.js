@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {ThemeProvider} from "@mui/material/styles";
 import {theme} from "../../Admin/theme";
@@ -30,6 +30,7 @@ import {getOrderDetails} from "../../api/customer-order";
 import './styles.scss'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faImage} from "@fortawesome/free-solid-svg-icons";
+import {CardBackButton} from "../../component-utility/icons-component";
 
 const VewCustomersDetail = () => {
 
@@ -78,19 +79,25 @@ const VewCustomersDetail = () => {
                 <ThemeProvider theme={theme}>
                     <div className="dashBoardNarBar">
                         <DashboardNavbar/>
+
                     </div>
                     <DashboardSidebar/>
                     <div className="wrapper-AdminHome body-container">
                         <DashboardTitle title="Chi tiết đơn hàng"/>
+
                         <Box
                             component="main"
                             sx={{
                                 flexGrow: 1,
                             }}
                         >
+
                             <Container maxWidth={false}>
-                                <Box sx={{mt: 3}}>
-                                    <div style={{paddingBottom: "16px"}}>
+                                <Box>
+                                    <div style={{paddingBottom: "8px"}}>
+                                        <Link to="/admin/order" style={{paddingBottom: "8px"}}><CardBackButton/></Link>
+
+                                        <div style={{paddingTop: "16px"}}>
                                         <TextField
                                             label={"Tên Sản Phẩm"}
                                             size="small"
@@ -111,6 +118,7 @@ const VewCustomersDetail = () => {
                                             onChange={(e) => onChangeSearch(e.target.value)}
                                             // variant="outlined"
                                         />
+                                        </div>
                                     </div>
                                     <Card>
 

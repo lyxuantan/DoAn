@@ -135,13 +135,13 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
                                 <TableRow
                                     hover
                                     key={order?.id}
-                                    onClick={() => onViewCustomerOrder(order)}
+
 
                                 >
-                                    <TableCell>
+                                    <TableCell  onClick={() => onViewCustomerOrder(order)}>
                                         {order?.id}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell  onClick={() => onViewCustomerOrder(order)}>
                                         {order?.customerOrder?.user?.fullName}
                                     </TableCell>
                                     <TableCell>
@@ -155,13 +155,13 @@ const LatestOrders = ({listOrderHistory, onFetchOrderHistory}) => {
                                             {order?.status ? "Đã giao" : "Đang giao"}
                                         </SeverityPill>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell  onClick={() => onViewCustomerOrder(order)}>
                                         {thousandsSeparators(order?.customerOrder?.price)} VNĐ
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell  onClick={() => onViewCustomerOrder(order)}>
                                         {moment(order?.createTime).format("DD/MM/YYYY")}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell  onClick={() => onViewCustomerOrder(order)}>
                                         {moment(order?.updateTime).format("DD/MM/YYYY")}
                                     </TableCell>
                                     <TableCell>

@@ -144,9 +144,9 @@ const FilterProduct = ({
                         />
                     </div>
                     <div className="footer">
-                        <div>
-                            <Checkbox/> Ẩn sản phẩm hết hàng
-                        </div>
+                        {/*<div>*/}
+                        {/*    <Checkbox/> Ẩn sản phẩm hết hàng*/}
+                        {/*</div>*/}
                         <div>
                             {totalElements || 0} sản phẩm phù hợp
                         </div>

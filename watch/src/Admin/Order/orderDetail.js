@@ -222,13 +222,13 @@ export const OrderListResults = () => {
                                         key={order?.id}
 
                                     >
-                                        <TableCell>
+                                        <TableCell onClick={(e) => onViewCustomerOrder(e, order)}>
                                             {order?.id}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell onClick={(e) => onViewCustomerOrder(e, order)}>
                                             {order?.customerOrder?.user?.fullName}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell >
                                             <div ref={refStatus}>
                                             <SeverityPill
                                                 style={{cursor: "pointer"}}
@@ -239,24 +239,24 @@ export const OrderListResults = () => {
                                             </SeverityPill>
                                             </div>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell onClick={(e) => onViewCustomerOrder(e, order)}>
                                             {thousandsSeparators(order?.customerOrder?.price)} VNĐ
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell onClick={(e) => onViewCustomerOrder(e, order)}>
                                             {moment(order?.createTime).format("DD/MM/YYYY")}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell onClick={(e) => onViewCustomerOrder(e, order)}>
                                             {moment(order?.updateTime).format("DD/MM/YYYY")}
                                         </TableCell>
                                         <TableCell>
                                             <div className="product-action">
-                                                <div>
-                                                    <Tooltip title="Xem chi tiết">
-                                                        <Button variant="contained" color="success" onClick={(e) => onViewCustomerOrder(e, order)}>
-                                                            <InfoIcon/>
-                                                        </Button>
-                                                    </Tooltip>
-                                                </div>
+                                                {/*<div>*/}
+                                                {/*    <Tooltip title="Xem chi tiết">*/}
+                                                {/*        <Button variant="contained" color="success" >*/}
+                                                {/*            <InfoIcon/>*/}
+                                                {/*        </Button>*/}
+                                                {/*    </Tooltip>*/}
+                                                {/*</div>*/}
                                                 <div>
                                                     <Tooltip title="Xoá">
                                                         <Button variant="contained" color="error" onClick={() => onDeleteProduct(order)}>
