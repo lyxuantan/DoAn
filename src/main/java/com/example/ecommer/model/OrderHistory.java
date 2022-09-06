@@ -34,8 +34,8 @@ public class OrderHistory  {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    @OneToOne
-    @JoinColumn(name = "customer_order_id", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "customer_order_id")
     private CustomerOrder customerOrder;
 
 
