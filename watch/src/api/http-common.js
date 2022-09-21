@@ -1,10 +1,13 @@
 import axios from "axios";
 import { BASE_URL } from "./config";
 import EventBus from "../common/EventBus";
-import {logout} from "./auth";
+// import {logout} from "./auth";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {useDispatch} from "react-redux";
+import {logoutService} from "./action/auth";
+import {logout} from "./../redux/userSlice";
+
 
 // const user = JSON.parse(localStorage.getItem("user"));
 export  function authHeader() {
@@ -85,6 +88,7 @@ const HTTP = axios.create({
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigator = useNavigate();
 
     useEffect(() => {
 
@@ -93,10 +97,11 @@ const HTTP = axios.create({
       }
 
       const errInterceptor = error => {
-        // if(error.response.status === 401) {
-        //
-        //   navigate("/login");
-        // }
+        if(error.response.status === 401) {
+            dispatch(logoutService());
+            dispatch(logout());
+            navigator("/login");
+        }
         return Promise.reject(error);
       }
 

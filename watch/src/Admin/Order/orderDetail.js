@@ -213,7 +213,7 @@ export const OrderListResults = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {listOrderDetail && listOrderDetail.length ? listOrderDetail.filter(item =>  (status !== STATUS_FILTER.ALL ? item.status.toString() == status ? true : false : true) ? (keyword ? (findText(item?.customerOrder?.user?.fullName, keyword)) : item) : false).slice(
+                                {listOrderDetail && listOrderDetail.length ? listOrderDetail.filter(item =>  (status !== STATUS_FILTER.ALL ? item?.status?.toString() == status ? true : false : true) ? (keyword ? (findText(item?.customerOrder?.user?.fullName, keyword)) : item) : false).slice(
                                     (pageNo - 1) * limit,
                                     (pageNo - 1) * limit + limit
                                 ).map((order) => (

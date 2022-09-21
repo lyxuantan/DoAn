@@ -91,21 +91,23 @@ const ProductItem = ({item}) => {
 
 
     const fetchCustomerOrder = () => {
-        getCustomerOrder({
-            isPaid: false,
-        }).then(
-            res => {
-                const {data} = res.data;
-                if (data && data.length) {
-                    dispatch(getCart(data?.[data.length - 1]))
+        if (currentUser?.token) {
+            getCustomerOrder({
+                isPaid: false,
+            }).then(
+                res => {
+                    const {data} = res.data;
+                    if (data && data.length) {
+                        dispatch(getCart(data?.[data.length - 1]))
 
-                } else {
-                    dispatch(getCart(null))
+                    } else {
+                        dispatch(getCart(null))
+                    }
                 }
-            }
-        ).catch(res => {
-            dispatch(getCart(null))
-        })
+            ).catch(res => {
+                dispatch(getCart(null))
+            })
+        }
     }
 
     return (<div className="content-product container">
